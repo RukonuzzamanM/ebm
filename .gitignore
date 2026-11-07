@@ -1,0 +1,12 @@
+# কখনও GitHub-এ যাবে না
+node_modules/
+*.json.bak
+EBM_backup_*.json
+*backup*.json
+*.xlsx
+*.xls
+*.log
+firebase-debug.log
+firestore-debug.log
+.firebase/
+.env*

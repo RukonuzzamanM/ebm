@@ -1,0 +1,108 @@
+rules_version = '2';
+
+// শাখা ব্যয়-বাজেট ম্যানেজার — Firestore নিরাপত্তার নিয়ম
+// ভূমিকা: admin (সব পারে), viewer = guest (শুধু পড়তে পারে)
+// মূলনীতি: যা স্পষ্টভাবে অনুমোদিত নয়, তা নিষিদ্ধ।
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(db)/documents/users/$(request.auth.uid)).data; }
+    // users তালিকায় আছে এবং সক্রিয়
+    function known() {
+      return signedIn()
+        && exists(/databases/$(db)/documents/users/$(request.auth.uid))
+        && profile().active == true
+        && profile().role in ['admin', 'viewer'];
+    }
+    function isAdmin() { return known() && profile().role == 'admin'; }
+    function onlyKeys(ks) { return request.resource.data.keys().hasOnly(ks); }
+    function stamped() {
+      return request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+    }
+
+    // ---- ব্যবহারকারী ----
+    match /users/{uid} {
+      function validUser() {
+        let d = request.resource.data;
+        return onlyKeys(['email', 'name', 'role', 'active', 'updatedAt', 'updatedBy'])
+          && d.email is string && d.email.size() <= 200
+          && d.name is string && d.name.size() <= 100
+          && d.role in ['admin', 'viewer']
+          && d.active is bool
+          && stamped();
+      }
+      // নিজের প্রোফাইল পড়া যায় (নিষ্ক্রিয় হলেও, যাতে বার্তা দেখানো যায়); admin সবার
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin() && validUser();
+      // admin নিজের ভূমিকা বদলাতে বা নিজেকে নিষ্ক্রিয় করতে পারবেন না (তালা পড়ে যাওয়া ঠেকাতে)
+      allow update: if isAdmin() && validUser()
+        && (uid != request.auth.uid
+            || (request.resource.data.role == 'admin' && request.resource.data.active == true));
+      allow delete: if isAdmin() && uid != request.auth.uid;
+    }
+
+    // ---- চলতি বছরের ডেটা ----
+    match /state/main {
+      function validMain() {
+        let d = request.resource.data;
+        return onlyKeys(['data', 'rev', 'appVer', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+          && d.data is string && d.data.size() > 2 && d.data.size() < 950000
+          && d.rev is int
+          && d.appVer is string && d.appVer.size() <= 20
+          && d.updatedByEmail is string && d.updatedByEmail.size() <= 200
+          && stamped();
+      }
+      allow read: if known();
+      allow create: if isAdmin() && validMain() && request.resource.data.rev == 1;
+      // rev ঠিক এক বাড়াতে হবে: দুই কম্পিউটার থেকে একসঙ্গে লিখলে একটির কাজ আরেকটি মুছে দিতে পারবে না
+      allow update: if isAdmin() && validMain() && request.resource.data.rev == resource.data.rev + 1;
+      allow delete: if false;
+    }
+
+    // ---- লাইসেন্স ----
+    match /state/license {
+      allow read: if known();
+      allow write: if isAdmin()
+        && onlyKeys(['key', 'updatedAt', 'updatedBy'])
+        && request.resource.data.key is string
+        && request.resource.data.key.size() < 2000
+        && stamped();
+    }
+
+    // ---- আর্কাইভ করা বছর ----
+    match /archive/{year} {
+      allow read: if known();
+      allow create, update: if isAdmin()
+        && year.matches('^20[0-9]{2}$')
+        && onlyKeys(['data', 'updatedAt', 'updatedBy'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() > 2
+        && request.resource.data.data.size() < 950000
+        && stamped();
+      allow delete: if isAdmin();
+    }
+
+    // ---- অডিট লগ: কেউ বদলাতে বা মুছতে পারে না ----
+    match /audit/{id} {
+      allow create: if known()
+        && onlyKeys(['t', 'uid', 'email', 'action', 'detail'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.t == request.time
+        && request.resource.data.email is string && request.resource.data.email.size() <= 200
+        && request.resource.data.action is string && request.resource.data.action.size() <= 60
+        && request.resource.data.detail is string && request.resource.data.detail.size() <= 500
+        // guest শুধু লগইন/লগআউট লিখতে পারে
+        && (isAdmin() || request.resource.data.action in ['login', 'logout']);
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // বাকি সব নিষিদ্ধ
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
