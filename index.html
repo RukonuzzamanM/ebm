@@ -225,7 +225,7 @@ const FB_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const EMU = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]emu=1\b/.test(location.search);
 // ডেভেলপার কী-জেনারেটর এই (GitHub-এ প্রকাশ্য) সংস্করণ থেকে সরানো হয়েছে; নতুন লাইসেন্স কী লোকাল v3.2 থেকে বানান।
 const LIC_BOOT = "eyJhcHAiOiJFQk0iLCJuYW1lIjoiTWQuIFJ1a29udXp6YW1hbiIsImlzcyI6IjIwMjYtMTAtMjciLCJleHAiOiIyMDI3LTEwLTI3In0.a5FIEsUh3TLNTn2XWTYeDtKYTAh838fFmGMo9a6CmWZwDjdJ8xSyV4LsB6pAPs1iLZd8E4WOKIkW5M_pDIHwjA";
-const APP_VER = '4.3';
+const APP_VER = '4.3.1';
 const LS = 'ebm_v1', LSL = 'ebm_lic', LSS = 'ebm_seen';
 const MBN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
 const MEN = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -2613,18 +2613,24 @@ window.addEventListener('popstate', () => { if (NAV.length) navBack(); });
 const inchOf = code => (S && S.inch && S.inch[code]) || null;
 const telOf = s => String(s || '').replace(/[^\d+]/g, '');
 const INCH_F = [['name', 'নাম'], ['mobile', 'মোবাইল'], ['staffId', 'স্টাফ আইডি'], ['email', 'ইমেইল']];
-function normMobile(v) {
-  if (v == null) return '';
-  let s = typeof v === 'number' ? String(Math.round(v)) : String(v).trim();
+// একাধিক নম্বর থাকলে কমা/সেমিকোলন/স্ল্যাশ দিয়ে আলাদা; সংরক্ষণ হয় "নম্বর১, নম্বর২" আকারে
+const mobList = s => String(s || '').split(/[,;/]/).map(x => x.trim()).filter(Boolean);
+function normOne(s) {
   s = s.replace(/[\s\-()]/g, '');
   if (/^1\d{9}$/.test(s)) s = '0' + s;                 // Excel-এ শুরুর ০ হারালে
   if (/^8801\d{9}$/.test(s)) s = '+' + s;
   return s;
 }
-const okMobile = s => !s || /^(\+?88)?01\d{9}$/.test(s) || /^\+?\d{7,15}$/.test(s);
+function normMobile(v) {
+  if (v == null) return '';
+  const s = typeof v === 'number' ? String(Math.round(v)) : String(v).trim();
+  return mobList(s).map(normOne).join(', ');
+}
+const okOne = s => /^(\+?88)?01\d{9}$/.test(s) || /^\+?\d{7,15}$/.test(s);
+const okMobile = s => !s || (mobList(s).length <= 4 && mobList(s).every(okOne));
 const okMail = s => !s || (/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(s) && s.length <= 120);
 function cleanInch(o) {
-  const x = {name: String(o.name || '').trim().slice(0, 100), mobile: normMobile(o.mobile).slice(0, 20), staffId: String(o.staffId == null ? '' : o.staffId).trim().slice(0, 30), email: String(o.email || '').trim().toLowerCase().slice(0, 120)};
+  const x = {name: String(o.name || '').trim().slice(0, 100), mobile: normMobile(o.mobile).slice(0, 80), staffId: String(o.staffId == null ? '' : o.staffId).trim().slice(0, 30), email: String(o.email || '').trim().toLowerCase().slice(0, 120)};
   const bad = [];
   if (!okMobile(x.mobile)) bad.push('মোবাইল');
   if (!okMail(x.email)) bad.push('ইমেইল');
@@ -2634,7 +2640,7 @@ function inchCells(x) {
   x = x || {};
   return {
     name: esc(x.name || '—'),
-    mobile: x.mobile ? `<a href="tel:${esc(telOf(x.mobile))}">${esc(x.mobile)}</a>` : '—',
+    mobile: x.mobile ? mobList(x.mobile).map(m => `<a href="tel:${esc(telOf(m))}">${esc(m)}</a>`).join(', ') : '—',
     staffId: esc(x.staffId || '—'),
     email: x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : '—',
   };
@@ -2645,7 +2651,7 @@ function inchBox(b) {
     (has ? `<div class="inch">${INCH_F.map(([k, l]) => `<div><span class="mut">${l}</span><b>${c[k]}</b></div>`).join('')}</div>` : '<div class="mut">শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।</div>');
   if (ROLE === 'admin' && !VIEW) {
     const v = k => esc((x && x[k]) || '');
-    h += `<div class="row" style="margin-top:8px"><input type="text" id="in_name" value="${v('name')}" placeholder="নাম" maxlength="100"><input type="text" id="in_mob" value="${v('mobile')}" placeholder="মোবাইল (01XXXXXXXXX)" maxlength="20" style="width:160px"><input type="text" id="in_sid" value="${v('staffId')}" placeholder="স্টাফ আইডি" maxlength="30" style="width:120px"><input type="email" id="in_em" value="${v('email')}" placeholder="ইমেইল" maxlength="120"><button class="b sec" data-a="saveInch" data-p="${b.code}">💾 সংরক্ষণ</button></div>`;
+    h += `<div class="row" style="margin-top:8px"><input type="text" id="in_name" value="${v('name')}" placeholder="নাম" maxlength="100"><input type="text" id="in_mob" value="${v('mobile')}" placeholder="মোবাইল (একাধিক হলে কমা দিয়ে)" maxlength="80" style="width:200px"><input type="text" id="in_sid" value="${v('staffId')}" placeholder="স্টাফ আইডি" maxlength="30" style="width:120px"><input type="email" id="in_em" value="${v('email')}" placeholder="ইমেইল" maxlength="120"><button class="b sec" data-a="saveInch" data-p="${b.code}">💾 সংরক্ষণ</button></div>`;
   }
   return h + '</div>';
 }
@@ -2758,7 +2764,7 @@ Object.assign(TR_EXACT, {
   'ডিপোজিট ও লাভ/ক্ষতি: কোটি টাকায় · আপ্যায়ন ব্যয়: লাখ টাকায়': 'Deposit and profit/loss: crore Taka · Entertainment cost: lakh Taka',
   'ডিপোজিট/অ্যাডভান্স: লক্ষ্যের % · প্রফিট: কোটি টাকায়': 'Deposit/advance: % of target · Profit: crore Taka',
   'অঙ্ক: কোটি টাকায় (% = লক্ষ্যের তুলনায়)': 'Figures in crore Taka (% = of target)', 'অঙ্ক: কোটি টাকায় (অংশ = মোটের %)': 'Figures in crore Taka (share = % of total)',
-  '← পেছনে': '← Back', 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)': 'Click to sort (click again to reverse)', 'আগের অবস্থায় ফিরুন': 'Go back to the previous view', '👤 শাখা-প্রধান': '👤 Branch incharge', 'শাখা-প্রধান': 'Branch incharge', 'নাম': 'Name', 'মোবাইল': 'Mobile', 'স্টাফ আইডি': 'Staff ID',
+  '← পেছনে': '← Back', 'মোবাইল (একাধিক হলে কমা দিয়ে)': 'Mobile (separate several with commas)', 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)': 'Click to sort (click again to reverse)', 'আগের অবস্থায় ফিরুন': 'Go back to the previous view', '👤 শাখা-প্রধান': '👤 Branch incharge', 'শাখা-প্রধান': 'Branch incharge', 'নাম': 'Name', 'মোবাইল': 'Mobile', 'স্টাফ আইডি': 'Staff ID',
   'শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।': 'Branch-incharge details not added yet.', '💾 সংরক্ষণ': '💾 Save',
   '৮. শাখা-প্রধানের তথ্য (Excel)': '8. Branch-incharge details (Excel)', '⬆ তথ্যের ফাইল দিন': '⬆ Upload details file',
 });
