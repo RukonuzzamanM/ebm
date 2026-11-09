@@ -1,7 +1,7 @@
 {
   "name": "ebm-firebase",
   "private": true,
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "শাখা ব্যয়-বাজেট ম্যানেজার — Firebase সংস্করণ (শুধু টেস্টের জন্য; সফটওয়্যার চালাতে npm লাগে না)",
   "type": "module",
   "scripts": {

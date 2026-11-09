@@ -94,7 +94,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:nth-child(even) td,table tr:nth-child(even) td{background:color-mix(in srgb,var(--card2) 55%,transparent)}
 tr.clk{cursor:pointer}tr.clk:hover td{background:var(--priSoft)!important}
 .tw{overflow:auto;max-height:68vh;border:1px solid var(--bd);border-radius:12px;background:var(--card)}
-.tbar{display:flex;gap:6px;justify-content:flex-end;margin:0 0 5px}
+.tbar{display:flex;gap:6px;justify-content:flex-end;align-items:center;margin:0 0 5px}.tbar .unit{margin-right:auto;font-size:12px;color:var(--mut);font-style:italic}th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--tx,inherit);text-decoration:underline}th.srt.s-asc::after{content:" ▲"}th.srt.s-desc::after{content:" ▼"}.mbox .bk{position:absolute;right:52px;top:14px;border:1px solid var(--bd,#ccc);background:none;border-radius:6px;padding:2px 10px;cursor:pointer;color:var(--mut);font-size:13px}#bBack{width:auto;padding:0 10px;font-size:13px}.inch{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.inch div{display:flex;flex-direction:column;gap:2px}.inch .mut{font-size:11px}
 .tbar button{font:inherit;font-size:12px;padding:3px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--mut);cursor:pointer}
 .tbar button:hover{color:var(--pri);border-color:var(--pri2)}
 .st{display:inline-flex;align-items:center;gap:5px;padding:1px 10px;border-radius:999px;font-size:12px;white-space:nowrap}
@@ -157,7 +157,7 @@ svg text{font-family:var(--fnt)}
 .sync{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.2);white-space:nowrap}
 .sync.ok{background:rgba(31,157,107,.35)}.sync.busy{background:rgba(217,154,0,.45)}.sync.err{background:rgba(207,48,48,.7)}
 /* guest: বদলানো, প্রিন্ট ও Excel-এর সব বোতাম লুকানো */
-body.guest .tbar,body.guest [data-a=exportXlsx],body.guest [data-a=printBranch],body.guest [data-a=printProp],body.guest [data-a=printModal],body.guest [data-a=tblPrint],body.guest [data-a=tblXlsx],body.guest [data-a=tplExport],body.guest [data-a=depTpl],body.guest [data-a=backup],body.guest [data-a=hoCopyGl],body.guest [data-a=saveBud],body.guest [data-a=applyProp],body.guest [data-a=saveBr],body.guest [data-a=hoSaveBud],body.guest [data-a=hoClearBud],body.guest [data-a=licApply],body.guest #licIn{display:none!important}
+body.guest .tbar button,body.guest [data-a=exportXlsx],body.guest [data-a=printBranch],body.guest [data-a=printProp],body.guest [data-a=printModal],body.guest [data-a=tblPrint],body.guest [data-a=tblXlsx],body.guest [data-a=tplExport],body.guest [data-a=depTpl],body.guest [data-a=backup],body.guest [data-a=hoCopyGl],body.guest [data-a=saveBud],body.guest [data-a=applyProp],body.guest [data-a=saveBr],body.guest [data-a=hoSaveBud],body.guest [data-a=hoClearBud],body.guest [data-a=licApply],body.guest #licIn{display:none!important}
 @media print{body.guest *{display:none!important}}
 </style>
 </head>
@@ -169,7 +169,7 @@ body.guest .tbar,body.guest [data-a=exportXlsx],body.guest [data-a=printBranch],
   <div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
    <div><h1 id="ttl"></h1><div class="sub" id="sub"></div></div></div>
   <div class="search"><input id="q" type="text" autocomplete="off"><div id="sg" class="sugg" hidden></div></div>
-  <div class="hdr-r"><button class="ico" id="bLang" data-a="lang" title="Language"></button><button class="ico" id="bTheme" data-a="theme" title="Theme"></button><span id="yrBox"></span><span class="chip" id="asof"></span><span class="sync" id="sync" hidden></span><span class="uchip" id="uchip"></span><button class="ico" data-a="logout" title="লগআউট">⏻</button></div>
+  <div class="hdr-r"><button class="ico" id="bBack" data-a="navBack" hidden>← পেছনে</button><button class="ico" id="bLang" data-a="lang" title="Language"></button><button class="ico" id="bTheme" data-a="theme" title="Theme"></button><span id="yrBox"></span><span class="chip" id="asof"></span><span class="sync" id="sync" hidden></span><span class="uchip" id="uchip"></span><button class="ico" data-a="logout" title="লগআউট">⏻</button></div>
  </header>
  <nav id="nav"></nav>
  <main id="main"></main>
@@ -225,7 +225,7 @@ const FB_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const EMU = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]emu=1\b/.test(location.search);
 // ডেভেলপার কী-জেনারেটর এই (GitHub-এ প্রকাশ্য) সংস্করণ থেকে সরানো হয়েছে; নতুন লাইসেন্স কী লোকাল v3.2 থেকে বানান।
 const LIC_BOOT = "eyJhcHAiOiJFQk0iLCJuYW1lIjoiTWQuIFJ1a29udXp6YW1hbiIsImlzcyI6IjIwMjYtMTAtMjciLCJleHAiOiIyMDI3LTEwLTI3In0.a5FIEsUh3TLNTn2XWTYeDtKYTAh838fFmGMo9a6CmWZwDjdJ8xSyV4LsB6pAPs1iLZd8E4WOKIkW5M_pDIHwjA";
-const APP_VER = '4.2';
+const APP_VER = '4.3';
 const LS = 'ebm_v1', LSL = 'ebm_lic', LSS = 'ebm_seen';
 const MBN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
 const MEN = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -453,9 +453,12 @@ function decorate(root) {
     if (tw.dataset.d) return;
     tw.dataset.d = '1'; const id = 't' + (++TID); tw.dataset.tid = id;
     const bar = document.createElement('div'); bar.className = 'tbar';
-    bar.innerHTML = `<button data-a="tblPrint" data-p="${id}">🖨 প্রিন্ট</button><button data-a="tblXlsx" data-p="${id}">⬇ Excel</button>`;
+    const tb0 = tw.querySelector('table'), u = tb0 && tb0.dataset.unit, ut = u && u !== '-' ? unitText(u) : '';
+    bar.innerHTML = (ut ? `<span class="unit">${ut}</span>` : '') + `<button data-a="tblPrint" data-p="${id}">🖨 প্রিন্ট</button><button data-a="tblXlsx" data-p="${id}">⬇ Excel</button>`;
     tw.parentNode.insertBefore(bar, tw);
   });
+  root.querySelectorAll('.tw').forEach(setupTable);
+  if (typeof navBtn === 'function') navBtn();
 }
 function post(root) { decorate(root); trDom(root); guestLock(root); }
 // guest হলে সম্পাদনার ঘরগুলো বন্ধ (ফিল্টার ও খোঁজার ঘর চালু থাকে, কারণ ওগুলোর id নেই)
@@ -493,7 +496,7 @@ function migrate() {
 }
 
 /* ---- মডাল / প্রিন্ট ---- */
-function modal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox"><button class="x" data-a="close">×</button>${html}</div>`; m.hidden = false; post(m); }
+function modal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox"><button class="x" data-a="close">×</button><button class="bk" data-a="navBack"${NAV.length ? '' : ' hidden'}>← পেছনে</button>${html}</div>`; m.hidden = false; post(m); }
 function printHtml(html) {
   const r = $('#printRoot'); r.innerHTML = html; trDom(r);
   document.body.classList.add('pr');
@@ -503,7 +506,7 @@ function pageOrient(land) {
   let st = document.getElementById('pgSt'); if (!st) { st = document.createElement('style'); st.id = 'pgSt'; document.head.appendChild(st); }
   st.textContent = `@page{size:A4 ${land ? 'landscape' : 'portrait'};margin:10mm}`;
 }
-const repHead = title => `<h2>${esc(orgLine())}</h2><h3 style="margin:2px 0 4px">${esc(title)}</h3><div class="meta"><span>${lastKey() ? 'সময়কাল: জানুয়ারি–' + lbl(lastKey()) : ''}</span><span>অঙ্ক: লাখ টাকায়</span><span>তারিখ: ${today()}</span></div>`;
+const repHead = (title, ut) => `<h2>${esc(orgLine())}</h2><h3 style="margin:2px 0 4px">${esc(title)}</h3><div class="meta"><span>${lastKey() ? 'সময়কাল: জানুয়ারি–' + lbl(lastKey()) : ''}</span><span>${ut == null ? 'অঙ্ক: লাখ টাকায়' : ut}</span><span>তারিখ: ${today()}</span></div>`;
 const repSign = '<div class="sign"><div>প্রস্তুতকারী</div><div>যাচাইকারী</div><div>অনুমোদনকারী</div></div>';
 function cloneTable(tw) {
   const t = tw.querySelector('table').cloneNode(true);
@@ -556,7 +559,7 @@ function branchRows() {
 function branchTable() {
   const rows = branchRows();
   const H = (f, l, c) => `<th class="${c || ''}" style="cursor:pointer" data-a="sort" data-p="${f}">${l}${UI.bSort === f ? (UI.bDir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
-  return `<div class="mut" style="margin:4px 0">${rows.length}টি শাখা</div><div class="tw"><table><tr>${H('code', 'কোড')}${H('name', 'শাখা')}${H('div', 'বিভাগ')}${H('rev', 'বাজেট', 'n')}${H('sp', 'ব্যয়', 'n')}${H('bal', 'অবশিষ্ট', 'n')}${H('pct', 'ব্যবহার')}${th('খাতওয়ারি')}${H('w', 'অবস্থা')}</tr>` +
+  return `<div class="mut" style="margin:4px 0">${rows.length}টি শাখা</div><div class="tw"><table data-unit="L"><tr>${H('code', 'কোড')}${H('name', 'শাখা')}${H('div', 'বিভাগ')}${H('rev', 'বাজেট', 'n')}${H('sp', 'ব্যয়', 'n')}${H('bal', 'অবশিষ্ট', 'n')}${H('pct', 'ব্যবহার')}${th('খাতওয়ারি')}${H('w', 'অবস্থা')}</tr>` +
     rows.map(r => `<tr class="clk" data-a="branch" data-p="${r.b.code}"><td>${r.b.code}</td><td>${esc(r.b.name)}</td><td>${esc(dn(r.b.div))}</td><td class="n">${num(r.rev)}</td><td class="n">${num(r.sp)}</td><td class="n ${r.bal < 0 ? 'neg' : ''}">${num(r.bal)}</td><td style="min-width:120px">${bar(r.pct, status(r.rev, r.sp), true)}<small>${pc(r.pct)}</small></td><td><span class="dots">${r.cs.map((c, i) => `<i class="${fillCls(c.st)}" title="${esc(cats()[i].bn)}: ${ST_LBL[c.st]}"></i>`).join('')}</span></td><td>${stChip(r.w)}</td></tr>`).join('') + `</table></div>`;
 }
 function vBranches() {
@@ -565,7 +568,7 @@ function vBranches() {
   return `<div class="row"><input type="text" data-f="bQ" value="${esc(UI.bQ)}" placeholder="শাখা খুঁজুন…"><select data-f="bDiv">${dopt}</select><select data-f="bSt">${sopt}</select>
    <button class="b sec" data-a="exportXlsx">⬇ Excel এক্সপোর্ট</button></div>
    <div class="mut" style="font-size:12px;margin-bottom:6px">খাতওয়ারি চৌকো: ${cats().map(c => esc(c.bn)).join(' · ')} (ক্রমানুসারে)। সারিতে ক্লিক করলে শাখার বিস্তারিত ও বাজেট সম্পাদনা।</div>
-   <div id="tbl">${branchTable()}</div>`;
+   <div id="tbl">${branchTable()}</div><div id="inchDir">${inchDirectory()}</div>`;
 }
 
 /* ---- শাখার বিস্তারিত (মডাল) ---- */
@@ -579,8 +582,9 @@ function openBranch(code) {
   modal(`<h2 style="margin:0">${esc(b.name)} <small class="mut">কোড ${b.code} · ${esc(dn(b.div))}</small></h2>
    <div class="row" style="margin-top:6px"><label>শাখার নাম <input type="text" id="bi_name" value="${esc(b.name)}"></label><label>বিভাগ <select id="bi_div">${allDivs().map(d => `<option value="${esc(d)}" ${b.div === d ? 'selected' : ''}>${esc(dn(d))}</option>`).join('')}</select></label><label>ডিপোজিট (লাখ) <input type="number" step="any" id="bi_dep" value="${b.dep || 0}" style="width:110px"></label><button class="b sec" data-a="saveBr" data-p="${b.code}">তথ্য সংরক্ষণ</button></div>
    <div class="row">${stChip(worst(cs.map(o => o.x)))} <span>মোট বাজেট <b>${num(tot.rev)}</b></span> <span>ব্যয় <b>${num(tot.sp)}</b></span> <span class="${tot.bal < 0 ? 'neg' : 'pos'}">অবশিষ্ট <b>${num(tot.bal)}</b></span> <span class="mut">ডিপোজিট ${num(b.dep / 100)} কোটি</span></div>
+   ${inchBox(b)}
    ${branchExtra(b)}
-   <div class="tw" style="max-height:none"><table><tr>${th('খাত')}${th('মূল বাজেট', 'n')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('বছরশেষ প্রজেকশন', 'n')}${th('অবস্থা')}</tr>` +
+   <div class="tw" style="max-height:none"><table data-unit="L"><tr>${th('খাত')}${th('মূল বাজেট', 'n')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('বছরশেষ প্রজেকশন', 'n')}${th('অবস্থা')}</tr>` +
     cs.map(({c, x}) => `<tr><td>${esc(c.bn)}</td><td class="n"><input type="number" step="0.01" id="eb_${c.k}" value="${x.bud}" style="width:90px;text-align:right"></td><td class="n"><input type="number" step="0.01" id="er_${c.k}" value="${x.rev}" style="width:90px;text-align:right"></td><td class="n">${num(x.sp)}</td><td class="n ${x.bal < 0 ? 'neg' : ''}">${num(x.bal)}</td><td style="min-width:110px">${bar(x.pct, x.st, true)}<small>${pc(x.pct)}</small></td><td class="n ${x.risk ? 'neg' : ''}">${num(x.proj)}</td><td>${stChip(x.st)}</td></tr>`).join('') +
     `<tr style="font-weight:700"><td>মোট</td><td class="n">${num(tot.bud)}</td><td class="n">${num(tot.rev)}</td><td class="n">${num(tot.sp)}</td><td class="n">${num(tot.bal)}</td><td>${pc(tot.pct)}</td><td></td><td></td></tr></table></div>
    <div class="row" style="margin-top:8px"><input type="text" id="e_note" placeholder="সংশোধনের কারণ/নোট (ঐচ্ছিক)" style="flex:1;min-width:200px"><button class="b" data-a="saveBud" data-p="${b.code}">💾 বাজেট সংরক্ষণ</button><button class="b sec" data-a="printBranch" data-p="${b.code}">🖨 প্রিন্ট রিপোর্ট</button></div>
@@ -603,7 +607,7 @@ function alertTable() {
   if (UI.aSt) l = l.filter(o => (UI.aSt === 'risk' ? o.x.risk : o.x.st === UI.aSt));
   if (UI.aDiv) l = l.filter(o => o.b.div === UI.aDiv);
   if (UI.aCat) l = l.filter(o => o.c.k === UI.aCat);
-  return `<div class="mut" style="margin:4px 0">${l.length}টি</div><div class="tw"><table><tr>${th('শাখা')}${th('বিভাগ')}${th('খাত')}${th('সংশোধিত বাজেট', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('%', 'n')}${th('প্রজেকশন', 'n')}${th('অবস্থা')}</tr>` +
+  return `<div class="mut" style="margin:4px 0">${l.length}টি</div><div class="tw"><table data-unit="L"><tr>${th('শাখা')}${th('বিভাগ')}${th('খাত')}${th('সংশোধিত বাজেট', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('%', 'n')}${th('প্রজেকশন', 'n')}${th('অবস্থা')}</tr>` +
     l.map(o => `<tr class="clk" data-a="branch" data-p="${o.b.code}"><td>${esc(o.b.name)}</td><td>${esc(dn(o.b.div))}</td><td>${esc(o.c.bn)}</td><td class="n">${num(o.x.rev)}</td><td class="n">${num(o.x.sp)}</td><td class="n ${o.x.bal < 0 ? 'neg' : ''}">${num(o.x.bal)}</td><td class="n">${pc(o.x.pct)}</td><td class="n ${o.x.risk ? 'neg' : ''}">${num(o.x.proj)}</td><td>${stChip(o.x.st)}${o.x.risk ? ' <span class="st s-warn">ঝুঁকি</span>' : ''}</td></tr>`).join('') + `</table></div>`;
 }
 function vAlerts() {
@@ -639,10 +643,10 @@ function vTrend() {
   const ba = S.branches.find(b => b.code == UI.cA) || S.branches[0], bb = S.branches.find(b => b.code == UI.cB) || S.branches[1] || S.branches[0];
   const A = ba.code, B = bb.code;
   const bo = v => S.branches.map(b => `<option value="${b.code}" ${b.code == v ? 'selected' : ''}>${b.code} · ${esc(b.name)}</option>`).join('');
-  h += `<div class="card" style="margin-top:12px"><h3>দুই শাখার তুলনা</h3><div class="row"><select data-f="cA">${bo(A)}</select> বনাম <select data-f="cB">${bo(B)}</select></div><div class="tw"><table><tr>${th('খাত')}${th(esc(ba.name) + ' বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}${th(esc(bb.name) + ' বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}</tr>` +
+  h += `<div class="card" style="margin-top:12px"><h3>দুই শাখার তুলনা</h3><div class="row"><select data-f="cA">${bo(A)}</select> বনাম <select data-f="cB">${bo(B)}</select></div><div class="tw"><table data-unit="L"><tr>${th('খাত')}${th(esc(ba.name) + ' বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}${th(esc(bb.name) + ' বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}</tr>` +
     cats().map(c => { const x = cell(ba, c.k), y = cell(bb, c.k); return `<tr><td>${esc(c.bn)}</td><td class="n">${num(x.rev)}</td><td class="n">${num(x.sp)}</td><td class="n">${pc(x.pct)}</td><td class="n">${num(y.rev)}</td><td class="n">${num(y.sp)}</td><td class="n">${pc(y.pct)}</td></tr>`; }).join('') + `</table></div></div>`;
   // স্ন্যাপশট টেবিল
-  h += `<div class="card" style="margin-top:12px"><h3>মাসওয়ারি সঞ্চিত ব্যয় (নির্বাচিত পরিসর)</h3><div class="tw"><table><tr>${th('মাস')}${cats().map(c => th(esc(c.bn), 'n')).join('')}${th('মোট', 'n')}</tr>` +
+  h += `<div class="card" style="margin-top:12px"><h3>মাসওয়ারি সঞ্চিত ব্যয় (নির্বাচিত পরিসর)</h3><div class="tw"><table data-unit="L"><tr>${th('মাস')}${cats().map(c => th(esc(c.bn), 'n')).join('')}${th('মোট', 'n')}</tr>` +
     ks.map(key => { const vals = cats().map(c => list.reduce((s, b) => s + sp(b.code, c.k, key), 0)); return `<tr><td>${lbl(key)}</td>${vals.map(v => `<td class="n">${num(v)}</td>`).join('')}<td class="n"><b>${num(vals.reduce((a, b) => a + b, 0))}</b></td></tr>`; }).join('') + `</table></div></div>`;
   return h;
 }
@@ -663,11 +667,11 @@ function vRevision0() {
   const P = proposals();
   const sumBy = k => P.filter(p => p.c.k === k).reduce((s, p) => s + p.add, 0);
   let h = `<div class="note">প্রস্তাবিত বাড়তি বরাদ্দ = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) − সংশোধিত বাজেট, ০.০৫ লাখে উপরের দিকে গোল করা। এটি শুধু সহায়ক হিসাব; সিদ্ধান্ত আপনার। "প্রয়োগ" চাপলে সংশোধিত বাজেট বাড়ে ও লগে লেখা হয়।</div>
-   <div class="grid g2"><div class="card"><h3>খাতভিত্তিক প্রস্তাব বনাম অবরাদ্দ ব্যালেন্স</h3><div class="tw"><table><tr>${th('খাত')}${th('অবরাদ্দ ব্যালেন্স', 'n')}${th('প্রস্তাবিত মোট', 'n')}${th('পরিস্থিতি')}</tr>` +
+   <div class="grid g2"><div class="card"><h3>খাতভিত্তিক প্রস্তাব বনাম অবরাদ্দ ব্যালেন্স</h3><div class="tw"><table data-unit="L"><tr>${th('খাত')}${th('অবরাদ্দ ব্যালেন্স', 'n')}${th('প্রস্তাবিত মোট', 'n')}${th('পরিস্থিতি')}</tr>` +
     cats().map(c => { const free = (+S.glob[c.k] || 0) - agg(S.branches, [c.k]).rev, need = sumBy(c.k); return `<tr><td>${esc(c.bn)}</td><td class="n">${num(free)}</td><td class="n">${num(need)}</td><td>${need <= free + 0.0001 ? '<span class="st s-ok">গ্লোবাল থেকে মেটানো সম্ভব</span>' : '<span class="st s-over">গ্লোবাল ঘাটতি ' + num(need - free) + '</span>'}</td></tr>`; }).join('') + `</table></div></div>
-   <div class="card"><h3>সংশোধনের লগ (সর্বশেষ ২০টি)</h3><div class="tw" style="max-height:260px"><table><tr>${th('তারিখ')}${th('শাখা')}${th('খাত')}${th('ধরন')}${th('আগে', 'n')}${th('পরে', 'n')}${th('নোট')}</tr>` +
+   <div class="card"><h3>সংশোধনের লগ (সর্বশেষ ২০টি)</h3><div class="tw" style="max-height:260px"><table data-unit="L"><tr>${th('তারিখ')}${th('শাখা')}${th('খাত')}${th('ধরন')}${th('আগে', 'n')}${th('পরে', 'n')}${th('নোট')}</tr>` +
     (S.log.length ? S.log.slice(0, 20).map(l => { const b = S.branches.find(x => x.code == l.code); const c = catOf(l.k); return `<tr><td>${esc(l.t.slice(0, 10))}</td><td>${esc(b ? b.name : l.code)}</td><td>${esc(c ? c.bn : l.k)}</td><td>${l.f === 'rev' ? 'সংশোধিত' : 'মূল'}</td><td class="n">${num(l.old)}</td><td class="n">${num(l.nw)}</td><td>${esc(l.note || '')}</td></tr>`; }).join('') : '<tr><td colspan="7" class="mut">এখনও কোনো সংশোধন নেই</td></tr>') + `</table></div></div></div>
-   <div class="card" style="margin-top:12px"><h3>প্রস্তাবিত বাড়তি বরাদ্দের তালিকা (${P.length})</h3><div class="row"><button class="b sec" data-a="printProp">🖨 প্রিন্ট</button><button class="b sec" data-a="exportXlsx">⬇ Excel</button></div><div class="tw"><table><tr>${th('শাখা')}${th('খাত')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('প্রজেকশন', 'n')}${th('প্রস্তাবিত বাড়তি', 'n')}${th('')}</tr>` +
+   <div class="card" style="margin-top:12px"><h3>প্রস্তাবিত বাড়তি বরাদ্দের তালিকা (${P.length})</h3><div class="row"><button class="b sec" data-a="printProp">🖨 প্রিন্ট</button><button class="b sec" data-a="exportXlsx">⬇ Excel</button></div><div class="tw"><table data-unit="L"><tr>${th('শাখা')}${th('খাত')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('প্রজেকশন', 'n')}${th('প্রস্তাবিত বাড়তি', 'n')}${th('')}</tr>` +
     (P.length ? P.map((p, i) => `<tr><td class="clk" data-a="branch" data-p="${p.b.code}">${esc(p.b.name)}</td><td>${esc(p.c.bn)}</td><td class="n">${num(p.x.rev)}</td><td class="n">${num(p.x.sp)}</td><td class="n">${num(p.x.proj)}</td><td class="n"><b>${num(p.add)}</b></td><td><button class="b sec" data-a="applyProp" data-p="${p.b.code}|${p.c.k}|${p.add}">প্রয়োগ</button></td></tr>`).join('') : '<tr><td colspan="7" class="mut">কোনো প্রস্তাব নেই 🎉</td></tr>') + `</table></div></div>`;
   return h;
 }
@@ -680,11 +684,11 @@ function vPL0() {
   const dv = divs().map(d => { const l = rows.filter(r => r.b.div === d); const e = l.reduce((s, r) => s + r.e, 0), dep = l.reduce((s, r) => s + r.dep, 0), pl = l.reduce((s, r) => s + r.pl, 0); return {d, n: l.length, e, dep, pl, ratio: dep > 0 ? e / dep * 100 : 0}; });
   const T = rows.reduce((t, r) => ({e: t.e + r.e, dep: t.dep + r.dep, pl: t.pl + r.pl}), {e: 0, dep: 0, pl: 0});
   return `<div class="note">আপ্যায়ন ব্যয়কে ডিপোজিটের শতাংশ হিসেবে দেখানো হয়েছে (দুটিই লাখ টাকায়)। ডিপোজিট ও লাভ/ক্ষতির সংখ্যা মূল Excel ফাইল থেকে নেওয়া; হালনাগাদ করতে "ইমপোর্ট" ট্যাবে বাজেট টেমপ্লেটে ডিপোজিট কলাম ব্যবহার করুন।</div>
-   <div class="grid g2"><div class="card"><h3>বিভাগভিত্তিক</h3><div class="tw"><table><tr>${th('বিভাগ')}${th('শাখা', 'n')}${th('আপ্যায়ন ব্যয়', 'n')}${th('ডিপোজিট (কোটি)', 'n')}${th('আপ্যায়ন/ডিপোজিট', 'n')}${th('লাভ/ক্ষতি (কোটি)', 'n')}</tr>` +
+   <div class="grid g2"><div class="card"><h3>বিভাগভিত্তিক</h3><div class="tw"><table data-unit="M1"><tr>${th('বিভাগ')}${th('শাখা', 'n')}${th('আপ্যায়ন ব্যয়', 'n')}${th('ডিপোজিট (কোটি)', 'n')}${th('আপ্যায়ন/ডিপোজিট', 'n')}${th('লাভ/ক্ষতি (কোটি)', 'n')}</tr>` +
     dv.map(r => `<tr><td>${esc(dn(r.d))}</td><td class="n">${r.n}</td><td class="n">${num(r.e)}</td><td class="n">${num(r.dep / 100)}</td><td class="n">${num(r.ratio, 3)}%</td><td class="n ${r.pl < 0 ? 'neg' : 'pos'}">${num(r.pl / 100)}</td></tr>`).join('') +
     `<tr style="font-weight:700"><td>মোট</td><td class="n">${rows.length}</td><td class="n">${num(T.e)}</td><td class="n">${num(T.dep / 100)}</td><td class="n">${num(T.dep ? T.e / T.dep * 100 : 0, 3)}%</td><td class="n ${T.pl < 0 ? 'neg' : 'pos'}">${num(T.pl / 100)}</td></tr></table></div></div>
    <div class="card"><h3>ক্রম</h3><div class="tabs2">${[['ratio', 'আপ্যায়ন/ডিপোজিট বেশি'], ['dep', 'ডিপোজিট বেশি'], ['pl', 'ক্ষতি বেশি'], ['code', 'কোড']].map(([k, t]) => `<button class="${UI.plSort === k ? 'on' : ''}" data-a="plSort" data-p="${k}">${t}</button>`).join('')}</div><div class="mut" style="font-size:12px">সংখ্যা: লাভ/ক্ষতি = অপারেটিং লাভ − অপারেটিং ক্ষতি (লাখ টাকা)</div></div></div>
-   <div class="tw" style="margin-top:12px"><table><tr>${th('কোড')}${th('শাখা')}${th('বিভাগ')}${th('ডিপোজিট (কোটি)', 'n')}${th(esc(ent ? ent.bn : 'আপ্যায়ন') + ' ব্যয়', 'n')}${th('ব্যয়/ডিপোজিট', 'n')}${th('লাভ/ক্ষতি (লাখ)', 'n')}</tr>` +
+   <div class="tw" style="margin-top:12px"><table data-unit="M1"><tr>${th('কোড')}${th('শাখা')}${th('বিভাগ')}${th('ডিপোজিট (কোটি)', 'n')}${th(esc(ent ? ent.bn : 'আপ্যায়ন') + ' ব্যয়', 'n')}${th('ব্যয়/ডিপোজিট', 'n')}${th('লাভ/ক্ষতি (লাখ)', 'n')}</tr>` +
     rows.map(r => `<tr class="clk" data-a="branch" data-p="${r.b.code}"><td>${r.b.code}</td><td>${esc(r.b.name)}</td><td>${esc(dn(r.b.div))}</td><td class="n">${num(r.dep / 100)}</td><td class="n">${num(r.e)}</td><td class="n">${num(r.ratio, 3)}%</td><td class="n ${r.pl < 0 ? 'neg' : 'pos'}">${num(r.pl)}</td></tr>`).join('') + `</table></div>`;
 }
 
@@ -779,7 +783,7 @@ function impPreview() {
   if (IMP.mode === 'mon' && !prevKey && !/-01$/.test(IMP.month || '')) h += `<div class="note er">"শুধু এ মাস" বাছা হয়েছে কিন্তু এ বছরের আগের কোনো সঞ্চিত মাস সংরক্ষিত নেই; তাই এ মাসের সংখ্যাই সঞ্চিত ধরা হবে।</div>`;
   if (IMP.mode === 'mon' && monthGap(IMP.month, prevKey)) h += `<div class="note er">⚠ মাস বাদ পড়েছে: আগের সংরক্ষিত মাস ${lbl(prevKey)}, কিন্তু ${lbl(IMP.month)}-এর ঠিক আগের মাস নেই। মাঝের মাসের ব্যয় হিসাবে আসবে না। আগে বাদ পড়া মাস ইমপোর্ট করুন, অথবা "সঞ্চিত" মোডে ইমপোর্ট করুন।</div>`;
   const prevTot = k => prevKey ? S.branches.reduce((s, b) => s + sp(b.code, k, prevKey), 0) : null;
-  h += `<div class="tw" style="max-height:none"><table><tr>${th('খাত')}${th('GL কোড')}${th('TB থেকে মোট (লাখ)', 'n')}${th(prevKey ? lbl(prevKey) + ' এর সঞ্চিত' : 'আগের মাস', 'n')}${th('পরিবর্তন', 'n')}</tr>` +
+  h += `<div class="tw" style="max-height:none"><table data-unit="L"><tr>${th('খাত')}${th('GL কোড')}${th('TB থেকে মোট (লাখ)', 'n')}${th(prevKey ? lbl(prevKey) + ' এর সঞ্চিত' : 'আগের মাস', 'n')}${th('পরিবর্তন', 'n')}</tr>` +
     cats().map(c => { const t = P.totals[c.k] || 0, pv = prevTot(c.k); const eff = IMP.mode === 'mon' && pv != null ? t + pv : t; return `<tr><td>${esc(c.bn)}</td><td>${c.gl.join(', ')}</td><td class="n">${num(t)}</td><td class="n">${pv == null ? '—' : num(pv)}</td><td class="n ${pv != null && eff < pv - 0.001 ? 'neg' : ''}">${pv == null ? '—' : (IMP.mode === 'mon' ? '+' + num(t) : num(eff - pv))}</td></tr>`; }).join('') + `</table></div>`;
   if (IMP.mode !== 'mon' && prevKey) {
     const dec = []; for (const b of S.branches) for (const c of cats()) { const nv = (P.data[b.code] || {})[c.k] || 0, ov = sp(b.code, c.k, prevKey); if (nv < ov - 0.001) dec.push(`${b.name}/${c.bn} (${num(ov)}→${num(nv)})`); }
@@ -794,7 +798,7 @@ function vImport0() {
   return `<div class="grid g2"><div class="card"><h3>১. মাসিক Trial Balance ইমপোর্ট</h3><input type="file" accept=".xlsx,.xlsm,.xls" data-f="impFile"><div id="impBox" style="margin-top:10px">${impPreview()}</div></div>
    <div class="card"><h3>২. বাজেট টেমপ্লেট (এক্সপোর্ট ↔ ইমপোর্ট)</h3><div class="mut" style="margin-bottom:8px">বর্তমান বাজেট, ডিপোজিট ও বিভাগ Excel-এ নামান, সম্পাদনা করে ফেরত দিন। নতুন শাখাও এভাবে যোগ করা যায় (Code, Name ঠিক রাখুন)।</div>
     <div class="row"><button class="b sec" data-a="tplExport">⬇ টেমপ্লেট নামান</button><label class="b" style="cursor:pointer">⬆ সম্পাদিত ফাইল দিন<input type="file" accept=".xlsx" data-f="tplFile" hidden></label></div></div></div>
-   <div class="grid g2" style="margin-top:12px"><div class="card"><h3>৩. সংরক্ষিত মাসগুলো</h3><div class="tw" style="max-height:240px"><table><tr>${th('মাস')}${th('মোট সঞ্চিত ব্যয়', 'n')}${th('')}</tr>` +
+   <div class="grid g2" style="margin-top:12px"><div class="card"><h3>৩. সংরক্ষিত মাসগুলো</h3><div class="tw" style="max-height:240px"><table data-unit="L"><tr>${th('মাস')}${th('মোট সঞ্চিত ব্যয়', 'n')}${th('')}</tr>` +
     (ks.length ? ks.map(k => `<tr><td>${lbl(k)}</td><td class="n">${num(S.branches.reduce((s, b) => s + cats().reduce((t, c) => t + sp(b.code, c.k, k), 0), 0))}</td><td><button class="b sec red" style="color:#fff" data-a="delSnap" data-p="${k}">মুছুন</button></td></tr>`).join('') : '<tr><td colspan="3" class="mut">কিছু নেই</td></tr>') + `</table></div></div>
    <div class="card"><h3>৪. ব্যাকআপ ও রিস্টোর</h3><div class="mut" style="margin-bottom:8px">ডেটা ক্লাউডে (Firebase) থাকে; তবু মাসে অন্তত একবার নিজের কাছে ব্যাকআপ রাখুন। রিস্টোর করলে ক্লাউডের চলতি ডেটা ও আর্কাইভ প্রতিস্থাপিত হয়। আগের সংস্করণ (v3.x) থেকে ডেটা আনতে সেখানে ব্যাকআপ নিয়ে এখানে রিস্টোর করুন।</div><div class="row"><button class="b" data-a="backup">💾 ব্যাকআপ (JSON)</button><label class="b sec" style="cursor:pointer">♻ রিস্টোর<input type="file" accept=".json" data-f="restoreFile" hidden></label><button class="b sec" data-a="histOpen">🕘 আগের সংস্করণ</button></div>${S.lastBackup ? `<div class="mut">শেষ ব্যাকআপ: ${S.lastBackup}</div>` : '<div class="neg">এখনও ব্যাকআপ নেওয়া হয়নি</div>'}</div></div>`;
 }
@@ -900,6 +904,10 @@ function validState(d) {
     if (typeof o !== 'object' || Array.isArray(o)) return false;
     if (!Object.keys(o).every(x => DAY.test(x) && o[x] && typeof o[x] === 'object' && Object.keys(o[x]).every(c => /^\d{1,6}$/.test(c)))) return false;
   }
+  if (d.inch != null) {
+    if (typeof d.inch !== 'object' || Array.isArray(d.inch)) return false;
+    if (!Object.keys(d.inch).every(c => /^\d{1,6}$/.test(c) && d.inch[c] && typeof d.inch[c] === 'object' && ['name', 'mobile', 'staffId', 'email'].every(f => d.inch[c][f] == null || (typeof d.inch[c][f] === 'string' && d.inch[c][f].length <= 200)))) return false;
+  }
   for (const k of ['mixAsOf', 'tgtAsOf']) if (d[k] != null && d[k] !== '' && !DAY.test(String(d[k]))) return false;
   return true;
 }
@@ -931,7 +939,7 @@ function exportXlsx() {
 function vSettings0() {
   return `<div class="grid g2"><div class="card"><h3>সাধারণ</h3><div class="row"><label>বছর <input type="number" id="s_year" value="${S.year}" style="width:90px" readonly title="বছর বদলাতে নিচের &quot;বছর বদল&quot; অংশ ব্যবহার করুন"></label><label>সতর্কতার সীমা % <input type="number" id="s_warn" value="${S.warn}" style="width:80px"></label></div><div class="mut">এই % ছাড়ালে "সতর্কতা" (হলুদ), ৯০%+ হলে কমলা, ১০০% ছাড়ালে লাল।</div></div>
    <div class="card"><h3>ডেটা</h3><div class="row"><button class="b red" data-a="resetData">⚠ সব ডেটা মুছে খালি অবস্থায় ফিরুন</button></div><div class="mut">এতে ক্লাউডের সব শাখা, বাজেট, ইমপোর্ট ও আর্কাইভ মুছে যাবে (খাত ও GL থাকবে)। আগে অবশ্যই ব্যাকআপ নিন।</div></div></div>
-   <div class="card" style="margin-top:12px"><h3>খাত ও GL কোড</h3><div class="mut" style="margin-bottom:8px">একাধিক GL কোড কমা দিয়ে লিখুন (যেমন যানবাহন জ্বালানি: 84210000, 84230000)। গ্লোবাল বাজেট লাখ টাকায়।</div><div class="tw" style="max-height:none"><table><tr>${th('নাম (বাংলা)')}${th('English')}${th('GL কোড')}${th('গ্লোবাল বাজেট', 'n')}${th('লুকান')}</tr>` +
+   <div class="card" style="margin-top:12px"><h3>খাত ও GL কোড</h3><div class="mut" style="margin-bottom:8px">একাধিক GL কোড কমা দিয়ে লিখুন (যেমন যানবাহন জ্বালানি: 84210000, 84230000)। গ্লোবাল বাজেট লাখ টাকায়।</div><div class="tw" style="max-height:none"><table data-unit="L"><tr>${th('নাম (বাংলা)')}${th('English')}${th('GL কোড')}${th('গ্লোবাল বাজেট', 'n')}${th('লুকান')}</tr>` +
     S.cats.map((c, i) => `<tr><td><input type="text" id="c_bn${i}" value="${esc(c.bn)}"></td><td><input type="text" id="c_en${i}" value="${esc(c.en)}"></td><td><input type="text" id="c_gl${i}" value="${esc(c.gl.join(', '))}" style="width:220px"></td><td class="n"><input type="number" step="0.01" id="c_gb${i}" value="${+S.glob[c.k] || 0}" style="width:100px;text-align:right"></td><td><input type="checkbox" id="c_off${i}" ${c.off ? 'checked' : ''}></td></tr>`).join('') + `</table></div>
    <div class="row" style="margin-top:8px"><button class="b" data-a="saveSet">💾 সংরক্ষণ</button><button class="b sec" data-a="addCat">➕ নতুন খাত</button></div></div>`;
 }
@@ -1071,17 +1079,17 @@ function vDash() {
      <div style="display:flex;justify-content:space-between;gap:6px;margin-top:8px;font-size:13px"><span>ব্যয় <b>${num(t.sp)}</b></span><span>বাজেট ${num(t.rev)}</span><span class="${t.bal < 0 ? 'neg' : 'pos'}">অবশিষ্ট ${num(t.bal)}</span></div>
      <div style="margin-top:6px">${stChip(st)} <span class="mut">${pc(t.pct)} ব্যবহৃত</span>${t.over ? ` · <span class="neg">${t.over}টি শাখা ছাড়িয়েছে</span>` : ''}${t.risk ? ` · <span class="warn-t">${t.risk}টি ঝুঁকিতে</span>` : ''}</div></div>`;
   }).join('') + `</div><div class="mut" style="font-size:12px;margin:6px 2px">বারের ছোট ত্রিকোণ-দাগ = বছরের যতটা সময় চলে গেছে (${pc(pace)})। বার তা ছাড়িয়ে গেলে ব্যয় সময়ের চেয়ে দ্রুত হচ্ছে।</div>`;
-  h += `<div class="grid g2" style="margin-top:12px"><div class="card"><h3>গ্লোবাল বাজেট বনাম শাখায় বরাদ্দ</h3><div class="tw"><table><tr>${th('খাত')}${th('গ্লোবাল', 'n')}${th('শাখায় বরাদ্দ (সংশোধিত)', 'n')}${th('অবরাদ্দ ব্যালেন্স', 'n')}</tr>` +
+  h += `<div class="grid g2" style="margin-top:12px"><div class="card"><h3>গ্লোবাল বাজেট বনাম শাখায় বরাদ্দ</h3><div class="tw"><table data-unit="L"><tr>${th('খাত')}${th('গ্লোবাল', 'n')}${th('শাখায় বরাদ্দ (সংশোধিত)', 'n')}${th('অবরাদ্দ ব্যালেন্স', 'n')}</tr>` +
     cats().map(c => { const g = +S.glob[c.k] || 0, t = agg(S.branches, [c.k]); return `<tr class="clk" data-a="cat" data-p="${c.k}"><td>${esc(c.bn)}</td><td class="n">${num(g)}</td><td class="n">${num(t.rev)}</td><td class="n ${g - t.rev < 0 ? 'neg' : ''}">${num(g - t.rev)}</td></tr>`; }).join('') +
     `</table></div></div>`;
-  h += `<div class="card"><h3>বিভাগ অনুযায়ী</h3><div class="tw"><table><tr>${th('বিভাগ')}${th('শাখা', 'n')}${th('বাজেট', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('ছাড়িয়েছে', 'n')}</tr>` +
+  h += `<div class="card"><h3>বিভাগ অনুযায়ী</h3><div class="tw"><table data-unit="L"><tr>${th('বিভাগ')}${th('শাখা', 'n')}${th('বাজেট', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('ছাড়িয়েছে', 'n')}</tr>` +
     divs().map(d => { const l = S.branches.filter(b => b.div === d), t = agg(l, ks), st = totalStatus(t);
       return `<tr class="clk" data-a="div" data-p="${esc(d)}"><td>${esc(dn(d))}</td><td class="n">${l.length}</td><td class="n">${num(t.rev)}</td><td class="n">${num(t.sp)}</td><td class="n ${t.bal < 0 ? 'neg' : ''}">${num(t.bal)}</td><td style="min-width:130px">${bar(t.pct, st, true)}<small>${pc(t.pct)}</small></td><td class="n ${t.over ? 'neg' : ''}">${t.over}</td></tr>`; }).join('') +
     `</table></div></div></div>`;
   const cum = monthSeries(null, 'all', S.branches), labels = snapKeys().map(mshort);
   const top = alertList().slice(0, 10);
   h += `<div class="grid g2" style="margin-top:12px"><div class="card cc" data-a="kpi" data-p="sp"><h3>মোট ব্যয়ের ধারা (সঞ্চিত) বনাম মোট সংশোধিত বাজেট</h3>${lineChart(labels, [{name: 'সঞ্চিত ব্যয়', vals: cum}], {limit: a.rev})}</div>
-   <div class="card"><h3>সবচেয়ে ঝুঁকিতে ১০টি শাখা-খাত</h3><div class="tw" style="max-height:300px"><table><tr>${th('শাখা')}${th('খাত')}${th('বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}${th('অবস্থা')}</tr>` +
+   <div class="card"><h3>সবচেয়ে ঝুঁকিতে ১০টি শাখা-খাত</h3><div class="tw" style="max-height:300px"><table data-unit="L"><tr>${th('শাখা')}${th('খাত')}${th('বাজেট', 'n')}${th('ব্যয়', 'n')}${th('%', 'n')}${th('অবস্থা')}</tr>` +
     (top.length ? top.map(o => `<tr class="clk" data-a="branch" data-p="${o.b.code}"><td>${esc(o.b.name)}</td><td>${esc(o.c.bn)}</td><td class="n">${num(o.x.rev)}</td><td class="n">${num(o.x.sp)}</td><td class="n">${pc(o.x.pct)}</td><td>${stChip(o.x.st === 'ok' ? 'warn' : o.x.st)}</td></tr>`).join('') : '<tr><td colspan="6" class="mut">কোনো সতর্কতা নেই 🎉</td></tr>') +
     `</table></div></div></div>`;
   return h;
@@ -1089,8 +1097,9 @@ function vDash() {
 
 /* ---- ডিটেইল মডাল সহায়ক ---- */
 const kmini = (l, v, s, cls) => `<div class="card kpi ${cls || ''}" style="padding:10px 14px;min-height:0"><div class="l">${l}</div><div class="v" style="font-size:20px">${v}</div><small>${s || ''}</small></div>`;
-function dt(heads, rows, maxH) {
-  return `<div class="tw" style="max-height:${maxH || 340}px"><table><tr>${heads.map(h => th(h[0], h[1])).join('')}</tr>` +
+function dt(unit, heads, rows, maxH) {
+  if (typeof unit !== 'string') { maxH = rows; rows = heads; heads = unit; unit = ''; }
+  return `<div class="tw" style="max-height:${maxH || 340}px"><table${unit ? ` data-unit="${unit}"` : ''}><tr>${heads.map(h => th(h[0], h[1])).join('')}</tr>` +
     rows.map(r => `<tr ${r.a ? `class="clk" data-a="${r.a}" data-p="${esc(r.p)}"` : ''}>${r.c.map((c, i) => `<td class="${(heads[i] && heads[i][1]) || ''}">${c}</td>`).join('')}</tr>`).join('') + `</table></div>`;
 }
 const balCell = v => `<span class="${v < 0 ? 'neg' : ''}">${num(v)}</span>`;
@@ -1125,13 +1134,13 @@ function openKpi(w) {
   if (w === 'rev') {
     const freeT = cats().reduce((s, c) => s + (+S.glob[c.k] || 0) - agg(S.branches, [c.k]).rev, 0), gT = cats().reduce((s, c) => s + (+S.glob[c.k] || 0), 0);
     h = mHead('মোট সংশোধিত বাজেট — বিস্তারিত') + `<div class="grid g5">${kmini('মূল বাজেট (শাখা)', num(a.bud))}${kmini('সংশোধিত বাজেট', num(a.rev))}${kmini('বাড়তি বরাদ্দ', num(a.rev - a.bud))}${kmini('গ্লোবাল বাজেট', num(gT))}${kmini('অবরাদ্দ ব্যালেন্স', num(freeT), '', freeT < 0 ? 'red' : 'grn')}</div>
-     <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী (গ্লোবালসহ)</h3>${dt([['খাত'], ['মূল বাজেট', 'n'], ['সংশোধিত', 'n'], ['বাড়তি', 'n'], ['গ্লোবাল', 'n'], ['অবরাদ্দ ব্যালেন্স', 'n']], cats().map(c => { const t = agg(S.branches, [c.k]), g = +S.glob[c.k] || 0; return {a: 'cat', p: c.k, c: [esc(c.bn), num(t.bud), num(t.rev), num(t.rev - t.bud), num(g), balCell(g - t.rev)]}; }))}</div>
+     <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী (গ্লোবালসহ)</h3>${dt('L', [['খাত'], ['মূল বাজেট', 'n'], ['সংশোধিত', 'n'], ['বাড়তি', 'n'], ['গ্লোবাল', 'n'], ['অবরাদ্দ ব্যালেন্স', 'n']], cats().map(c => { const t = agg(S.branches, [c.k]), g = +S.glob[c.k] || 0; return {a: 'cat', p: c.k, c: [esc(c.bn), num(t.bud), num(t.rev), num(t.rev - t.bud), num(g), balCell(g - t.rev)]}; }))}</div>
      <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt(divHeads, divRows(ks))}</div>
      <div class="card" style="margin-top:12px"><h3>সর্বোচ্চ বাজেটের ১০টি শাখা</h3>${dt(brHeads, brRows(S.branches, ks, (x, y) => y.t.rev - x.t.rev, 10))}</div>`;
   } else if (w === 'sp') {
     h = mHead('মোট ব্যয় — বিস্তারিত') + `<div class="grid g5">${kmini('মোট ব্যয়', num(a.sp))}${kmini('বাজেট ব্যবহার', pc(a.pct))}${kmini('সময় অতিবাহিত', pc(m / 12 * 100))}${kmini('গড় মাসিক ব্যয়', num(m ? a.sp / m : 0))}${kmini('বছরশেষ প্রজেকশন', num(m ? a.sp / m * 12 : a.sp), '', a.sp / Math.max(m, 1) * 12 > a.rev ? 'yel' : 'grn')}</div>` +
       trendCard(ks, S.branches, a.rev) +
-      `<div class="card"><h3>খাত অনুযায়ী ব্যয়</h3>${dt([['খাত'], ['ব্যয়', 'n'], ['মোট ব্যয়ে অংশ', 'n'], ['ব্যবহার'], ['অবস্থা']], cats().map(c => { const t = agg(S.branches, [c.k]); return {a: 'cat', p: c.k, c: [esc(c.bn), num(t.sp), pc(a.sp ? t.sp / a.sp * 100 : 0), useCell(t), stChip(totalStatus(t))]}; }))}</div>
+      `<div class="card"><h3>খাত অনুযায়ী ব্যয়</h3>${dt('L', [['খাত'], ['ব্যয়', 'n'], ['মোট ব্যয়ে অংশ', 'n'], ['ব্যবহার'], ['অবস্থা']], cats().map(c => { const t = agg(S.branches, [c.k]); return {a: 'cat', p: c.k, c: [esc(c.bn), num(t.sp), pc(a.sp ? t.sp / a.sp * 100 : 0), useCell(t), stChip(totalStatus(t))]}; }))}</div>
       <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী ব্যয়</h3>${dt(divHeads, divRows(ks))}</div>
       <div class="card" style="margin-top:12px"><h3>সর্বোচ্চ ব্যয়ের ১০টি শাখা</h3>${dt(brHeads, brRows(S.branches, ks, (x, y) => y.t.sp - x.t.sp, 10))}</div>`;
   } else if (w === 'bal') {
@@ -1142,13 +1151,13 @@ function openKpi(w) {
   } else if (w === 'over') {
     const l = alertList().filter(o => o.x.st === 'over').sort((x, y) => (y.x.sp - y.x.rev) - (x.x.sp - x.x.rev));
     h = mHead('সীমা ছাড়ানো শাখা-খাত') + `<div class="grid g5">${kmini('মোট', l.length, '', 'red')}${kmini('মোট অতিরিক্ত ব্যয়', num(l.reduce((s, o) => s + Math.max(0, o.x.sp - o.x.rev), 0)))}</div>
-      <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী গণনা</h3>${dt([['খাত'], ['ছাড়ানো শাখা', 'n']], cats().map(c => ({a: 'cat', p: c.k, c: [esc(c.bn), l.filter(o => o.c.k === c.k).length]})))}</div>
-      <div class="card" style="margin-top:12px"><h3>তালিকা (অতিরিক্তের পরিমাণ অনুযায়ী)</h3>${dt([['শাখা'], ['বিভাগ'], ['খাত'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['অতিরিক্ত', 'n'], ['%', 'n']], l.map(o => ({a: 'branch', p: o.b.code, c: [esc(o.b.name), esc(dn(o.b.div)), esc(o.c.bn), num(o.x.rev), num(o.x.sp), `<span class="neg">${num(o.x.sp - o.x.rev)}</span>`, pc(o.x.pct)]})), 420)}</div>`;
+      <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী গণনা</h3>${dt('-', [['খাত'], ['ছাড়ানো শাখা', 'n']], cats().map(c => ({a: 'cat', p: c.k, c: [esc(c.bn), l.filter(o => o.c.k === c.k).length]})))}</div>
+      <div class="card" style="margin-top:12px"><h3>তালিকা (অতিরিক্তের পরিমাণ অনুযায়ী)</h3>${dt('L', [['শাখা'], ['বিভাগ'], ['খাত'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['অতিরিক্ত', 'n'], ['%', 'n']], l.map(o => ({a: 'branch', p: o.b.code, c: [esc(o.b.name), esc(dn(o.b.div)), esc(o.c.bn), num(o.x.rev), num(o.x.sp), `<span class="neg">${num(o.x.sp - o.x.rev)}</span>`, pc(o.x.pct)]})), 420)}</div>`;
   } else if (w === 'risk') {
     const l = allCells().filter(o => o.x.risk).sort((x, y) => (y.x.proj - y.x.rev) - (x.x.proj - x.x.rev));
     h = mHead('বছরশেষে ছাড়াতে পারে — বিস্তারিত') + `<div class="note">বর্তমান গড় হারে চললে বছরশেষে সংশোধিত বাজেটের ৫%-এর বেশি ছাড়াবে, কিন্তু এখনও সীমার ভেতরে। মৌসুমি খরচ ধরা নেই।</div><div class="grid g5">${kmini('মোট', l.length, '', 'yel')}${kmini('সম্ভাব্য মোট অতিরিক্ত', num(l.reduce((s, o) => s + (o.x.proj - o.x.rev), 0)))}</div>
-      <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী গণনা</h3>${dt([['খাত'], ['ঝুঁকির শাখা', 'n']], cats().map(c => ({a: 'cat', p: c.k, c: [esc(c.bn), l.filter(o => o.c.k === c.k).length]})))}</div>
-      <div class="card" style="margin-top:12px"><h3>তালিকা</h3>${dt([['শাখা'], ['বিভাগ'], ['খাত'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['প্রজেকশন', 'n'], ['সম্ভাব্য অতিরিক্ত', 'n']], l.map(o => ({a: 'branch', p: o.b.code, c: [esc(o.b.name), esc(dn(o.b.div)), esc(o.c.bn), num(o.x.rev), num(o.x.sp), num(o.x.proj), `<span class="neg">${num(o.x.proj - o.x.rev)}</span>`]})), 420)}</div>`;
+      <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী গণনা</h3>${dt('-', [['খাত'], ['ঝুঁকির শাখা', 'n']], cats().map(c => ({a: 'cat', p: c.k, c: [esc(c.bn), l.filter(o => o.c.k === c.k).length]})))}</div>
+      <div class="card" style="margin-top:12px"><h3>তালিকা</h3>${dt('L', [['শাখা'], ['বিভাগ'], ['খাত'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['প্রজেকশন', 'n'], ['সম্ভাব্য অতিরিক্ত', 'n']], l.map(o => ({a: 'branch', p: o.b.code, c: [esc(o.b.name), esc(dn(o.b.div)), esc(o.c.bn), num(o.x.rev), num(o.x.sp), num(o.x.proj), `<span class="neg">${num(o.x.proj - o.x.rev)}</span>`]})), 420)}</div>`;
   }
   modal(h);
 }
@@ -1158,7 +1167,7 @@ function openCat(k) {
   modal(mHead(esc(c.bn) + ' <small class="mut">' + esc(c.en) + '</small>') + `<div class="grid g5">${kmini('সংশোধিত বাজেট', num(t.rev), 'মূল ' + num(t.bud))}${kmini('ব্যয়', num(t.sp), pc(t.pct) + ' ব্যবহৃত')}${kmini('অবশিষ্ট', balCell(t.bal), '', t.bal < 0 ? 'red' : 'grn')}${kmini('গ্লোবাল বাজেট', num(g), 'অবরাদ্দ ' + num(g - t.rev))}${kmini('সীমা ছাড়ানো', t.over, t.risk + 'টি ঝুঁকিতে', t.over ? 'red' : 'grn')}</div>` +
     trendCard([k], S.branches, t.rev) +
     `<div class="card"><h3>বিভাগ অনুযায়ী</h3>${dt(divHeads, divRows([k]))}</div>
-     <div class="card" style="margin-top:12px"><h3>শাখাওয়ারি (ব্যবহারের হার অনুযায়ী)</h3>${dt([['কোড'], ['শাখা'], ['বিভাগ'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['অবশিষ্ট', 'n'], ['ব্যবহার'], ['প্রজেকশন', 'n'], ['অবস্থা']],
+     <div class="card" style="margin-top:12px"><h3>শাখাওয়ারি (ব্যবহারের হার অনুযায়ী)</h3>${dt('L', [['কোড'], ['শাখা'], ['বিভাগ'], ['সংশোধিত', 'n'], ['ব্যয়', 'n'], ['অবশিষ্ট', 'n'], ['ব্যবহার'], ['প্রজেকশন', 'n'], ['অবস্থা']],
       S.branches.map(b => ({b, x: cell(b, k)})).sort((p, q) => (q.x.pct === Infinity ? 1e9 : q.x.pct) - (p.x.pct === Infinity ? 1e9 : p.x.pct)).map(({b, x}) => ({a: 'branch', p: b.code, c: [b.code, esc(b.name), esc(dn(b.div)), num(x.rev), num(x.sp), balCell(x.bal), `<div style="min-width:110px">${bar(x.pct, x.st, true)}<small>${pc(x.pct)}</small></div>`, `<span class="${x.risk ? 'neg' : ''}">${num(x.proj)}</span>`, stChip(x.st)]})), 460)}</div>`);
 }
 function openDiv(d) {
@@ -1176,7 +1185,7 @@ function vHeat() {
   const list = S.branches.filter(b => !UI.hDiv || b.div === UI.hDiv);
   return `<div class="row"><select data-f="hDiv">${dopt}</select><span class="mut">প্রতিটি ঘরে সংশোধিত বাজেটের কত % ব্যয় হয়েছে। ঘরে/সারিতে ক্লিক করলে শাখার বিস্তারিত।</span></div>
    <div class="legend"><span><i style="background:var(--ok)"></i>নিরাপদ</span><span><i style="background:var(--warn)"></i>সতর্কতা (${S.warn}%+)</span><span><i style="background:var(--crit)"></i>৯০%+</span><span><i style="background:var(--over)"></i>সীমা ছাড়িয়েছে</span><span><i style="background:var(--noneBg)"></i>বাজেট নেই</span></div>
-   <div class="tw hm"><table><tr>${th('শাখা')}${th('বিভাগ')}${cats().map(c => th(esc(c.bn))).join('')}${th('মোট')}</tr>` +
+   <div class="tw hm"><table data-unit="P"><tr>${th('শাখা')}${th('বিভাগ')}${cats().map(c => th(esc(c.bn))).join('')}${th('মোট')}</tr>` +
     list.map(b => { const cs = cats().map(c => cell(b, c.k)), t = agg([b], allKs());
       return `<tr class="clk" data-a="branch" data-p="${b.code}"><td class="nm">${b.code} · ${esc(b.name)}</td><td>${esc(dn(b.div))}</td>${cs.map(x => `<td class="c h-${x.st}" title="${num(x.sp)} / ${num(x.rev)}">${x.rev > 0 || x.sp > 0.0005 ? pc(x.pct) : '—'}</td>`).join('')}<td class="c h-${totalStatus(t)}">${pc(t.pct)}</td></tr>`; }).join('') + `</table></div>`;
 }
@@ -1191,7 +1200,7 @@ function vRevision() {
   return vRevision0() + `<div class="card" style="margin-top:12px"><h3>${S.year + 1} সালের বাজেট প্রস্তাব (খসড়া)</h3>
    <div class="note">প্রস্তাব = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) × (১ + বৃদ্ধির হার), ০.০৫ লাখে গোল করা। এটি শুধু শুরুর খসড়া; শাখার বিশেষ পরিকল্পনা, ভাড়া/দর বৃদ্ধি ও মৌসুমি খরচ আলাদা বিবেচ্য।</div>
    <div class="row"><label>প্রত্যাশিত বৃদ্ধি % <input type="number" step="0.5" data-f="nyG" value="${g}" style="width:80px"></label><span>মোট প্রস্তাব <b>${num(totNew)}</b> · চলতি সংশোধিত ${num(totCur)} · পরিবর্তন <b class="${totNew > totCur ? 'neg' : 'pos'}">${totCur ? pc((totNew / totCur - 1) * 100) : '—'}</b></span></div>
-   <div class="tw"><table><tr>${th('কোড')}${th('শাখা')}${cats().map(c => th(esc(c.bn), 'n')).join('')}${th('মোট প্রস্তাব', 'n')}${th('চলতি বাজেট', 'n')}${th('পরিবর্তন', 'n')}</tr>` +
+   <div class="tw"><table data-unit="L"><tr>${th('কোড')}${th('শাখা')}${cats().map(c => th(esc(c.bn), 'n')).join('')}${th('মোট প্রস্তাব', 'n')}${th('চলতি বাজেট', 'n')}${th('পরিবর্তন', 'n')}</tr>` +
     rows.map(r => `<tr class="clk" data-a="branch" data-p="${r.b.code}"><td>${r.b.code}</td><td>${esc(r.b.name)}</td>${r.per.map(v => `<td class="n">${num(v)}</td>`).join('')}<td class="n"><b>${num(r.tot)}</b></td><td class="n">${num(r.cur)}</td><td class="n">${r.cur ? pc((r.tot / r.cur - 1) * 100) : '—'}</td></tr>`).join('') +
     `<tr style="font-weight:700"><td></td><td>মোট</td>${cats().map((c, i) => `<td class="n">${num(rows.reduce((s, r) => s + r.per[i], 0))}</td>`).join('')}<td class="n">${num(totNew)}</td><td class="n">${num(totCur)}</td><td class="n">${totCur ? pc((totNew / totCur - 1) * 100) : '—'}</td></tr></table></div></div>`;
 }
@@ -1200,7 +1209,7 @@ function vRevision() {
 function vSettings() {
   return vSettings0() + rollCard() + `<div class="card" style="margin-top:12px"><h3>বিভাগ/ইউনিটের নাম (প্রিন্ট ও রিপোর্ট হেডারে)</h3><div class="mut" style="margin-bottom:8px">যে বিভাগ এই সফটওয়্যার ব্যবহার করবে, তাদের নাম এখানে দিন। প্রতিটি প্রিন্ট ও রিপোর্টের শিরোনামে "BASIC Bank PLC — (এই নাম)" ছাপা হবে।</div><div class="row"><input type="text" id="un_bn" value="${esc((S.unit||UNIT0).bn)}" placeholder="বাংলা নাম" style="min-width:280px"><input type="text" id="un_en" value="${esc((S.unit||UNIT0).en)}" placeholder="English name" style="min-width:280px"><button class="b" data-a="saveUnit">💾 সংরক্ষণ</button></div></div>`
   + `<div class="card" style="margin-top:12px"><h3>বিভাগের নাম (বাংলা ও ইংরেজি)</h3><div class="mut" style="margin-bottom:8px">এখানে নাম বদলালে পুরো সফটওয়্যারে (বাংলা/ইংরেজি দুই ভাষায়) সেই নাম দেখাবে। কোড/কী অপরিবর্তিত থাকে।</div>
-   <div class="tw" style="max-height:none"><table><tr>${th('কী')}${th('বাংলা নাম')}${th('English name')}${th('শাখা', 'n')}</tr>` +
+   <div class="tw" style="max-height:none"><table data-unit="-"><tr>${th('কী')}${th('বাংলা নাম')}${th('English name')}${th('শাখা', 'n')}</tr>` +
     allDivs().map((d, i) => { ensureDiv(d); return `<tr><td>${esc(d)}</td><td><input type="text" id="dv_bn${i}" value="${esc(S.divs[d].bn)}"></td><td><input type="text" id="dv_en${i}" value="${esc(S.divs[d].en)}"></td><td class="n">${S.branches.filter(b => b.div === d).length}</td></tr>`; }).join('') + `</table></div>
    <div class="row" style="margin-top:8px"><button class="b" data-a="saveDivs">💾 নাম সংরক্ষণ</button><button class="b sec" data-a="addDiv">➕ নতুন বিভাগ</button></div></div>`;
 }
@@ -1226,13 +1235,18 @@ Object.assign(ACT, {
     const tw = document.querySelector(`[data-tid="${p}"]`); if (!tw) return;
     const t = cloneTable(tw), cols = t.rows[0] ? t.rows[0].cells.length : 0;
     pageOrient(cols > 8);
-    printHtml(`<div class="rep">${repHead(tblTitle(tw))}${t.outerHTML}${repSign}</div>`);
+    const u = typeof unitText === 'function' ? unitText(t.dataset.unit) : '';
+    printHtml(`<div class="rep">${repHead(tblTitle(tw), t.dataset.unit ? u : null)}${t.outerHTML}${repSign}</div>`);
   },
   tblXlsx: p => {
     const tw = document.querySelector(`[data-tid="${p}"]`); if (!tw) return;
     const t = cloneTable(tw); const wb = XLSX.utils.book_new();
     const name = (tblTitle(tw) || 'Sheet').replace(/[\\\/\?\*\[\]:]/g, ' ').trim().slice(0, 30) || 'Sheet';
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.table_to_sheet(t, {raw: false}), name);
+    const ut = typeof unitText === 'function' ? unitText(t.dataset.unit) : '';
+    let ws;
+    if (ut) { ws = XLSX.utils.aoa_to_sheet([[tr(ut)], []]); XLSX.utils.sheet_add_dom(ws, t, {raw: false, origin: 'A3'}); }
+    else ws = XLSX.utils.table_to_sheet(t, {raw: false});
+    XLSX.utils.book_append_sheet(wb, ws, name);
     XLSX.writeFile(wb, 'EBM_' + name.replace(/\s+/g, '_') + '_' + today() + '.xlsx');
   },
   saveUnit: () => { S.unit = {bn: $('#un_bn').value.trim() || UNIT0.bn, en: $('#un_en').value.trim() || UNIT0.en}; save(); render(); toast('ইউনিটের নাম সংরক্ষিত'); },
@@ -1291,7 +1305,7 @@ function hoTable(g) {
      <td class="n">${c.has ? `<span class="${c.risk ? 'neg' : ''}">${num(c.proj)}</span>` : '—'}</td><td class="n">${c.add ? `<span class="neg">${num(c.add)}</span>` : '—'}</td><td>${hoStc(c)}</td></tr>`;
   }).join('');
   const t = `<tr style="font-weight:700"><td>মোট</td><td></td><td></td><td class="n">${num(gr.rev)}</td><td class="n">${num(gr.sp)}</td><td class="n">${gr.n ? balCell(gr.bal) : '—'}</td><td>${gr.n ? pc(gr.pct) : '—'}</td><td></td><td></td><td></td></tr>`;
-  return `<div class="tw" style="max-height:none"><table><tr>${th('খাত')}${th('GL')}${th('বাজেট (ঐচ্ছিক)', 'n')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('প্রজেকশন', 'n')}${th('প্রস্তাবিত বাড়তি', 'n')}${th('অবস্থা')}</tr>${rows}${t}</table></div>`;
+  return `<div class="tw" style="max-height:none"><table data-unit="L"><tr>${th('খাত')}${th('GL')}${th('বাজেট (ঐচ্ছিক)', 'n')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('প্রজেকশন', 'n')}${th('প্রস্তাবিত বাড়তি', 'n')}${th('অবস্থা')}</tr>${rows}${t}</table></div>`;
 }
 function hoTrend(g) {
   const ks = hoKeys(); if (!ks.length) return '';
@@ -1312,7 +1326,7 @@ function vHO() {
   if (key) {
     const ks = hoKeys();
     h += `<div class="card" style="margin-top:12px"><h3>৩. নিয়ন্ত্রণ-বহির্ভূত ও অন্যান্য (অবশিষ্ট)</h3><div class="note">হেড অফিসের মোট ব্যয় (GL 70000000) থেকে উপরের দুই গ্রুপের বাছাই-করা খাতগুলো বাদ দিলে যা থাকে। এর মধ্যে সুদ ব্যয়, ঋণ-ক্ষতির চার্জ, বিনিয়োগ পুনর্মূল্যায়ন ও বিনিময় ক্ষতির মতো বড় আর্থিক ব্যবস্থাপনার খরচ আছে; কোনো ব্যয় যেন আড়ালে না থাকে সেজন্য এখানে দেখানো হলো।</div>
-     <div class="tw" style="max-height:none"><table><tr>${th('মাস')}${th('হেড অফিসের মোট ব্যয়', 'n')}${th('বাছাই-করা খাতের যোগফল', 'n')}${th('অবশিষ্ট', 'n')}${th('অবশিষ্টের অংশ', 'n')}</tr>` +
+     <div class="tw" style="max-height:none"><table data-unit="L"><tr>${th('মাস')}${th('হেড অফিসের মোট ব্যয়', 'n')}${th('বাছাই-করা খাতের যোগফল', 'n')}${th('অবশিষ্ট', 'n')}${th('অবশিষ্টের অংশ', 'n')}</tr>` +
       ks.map(k => { const r = hoRem(k); return r ? `<tr><td>${lbl(k)}</td><td class="n">${num(r.tot)}</td><td class="n">${num(r.sel)}</td><td class="n">${num(r.rem)}</td><td class="n">${r.tot ? pc(r.rem / r.tot * 100) : '—'}</td></tr>` : ''; }).join('') + `</table></div></div>`;
   }
   h += hoEditor();
@@ -1321,7 +1335,7 @@ function vHO() {
 function hoEditor() {
   return `<div class="card" style="margin-top:12px"><h3>হেড অফিসের খাত-তালিকা (সম্পাদনাযোগ্য)</h3>
    <div class="mut" style="margin-bottom:8px">প্রতিটি খাতের জন্য সবচেয়ে উপরের লেভেলের একটিমাত্র GL দিন; বাবা-GL ও ছেলে-GL একসাথে দিলে ব্যয় দুইবার গণনা হবে। একাধিক GL কমা দিয়ে লিখুন। নতুন GL যোগ করলে কনভার্টারের "অতিরিক্ত GL" ঘরেও দিতে হবে (নিচের বোতামে GL তালিকা কপি করা যায়)।</div>
-   <div class="tw" style="max-height:420px"><table><tr>${th('বাংলা নাম')}${th('English name')}${th('GL কোড')}${th('গ্রুপ')}${th('')}</tr>` +
+   <div class="tw" style="max-height:420px"><table data-unit="-"><tr>${th('বাংলা নাম')}${th('English name')}${th('GL কোড')}${th('গ্রুপ')}${th('')}</tr>` +
     S.ho.heads.map((h, i) => `<tr><td><input type="text" id="ho_bn${i}" value="${esc(h.bn)}"></td><td><input type="text" id="ho_en${i}" value="${esc(h.en)}"></td><td><input type="text" id="ho_gl${i}" value="${esc(h.gl.join(', '))}"></td><td><select id="ho_gr${i}"><option value="1" ${h.grp === 1 ? 'selected' : ''}>প্রশাসনিক</option><option value="2" ${h.grp === 2 ? 'selected' : ''}>কর্মচারী-সংক্রান্ত</option></select></td><td><button class="b sec" data-a="hoDel" data-p="${i}">মুছুন</button></td></tr>`).join('') + `</table></div>
    <div class="row" style="margin-top:8px"><button class="b" data-a="hoSaveHeads">💾 খাত-তালিকা সংরক্ষণ</button><button class="b sec" data-a="hoAddHead">➕ নতুন খাত</button><button class="b sec" data-a="hoCopyGl">📋 সব GL কপি</button><button class="b sec" data-a="hoResetHeads">↺ ডিফল্ট তালিকা</button></div></div>`;
 }
@@ -1330,7 +1344,7 @@ function openHoHead(k) {
   const c = hoCell(hd), ks = hoKeys(), cum = ks.map(x => hosp(k, x)), mon = hoMonthly(cum), labels = ks.map(mshort);
   modal(mHead(esc(LANG === 'en' ? hd.en : hd.bn) + ' <small class="mut">GL ' + esc(hd.gl.join(', ')) + '</small>') + `<div class="grid g5">${kmini('সঞ্চিত ব্যয়', num(c.sp), hoLab())}${kmini('বাজেট (সংশোধিত)', c.has ? num(c.rev) : '—', c.has ? 'ব্যবহার ' + pc(c.pct) : 'বাজেট দেওয়া হয়নি')}${kmini('অবশিষ্ট', c.has ? balCell(c.bal) : '—', '', c.has ? (c.bal < 0 ? 'red' : 'grn') : '')}${kmini('বছরশেষ প্রজেকশন', num(c.proj), '', c.risk ? 'yel' : '')}${kmini('প্রস্তাবিত বাড়তি', c.add ? num(c.add) : '—')}</div>
    <div class="grid g2" style="margin:10px 0"><div class="card"><h3>সঞ্চিত ব্যয়</h3>${lineChart(labels, [{name: 'সঞ্চিত ব্যয়', vals: cum}], c.has ? {limit: c.rev} : {})}</div><div class="card"><h3>মাসিক ব্যয়</h3>${barChart(labels, mon, '#1384a3')}</div></div>
-   <div class="card"><h3>মাসওয়ারি</h3>${dt([['মাস'], ['সঞ্চিত', 'n'], ['মাসিক', 'n']], ks.map((x, i) => ({c: [lbl(x), num(cum[i]), mon[i] == null ? '—' : num(mon[i])]})))}</div>`);
+   <div class="card"><h3>মাসওয়ারি</h3>${dt('L', [['মাস'], ['সঞ্চিত', 'n'], ['মাসিক', 'n']], ks.map((x, i) => ({c: [lbl(x), num(cum[i]), mon[i] == null ? '—' : num(mon[i])]})))}</div>`);
 }
 
 /* ---- ব্যাংকের মোট (শাখা + হেড অফিস, ৭টি তুলনীয় খাত) ---- */
@@ -1351,7 +1365,7 @@ function openBank() {
   const r = bankRows(); if (!r) return;
   const br = r.reduce((a, x) => a + x.br, 0), ho = r.reduce((a, x) => a + x.ho, 0), key = lastKey();
   modal(mHead('ব্যাংকের মোট ব্যয় (হেড অফিসসহ)') + `<div class="note">জানুয়ারি–${lbl(key)} পর্যন্ত, তুলনীয় খাত। আপ্যায়ন বলতে ক্লায়েন্ট আপ্যায়ন (84170000) ধরা হয়েছে, যাতে শাখার সাথে মেলে।</div><div class="grid g5">${kmini('শাখার ব্যয়', num(br))}${kmini('হেড অফিসের ব্যয়', num(ho))}${kmini('ব্যাংকের মোট', num(br + ho))}${kmini('হেড অফিসের অংশ', pc(br + ho > 0 ? ho / (br + ho) * 100 : 0))}</div>
-   <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী</h3>${dt([['খাত'], ['শাখা', 'n'], ['হেড অফিস', 'n'], ['মোট', 'n'], ['হেড অফিসের অংশ', 'n']], r.map(x => ({a: 'cat', p: x.c.k, c: [esc(x.c.bn), num(x.br), num(x.ho), num(x.tot), pc(x.share)]})).concat([{c: ['<b>মোট</b>', num(br), num(ho), num(br + ho), pc(br + ho > 0 ? ho / (br + ho) * 100 : 0)]}]))}</div>`);
+   <div class="card" style="margin-top:12px"><h3>খাত অনুযায়ী</h3>${dt('L', [['খাত'], ['শাখা', 'n'], ['হেড অফিস', 'n'], ['মোট', 'n'], ['হেড অফিসের অংশ', 'n']], r.map(x => ({a: 'cat', p: x.c.k, c: [esc(x.c.bn), num(x.br), num(x.ho), num(x.tot), pc(x.share)]})).concat([{c: ['<b>মোট</b>', num(br), num(ho), num(br + ho), pc(br + ho > 0 ? ho / (br + ho) * 100 : 0)]}]))}</div>`);
 }
 
 /* ---- ডিপোজিট ইমপোর্ট ---- */
@@ -1364,7 +1378,7 @@ function depCard() {
     h += `<div class="row" style="margin-top:10px"><label>একক <select data-f="depUnit"><option value="lakh" ${DEP.unit === 'lakh' ? 'selected' : ''}>লাখ টাকা</option><option value="crore" ${DEP.unit === 'crore' ? 'selected' : ''}>কোটি টাকা</option><option value="taka" ${DEP.unit === 'taka' ? 'selected' : ''}>টাকা</option></select></label><label>ডিপোজিটের তারিখ <input type="date" data-f="depDate" value="${esc(DEP.date)}"></label></div>
      <div class="note ok">মিলেছে: <b>${ok.length}</b> শাখা${bad.length ? ` · সমস্যা/অচেনা: <b>${bad.length}</b>` : ''}${S.branches.length - ok.length > 0 ? ` · ফাইলে নেই: ${S.branches.length - ok.length}টি (আগের মান থাকবে)` : ''}</div>`;
     if (bad.length) h += `<div class="note er">বাদ যাবে: ${bad.slice(0, 10).map(r => esc(r.code + (r.b ? '' : ' (অচেনা কোড)') + (r.v == null ? ' (ফাঁকা/অবৈধ)' : r.v < 0 ? ' (ঋণাত্মক)' : ''))).join('; ')}${bad.length > 10 ? ' …' : ''}</div>`;
-    h += `<div class="tw" style="max-height:220px"><table><tr>${th('কোড')}${th('শাখা')}${th('আগের (লাখ)', 'n')}${th('নতুন (লাখ)', 'n')}${th('পরিবর্তন', 'n')}</tr>` + ok.slice(0, 80).map(r => { const nv = depLakh(r.v); return `<tr><td>${r.code}</td><td>${esc(r.b.name)}</td><td class="n">${num(r.b.dep)}</td><td class="n">${num(nv)}</td><td class="n ${nv < r.b.dep ? 'neg' : 'pos'}">${r.b.dep ? pc((nv / r.b.dep - 1) * 100) : '—'}</td></tr>`; }).join('') + `</table></div>
+    h += `<div class="tw" style="max-height:220px"><table data-unit="L"><tr>${th('কোড')}${th('শাখা')}${th('আগের (লাখ)', 'n')}${th('নতুন (লাখ)', 'n')}${th('পরিবর্তন', 'n')}</tr>` + ok.slice(0, 80).map(r => { const nv = depLakh(r.v); return `<tr><td>${r.code}</td><td>${esc(r.b.name)}</td><td class="n">${num(r.b.dep)}</td><td class="n">${num(nv)}</td><td class="n ${nv < r.b.dep ? 'neg' : 'pos'}">${r.b.dep ? pc((nv / r.b.dep - 1) * 100) : '—'}</td></tr>`; }).join('') + `</table></div>
      <div class="row" style="margin-top:8px"><button class="b grn" data-a="depApply">✔ ডিপোজিট প্রয়োগ করুন</button><button class="b sec" data-a="depClear">বাতিল</button></div>`;
   }
   return h + '</div>';
@@ -1406,7 +1420,7 @@ function depApply() {
 }
 
 /* ---- মোড়ক: ইমপোর্ট ও আপ্যায়ন-ডিপোজিট ট্যাব ---- */
-function vImport() { return vImport0() + `<div class="grid g2" style="margin-top:12px">${mixCard()}${depCard()}</div><div class="card" style="margin-top:12px"><h3>৭. ইমপোর্টের ধাপ</h3><div class="mut">১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে "১. মাসিক Trial Balance ইমপোর্ট"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) CBS-এর ডিপোজিট মিক্স ও লক্ষ্যমাত্রা রিপোর্ট সরাসরি "৫"-এ দিন (ডিপোজিটও এর থেকেই হালনাগাদ হয়) · ৫) শুধু ডিপোজিট বদলাতে চাইলে "৬. ডিপোজিট ইমপোর্ট" ব্যবহার করুন। CBS-এর মূল Trial Balance ফাইল সরাসরি দিলেও চলে।</div></div>`; }
+function vImport() { return vImport0() + `<div class="grid g2" style="margin-top:12px">${mixCard()}${depCard()}</div><div style="margin-top:12px">${inchCard()}</div><div class="card" style="margin-top:12px"><h3>৭. ইমপোর্টের ধাপ</h3><div class="mut">১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে "১. মাসিক Trial Balance ইমপোর্ট"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) CBS-এর ডিপোজিট মিক্স ও লক্ষ্যমাত্রা রিপোর্ট সরাসরি "৫"-এ দিন (ডিপোজিটও এর থেকেই হালনাগাদ হয়) · ৫) শুধু ডিপোজিট বদলাতে চাইলে "৬. ডিপোজিট ইমপোর্ট" ব্যবহার করুন। CBS-এর মূল Trial Balance ফাইল সরাসরি দিলেও চলে।</div></div>`; }
 function vPL() {
   const lab = S.depAsOf ? `ডিপোজিট: <b>${fmtD(S.depAsOf)}</b> পর্যন্ত` : 'ডিপোজিট: মূল Excel ফাইল থেকে (তারিখ অজানা) — হালনাগাদ করতে ইমপোর্ট ট্যাবে ডিপোজিট ইমপোর্ট করুন';
   return `<div class="mut" style="margin:0 2px 8px">${lab} · আপ্যায়ন = ক্লায়েন্ট আপ্যায়ন (GL 84170000), জানুয়ারি–${lbl(lastKey())} পর্যন্ত সঞ্চিত</div>` + vPL0();
@@ -1481,7 +1495,7 @@ function plCard() {
    <div class="mut" style="font-size:12px">${worst && worst.pl < 0 ? 'সবচেয়ে বেশি ক্ষতি: ' + esc(worst.b.name) + ' (' + crore(-worst.pl) + ' কোটি) · ' : ''}ক্লিক করলে শাখাওয়ারি তালিকা (লাভ, ক্ষতি, ডিপোজিট ইত্যাদি)।</div></div>`;
 }
 function plTable(list, maxH) {
-  return dt([['কোড'], ['শাখা'], ['বিভাগ'], ['ডিপোজিট (কোটি)', 'n'], ['লাভ/ক্ষতি (কোটি)', 'n'], ['লাভ/ডিপোজিট', 'n'], ['আপ্যায়ন ব্যয় (লাখ)', 'n'], ['অবস্থা']],
+  return dt('M2', [['কোড'], ['শাখা'], ['বিভাগ'], ['ডিপোজিট (কোটি)', 'n'], ['লাভ/ক্ষতি (কোটি)', 'n'], ['লাভ/ডিপোজিট', 'n'], ['আপ্যায়ন ব্যয় (লাখ)', 'n'], ['অবস্থা']],
     list.map(r => ({a: 'branch', p: r.b.code, c: [r.b.code, esc(r.b.name), esc(dn(r.b.div)), crore(r.dep), `<b class="${r.pl < 0 ? 'neg' : 'pos'}">${r.pl < 0 ? '−' : ''}${crore(Math.abs(r.pl))}</b>`, r.roa == null ? '—' : `<span class="${r.pl < 0 ? 'neg' : ''}">${num(r.roa, 2)}%</span>`, num(r.ent), r.st === 'p' ? '<span class="st s-ok">লাভ</span>' : r.st === 'l' ? '<span class="st s-over">ক্ষতি</span>' : '<span class="st s-none">শূন্য</span>']})), maxH || 420);
 }
 function openPlc() {
@@ -1489,7 +1503,7 @@ function openPlc() {
   const dv = divs().map(d => { const l = rows.filter(r => r.b.div === d), s = plSum(l); return {a: 'div', p: d, c: [esc(dn(d)), l.length, s.np, s.nl, crore(s.prof), crore(-s.loss), `<b class="${s.net < 0 ? 'neg' : 'pos'}">${s.net < 0 ? '−' : ''}${crore(Math.abs(s.net))}</b>`, crore(l.reduce((a, r) => a + r.dep, 0))]}; });
   modal(mHead('লাভ/ক্ষতির অবস্থা — শাখাওয়ারি') + `<div class="note">অপারেটিং লাভ/ক্ষতি (CBS-এর GL 70000001 ও 90000001), ${plAsLabel()}। ডিপোজিট: ${S.depAsOf ? fmtD(S.depAsOf) + ' পর্যন্ত' : 'মূল Excel ফাইল থেকে'}। অঙ্ক কোটি টাকায়। সারিতে ক্লিক করলে শাখার বিস্তারিত।</div>
    <div class="grid g5">${kmini('লাভজনক শাখা', t.np, 'মোট লাভ ' + crore(t.prof) + ' কোটি', 'grn')}${kmini('ক্ষতিতে থাকা শাখা', t.nl, 'মোট ক্ষতি ' + crore(-t.loss) + ' কোটি', t.nl ? 'red' : 'grn')}${kmini('নিট লাভ/ক্ষতি', (t.net < 0 ? '−' : '') + crore(Math.abs(t.net)), 'কোটি টাকা', t.net < 0 ? 'red' : 'grn')}${kmini('মোট ডিপোজিট', crore(rows.reduce((a, r) => a + r.dep, 0)), 'কোটি টাকা')}${kmini('লাভ-ক্ষতি শূন্য', t.nz, 'শাখা')}</div>
-   <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt([['বিভাগ'], ['শাখা', 'n'], ['লাভে', 'n'], ['ক্ষতিতে', 'n'], ['মোট লাভ (কোটি)', 'n'], ['মোট ক্ষতি (কোটি)', 'n'], ['নিট (কোটি)', 'n'], ['ডিপোজিট (কোটি)', 'n']], dv)}</div>
+   <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt('C', [['বিভাগ'], ['শাখা', 'n'], ['লাভে', 'n'], ['ক্ষতিতে', 'n'], ['মোট লাভ (কোটি)', 'n'], ['মোট ক্ষতি (কোটি)', 'n'], ['নিট (কোটি)', 'n'], ['ডিপোজিট (কোটি)', 'n']], dv)}</div>
    <div class="card" style="margin-top:12px"><h3>ক্ষতিতে থাকা শাখা (${loss.length}টি, বেশি ক্ষতি আগে)</h3>${loss.length ? plTable(loss) : '<div class="mut">কোনো শাখা ক্ষতিতে নেই 🎉</div>'}</div>
    <div class="card" style="margin-top:12px"><h3>লাভজনক শাখা (${prof.length}টি, বেশি লাভ আগে)</h3>${prof.length ? plTable(prof) : '<div class="mut">কোনো শাখা লাভে নেই</div>'}</div>${zero.length ? `<div class="card" style="margin-top:12px"><h3>লাভ-ক্ষতি শূন্য (${zero.length}টি)</h3>${plTable(zero, 200)}</div>` : ''}`);
 }
@@ -1725,7 +1739,7 @@ function mixCardBr(b) {
   const det = MIXT.map(t => `<tr><td><i class="sw" style="background:var(--m-${t.k})"></i>${esc(t.bn)}</td><td class="n">${crore(m[t.k] || 0)}</td><td class="n">${pc((m[t.k] || 0) / m.total * 100)}</td><td class="n mut">${bank && bank.total ? pc((bank[t.k] || 0) / bank.total * 100) : '—'}</td></tr>`).join('');
   return `<div class="card"><h3>💳 ডিপোজিট মিক্স <small class="mut">${fmtD(d)} পর্যন্ত · মোট ${crore(m.total)} কোটি</small></h3>${mixRibbon(m)}${mixLegend(m)}
    <div class="grid g2" style="margin-top:8px">${kmini('কম খরচের আমানত', lc == null ? '—' : pc(lc), 'CCOD + SND + SB' + (lcb != null ? ' · শাখা-গড় ' + pc(lcb) : ''))}${kmini('আমানতের ব্যয়-হার (আনুমানিক)', cr == null ? '—' : num(cr, 2) + '%', cr == null ? 'সুদের তথ্য নেই' : 'বার্ষিক' + (crb != null ? ' · শাখা-গড় ' + num(crb, 2) + '%' : ''))}</div>
-   <details style="margin-top:8px"><summary>৯টি ধরনের বিস্তারিত</summary><div class="tw" style="max-height:260px"><table><tr>${th('ধরন')}${th('কোটি', 'n')}${th('অংশ', 'n')}${th('শাখা-গড়', 'n')}</tr>${det}</table></div></details>${mixHist(b.code)}</div>`;
+   <details style="margin-top:8px"><summary>৯টি ধরনের বিস্তারিত</summary><div class="tw" style="max-height:260px"><table data-unit="C"><tr>${th('ধরন')}${th('কোটি', 'n')}${th('অংশ', 'n')}${th('শাখা-গড়', 'n')}</tr>${det}</table></div></details>${mixHist(b.code)}</div>`;
 }
 
 /* ---- লক্ষ্য বনাম অর্জন ---- */
@@ -1763,7 +1777,7 @@ function tgRow(label, kind, t, a, mo) {
 }
 function tgHist(code) {
   const ds = mxKeys(S.tgt).filter(d => S.tgt[d][code]); if (ds.length < 2) return '';
-  return `<details style="margin-top:8px"><summary>আগের ইমপোর্টের সঙ্গে তুলনা</summary><div class="tw" style="max-height:200px"><table><tr>${th('তারিখ')}${th('ডিপোজিট', 'n')}${th('অ্যাডভান্স', 'n')}${th('প্রফিট (কোটি)', 'n')}</tr>` + ds.slice(-12).reverse().map(d => { const r = S.tgt[d][code]; return `<tr><td>${fmtD(d)}</td><td class="n">${r.dt ? pc(r.da / r.dt * 100) : '—'}</td><td class="n">${r.at ? pc(r.aa / r.at * 100) : '—'}</td><td class="n">${sg(r.pa)}</td></tr>`; }).join('') + `</table></div></details>`;
+  return `<details style="margin-top:8px"><summary>আগের ইমপোর্টের সঙ্গে তুলনা</summary><div class="tw" style="max-height:200px"><table data-unit="M3"><tr>${th('তারিখ')}${th('ডিপোজিট', 'n')}${th('অ্যাডভান্স', 'n')}${th('প্রফিট (কোটি)', 'n')}</tr>` + ds.slice(-12).reverse().map(d => { const r = S.tgt[d][code]; return `<tr><td>${fmtD(d)}</td><td class="n">${r.dt ? pc(r.da / r.dt * 100) : '—'}</td><td class="n">${r.at ? pc(r.aa / r.at * 100) : '—'}</td><td class="n">${sg(r.pa)}</td></tr>`; }).join('') + `</table></div></details>`;
 }
 function tgtCardBr(b) {
   const d = tgtD(), r = tgtOf(b.code, d); if (!r) return '';
@@ -1818,7 +1832,7 @@ function openTgt() {
   else rows.sort((a, b) => (key[TG.s](a) == null ? 1e9 : key[TG.s](a)) - (key[TG.s](b) == null ? 1e9 : key[TG.s](b)));
   const pcell = (p, st) => p == null ? '<span class="mut">—</span>' : `<div style="min-width:96px">${tgBar(p, st, mo)}<small>${pc(p)}</small></div>`;
   const st1 = p => p >= 100 ? 'ok' : p >= 80 ? 'warn' : 'over';
-  const tb = dt([['কোড'], ['শাখা'], ['ডিপোজিট (লক্ষ্যের %)'], ['অ্যাডভান্স (লক্ষ্যের %)'], ['প্রফিট (কোটি)', 'n'], ['ডিপোজিট মিক্স'], ['কম খরচের আমানত', 'n']],
+  const tb = dt('M3', [['কোড'], ['শাখা'], ['ডিপোজিট (লক্ষ্যের %)'], ['অ্যাডভান্স (লক্ষ্যের %)'], ['প্রফিট (কোটি)', 'n'], ['ডিপোজিট মিক্স'], ['কম খরচের আমানত', 'n']],
     rows.map(x => ({a: 'branch', p: x.b.code, c: [x.b.code, esc(x.b.name), pcell(x.dp, x.dp == null ? '' : st1(x.dp)), pcell(x.ap, x.ap == null ? '' : st1(x.ap)),
       x.r ? `<span class="${x.ps ? 'st s-' + x.ps.st : ''}">${sg(x.r.pa)}</span>` : '—', x.m ? `<div style="width:150px">${mixRibbon(x.m, {mini: true})}</div>` : '<span class="mut">—</span>', x.lc == null ? '—' : pc(x.lc)]})), 440);
   const dv = divs().map(dd => {
@@ -1829,7 +1843,7 @@ function openTgt() {
   const fb = (f, t) => `<button class="b ${TG.f === f ? '' : 'sec'}" data-a="tgf" data-p="${f}">${t}</button>`;
   modal(mHead('লক্ষ্য বনাম অর্জন ও ডিপোজিট মিক্স — শাখাওয়ারি') + `<div class="note">${d ? `লক্ষ্য: ডিসেম্বর ${d.slice(0, 4)}, অর্জন ${fmtD(d)} পর্যন্ত` : 'লক্ষ্যমাত্রার ফাইল ইমপোর্ট করা হয়নি'}${md ? ` · ডিপোজিট মিক্স ${fmtD(md)} পর্যন্ত` : ''}। অঙ্ক কোটি টাকায়। বারের দাগ = বছরের কতটা সময় গেছে। সারিতে ক্লিক করলে শাখার বিস্তারিত।</div>
    ${o ? `<div class="grid g3">${[['ডিপোজিট', 'd', o.dt, o.da], ['অ্যাডভান্স', 'a', o.at, o.aa], ['প্রফিট (ব্যাংক)', 'p', o.pt, o.pa]].map(q => `<div class="card" style="padding:10px 14px">${tgRow(q[0], q[1], q[2], q[3], mo)}</div>`).join('')}</div>
-   <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt([['বিভাগ'], ['শাখা', 'n'], ['ডিপোজিট লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n'], ['অ্যাডভান্স লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n']], dv, 260)}</div>` : ''}
+   <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt('CP', [['বিভাগ'], ['শাখা', 'n'], ['ডিপোজিট লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n'], ['অ্যাডভান্স লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n']], dv, 260)}</div>` : ''}
    <div class="card" style="margin-top:12px"><h3>শাখার তালিকা (${rows.length}টি)</h3>
     <div class="row" style="margin-bottom:8px">${fb('all', 'সব')}${fb('d80', 'ডিপোজিট ৮০%-এর নিচে')}${fb('a80', 'অ্যাডভান্স ৮০%-এর নিচে')}${fb('pl', 'প্রফিটে পিছিয়ে')}<label>সাজান <select data-f="tgs">${[['code', 'শাখার কোড'], ['dp', 'ডিপোজিট % (কম আগে)'], ['ap', 'অ্যাডভান্স % (কম আগে)'], ['lc', 'কম খরচের আমানত (বেশি আগে)']].map(q => `<option value="${q[0]}" ${TG.s === q[0] ? 'selected' : ''}>${q[1]}</option>`).join('')}</select></label></div>${tb}</div>`);
 }
@@ -2333,7 +2347,7 @@ function vUsers() {
   const rows = USERS.map(u => { const me = u.uid === ME.uid; return `<tr><td>${esc(u.email)}${me ? ' <span class="mut">(আপনি)</span>' : ''}</td><td>${esc(u.name || '')}</td><td>${u.role === 'admin' ? '<b>admin</b>' : 'শুধু দেখা'}</td><td>${u.active ? '<span class="st s-ok">সক্রিয়</span>' : '<span class="st s-over">বন্ধ</span>'}</td>
     <td class="mut" style="font-size:11px">${esc(u.uid)}</td><td>${me ? '' : `<button class="b sec" data-a="userToggle" data-p="${esc(u.uid)}">${u.active ? 'বন্ধ করুন' : 'চালু করুন'}</button> <button class="b sec" data-a="userReset" data-p="${esc(u.uid)}">পাসওয়ার্ড-রিসেট ইমেইল</button> <button class="b sec red" style="color:#fff" data-a="userDel" data-p="${esc(u.uid)}">মুছুন</button>`}</td></tr>`; }).join('');
   const au = (AUDIT || []).map(a => `<tr><td style="white-space:nowrap">${esc(fmtT(a.t))}</td><td>${esc(a.email)}</td><td>${esc(a.action)}</td><td class="mut" style="font-size:12px">${esc(a.detail)}</td></tr>`).join('');
-  return `<div class="grid g2"><div class="card"><h3>👥 ব্যবহারকারী</h3><div class="tw" style="max-height:none"><table><tr>${th('ইমেইল')}${th('নাম')}${th('ভূমিকা')}${th('অবস্থা')}${th('UID')}${th('')}</tr>${rows}</table></div>
+  return `<div class="grid g2"><div class="card"><h3>👥 ব্যবহারকারী</h3><div class="tw" style="max-height:none"><table data-unit="-"><tr>${th('ইমেইল')}${th('নাম')}${th('ভূমিকা')}${th('অবস্থা')}${th('UID')}${th('')}</tr>${rows}</table></div>
      <div class="mut" style="font-size:12px;margin-top:6px">"বন্ধ করুন" চাপলে সেই ব্যক্তি সঙ্গে সঙ্গে লগআউট হবেন এবং আর ঢুকতে পারবেন না। "মুছুন" অনুমতি মুছে দেয়; লগইন অ্যাকাউন্টটিও পুরো মুছতে Firebase কনসোল → Authentication থেকে মুছুন।</div></div>
     <div class="card"><h3>➕ নতুন guest (শুধু দেখা)</h3>
      <div class="row"><input type="email" class="ugIn" data-k="em" placeholder="ইমেইল" style="min-width:220px"><input type="text" class="ugIn" data-k="nm" placeholder="নাম/পদবি"></div>
@@ -2342,7 +2356,7 @@ function vUsers() {
      <div class="mut" style="font-size:12px">পাসওয়ার্ডটি নিরাপদ উপায়ে (সামনাসামনি/ফোনে) জানান, ইমেইলে নয়। প্রথম লগইনের পর guest নিজে "About" ট্যাব থেকে পাসওয়ার্ড বদলাবেন।</div>
      <h3 style="margin-top:14px">অথবা আগের অ্যাকাউন্ট UID দিয়ে</h3><div class="row"><input type="text" class="ugIn" data-k="uid" placeholder="UID" style="min-width:220px"><input type="email" class="ugIn" data-k="em2" placeholder="ইমেইল"><button class="b sec" data-a="addByUid">যোগ করুন</button></div></div></div>
    <div class="card" style="margin-top:12px"><h3>📜 অডিট লগ (সর্বশেষ ১৫০টি)</h3><div class="row"><button class="b sec" data-a="usRefresh">↻ হালনাগাদ</button></div><div class="mut" style="font-size:12px;margin-bottom:6px">কে কখন লগইন/লগআউট করলেন ও কী বদলালেন। এই লগ কেউ (admin-ও না) বদলাতে বা মুছতে পারে না।</div>
-    <div class="tw" style="max-height:460px"><table><tr>${th('সময়')}${th('ব্যবহারকারী')}${th('কাজ')}${th('বিস্তারিত')}</tr>${au || '<tr><td colspan="4" class="mut">কিছু নেই</td></tr>'}</table></div></div>`;
+    <div class="tw" style="max-height:460px"><table data-unit="-"><tr>${th('সময়')}${th('ব্যবহারকারী')}${th('কাজ')}${th('বিস্তারিত')}</tr>${au || '<tr><td colspan="4" class="mut">কিছু নেই</td></tr>'}</table></div></div>`;
 }
 const ug = k => (($(`.ugIn[data-k=${k}]`) || {}).value || '').trim();
 const okEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 200;
@@ -2437,7 +2451,7 @@ async function histOpen() {
   const rows = HIST.map(h => `<tr><td style="white-space:nowrap">${esc(fmtT(h.updatedAt))}</td><td class="n">${h.rev | 0}</td><td>${esc(((m => m[h.act] || m.save)(LANG === 'en' ? HIST_ACT_EN : HIST_ACT)))}</td><td>${esc(h.year || '')}${h.last ? ' · ' + esc(lbl(h.last)) : ''}</td><td class="n">${Math.round(bytesOf(h.data || '') / 1024)} KB</td>
     <td>${h.bad ? '<span class="neg">নষ্ট</span>' : `<button class="b sec" data-a="histUse" data-p="${esc(h.id)}">↺ ফিরুন</button> <button class="b sec" data-a="histDl" data-p="${esc(h.id)}">⬇ নামান</button>`}</td></tr>`).join('');
   modal(histTitle + `<div class="note">${BI('প্রতিটি সারি = সেই কাজের <b>ঠিক আগের</b> অবস্থা (চলতি বছরের ডেটা)। "ফিরুন" চাপলে এখনকার অবস্থারও একটি কপি এখানে থেকে যায়, তাই ভুল হলে আবার ফেরা যায়। পুরোনো বছরের আর্কাইভ এতে বদলায় না। শেষ ১০টি কপি থাকে।', 'Each row is the state <b>just before</b> that action (current-year data). Restoring also keeps a copy of the present state here, so you can go back again. Archived years are not changed. The last 10 copies are kept.')}</div>
-   <div class="tw" style="max-height:420px"><table><tr>${th(BI('কখন', 'When'))}${th(BI('সংস্করণ', 'Version'), 'n')}${th(BI('যে কাজের আগে', 'Before action'))}${th(BI('বছর · শেষ মাস', 'Year · last month'))}${th(BI('আকার', 'Size'), 'n')}${th('')}</tr>${rows || `<tr><td colspan="6" class="mut">${BI('এখনও কোনো কপি নেই (প্রথম সংরক্ষণের পর থেকে জমবে)', 'No copies yet (they build up after the first save)')}</td></tr>`}</table></div>
+   <div class="tw" style="max-height:420px"><table data-unit="-"><tr>${th(BI('কখন', 'When'))}${th(BI('সংস্করণ', 'Version'), 'n')}${th(BI('যে কাজের আগে', 'Before action'))}${th(BI('বছর · শেষ মাস', 'Year · last month'))}${th(BI('আকার', 'Size'), 'n')}${th('')}</tr>${rows || `<tr><td colspan="6" class="mut">${BI('এখনও কোনো কপি নেই (প্রথম সংরক্ষণের পর থেকে জমবে)', 'No copies yet (they build up after the first save)')}</td></tr>`}</table></div>
    <div class="row" style="margin-top:8px"><button class="b sec" data-a="close">${BI('বন্ধ', 'Close')}</button></div>`);
 }
 function histUse(id) {
@@ -2456,6 +2470,317 @@ function histDl(id) {
 }
 Object.assign(ACT, {histOpen: () => histOpen(), histUse: p => histUse(p), histDl: p => histDl(p)});
 VIEW_BLOCK.add('histOpen'); VIEW_BLOCK.add('histUse');
+
+/* ================= v4.3: টেবিল সাজানো, একক, পেছনে ফেরা, শাখা-প্রধান ================= */
+
+/* ---- টেবিলের একক (প্রতিটি টেবিলের উপরে) ---- */
+const UNIT_TXT = {
+  L: 'অঙ্ক: লাখ টাকায়',
+  C: 'অঙ্ক: কোটি টাকায়',
+  P: 'অঙ্ক: বাজেটের শতাংশ (%)',
+  M1: 'আপ্যায়ন ব্যয়: লাখ টাকায় · ডিপোজিট: কোটি টাকায়',
+  M2: 'ডিপোজিট ও লাভ/ক্ষতি: কোটি টাকায় · আপ্যায়ন ব্যয়: লাখ টাকায়',
+  M3: 'ডিপোজিট/অ্যাডভান্স: লক্ষ্যের % · প্রফিট: কোটি টাকায়',
+  CP: 'অঙ্ক: কোটি টাকায় (% = লক্ষ্যের তুলনায়)',
+  CS: 'অঙ্ক: কোটি টাকায় (অংশ = মোটের %)',
+};
+const unitText = u => UNIT_TXT[u] || '';
+
+/* ---- যেকোনো টেবিলের হেডারে ক্লিক করে সাজানো (ছোট→বড় / বড়→ছোট) ---- */
+let SORTS = {}; // টেবিলের হেডার-লেখা → {ci, dir}; আবার আঁকলেও সাজানো থাকে
+const MON_N = {};
+MBS.forEach((m, i) => { MON_N[m] = i + 1; }); MBN.forEach((m, i) => { MON_N[m] = i + 1; });
+['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].forEach((m, i) => { MON_N[m] = i + 1; });
+const tblSig = tb => { const hr = tb.rows[0]; return hr ? [...hr.cells].map(c => c.textContent.trim()).join('|') : ''; };
+function cellAt(row, ci) { let k = 0; for (const c of row.cells) { if (k === ci) return c; k += c.colSpan || 1; if (k > ci) return null; } return null; }
+function sortKey(cell) {
+  if (!cell) return null;
+  if (cell.dataset && cell.dataset.v != null) { const v = cell.dataset.v; return v === '' ? null : (isFinite(+v) ? +v : v); }
+  const t = cell.textContent.replace(/\s+/g, ' ').trim();
+  if (!t || t === '—' || t === '-' || t === '–') return null;
+  const n = t.replace(/[,৳\s]/g, '').replace(/^−/, '-');
+  if (/^[-+]?\d*\.?\d+%?$/.test(n)) return parseFloat(n);
+  let m = t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (m) return +(m[3] + m[2] + m[1]);
+  m = t.match(/^(\d{2})\/(\d{2})\/(\d{4}),? (\d{2}):(\d{2})/); if (m) return +(m[3] + m[2] + m[1] + m[4] + m[5]);
+  m = t.match(/^(\S+)\s+(\d{4})$/); if (m && MON_N[m[1].toLowerCase()] != null) return +m[2] * 100 + MON_N[m[1].toLowerCase()];
+  if (MON_N[t.toLowerCase()] != null) return MON_N[t.toLowerCase()];
+  m = t.match(/^([-+−]?[\d,]*\.?\d+)%?\s/); if (m) return parseFloat(m[1].replace(/,/g, '').replace('−', '-'));
+  return t.toLowerCase();
+}
+function cmpKey(a, b) {
+  if (typeof a === 'number' && typeof b === 'number') return a - b;
+  if (typeof a === 'number') return -1; if (typeof b === 'number') return 1;
+  return String(a).localeCompare(String(b), 'bn', {numeric: true});
+}
+// মোট-সারি, খালি-বার্তার সারি ও দ্বিতীয় হেডার নিচে/জায়গায় থাকে
+const pinRow = r => !!(r.querySelector('th') || r.querySelector('td[colspan]') || /font-weight:\s*(700|bold)/.test(r.getAttribute('style') || '') || r.classList.contains('tot'));
+function applySort(tb, ci, dir) {
+  const hr = tb.rows[0]; if (!hr) return;
+  const rows = [...tb.rows].slice(1);
+  const body = rows.filter(r => !pinRow(r)), pin = rows.filter(pinRow);
+  if (body.length < 2) { markSort(hr, ci, dir); return; }
+  const keyed = body.map((r, i) => ({r, i, k: sortKey(cellAt(r, ci))}));
+  keyed.sort((x, y) => {
+    if (x.k == null && y.k == null) return x.i - y.i;
+    if (x.k == null) return 1; if (y.k == null) return -1; // খালি সবসময় শেষে
+    return (cmpKey(x.k, y.k) * dir) || (x.i - y.i);
+  });
+  const parent = body[0].parentNode;
+  keyed.forEach(x => parent.appendChild(x.r));
+  pin.filter(r => r.parentNode === parent).forEach(r => parent.appendChild(r));
+  markSort(hr, ci, dir);
+}
+function markSort(hr, ci, dir) {
+  [...hr.cells].forEach(c => c.classList.remove('s-asc', 's-desc'));
+  const th = [...hr.cells].find(c => +c.dataset.ci === ci); if (th) th.classList.add(dir > 0 ? 's-asc' : 's-desc');
+}
+function setupTable(tw) {
+  const tb = tw.querySelector('table'); if (!tb || tb.dataset.sg) return;
+  tb.dataset.sg = '1';
+  const hr = tb.rows[0]; if (!hr || !hr.querySelector('th') || hr.querySelector('th[data-a]')) return; // নিজস্ব সাজানো আছে এমন টেবিল বাদ
+  tb.dataset.sig = tblSig(tb);
+  let k = 0;
+  [...hr.cells].forEach(c => {
+    const ci = k; k += c.colSpan || 1;
+    if (c.tagName !== 'TH' || c.dataset.a || !c.textContent.trim() || c.querySelector('[data-a],input,select,button')) return;
+    c.classList.add('srt'); c.dataset.ci = ci; c.title = 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)';
+  });
+  const s = SORTS[tb.dataset.sig]; if (s) applySort(tb, s.ci, s.dir);
+}
+document.addEventListener('click', e => {
+  const th = e.target.closest && e.target.closest('th.srt'); if (!th) return;
+  const tb = th.closest('table'); if (!tb) return;
+  const ci = +th.dataset.ci, sig = tb.dataset.sig, cur = SORTS[sig];
+  const dir = cur && cur.ci === ci ? -cur.dir : 1; // প্রথম ক্লিকে ছোট→বড়, আবার ক্লিকে বড়→ছোট
+  navPush();
+  SORTS[sig] = {ci, dir}; applySort(tb, ci, dir);
+});
+
+/* ---- যেকোনো অবস্থা থেকে আগের অবস্থায় ফেরা ---- */
+let NAV = [], NAV_MODAL = null, NAV_RESTORING = false;
+// যে কাজগুলো "দেখার জায়গা" বদলায় (ট্যাব, বিস্তারিত, তালিকা, সাজানো, ফিল্টার)
+const NAV_ACTS = new Set(['tab', 'branch', 'goDiv', 'goCat', 'kpi', 'cat', 'div', 'divList', 'hoHead', 'bank', 'plc', 'tgc', 'tgf', 'sort', 'plSort', 'histOpen', 'inchList']);
+function navSnap() {
+  return {ui: JSON.parse(JSON.stringify(UI)), tg: JSON.parse(JSON.stringify(TG)), sorts: JSON.parse(JSON.stringify(SORTS)), modal: $('#modal').hidden ? null : NAV_MODAL, y: window.scrollY};
+}
+function navPush() {
+  if (NAV_RESTORING) return;
+  NAV.push(navSnap()); if (NAV.length > 60) NAV.shift();
+  try { history.pushState({ebmNav: Date.now()}, ''); } catch (e) {}
+  navBtn();
+}
+function navBtn() {
+  const b = $('#bBack'); if (b) b.hidden = !NAV.length;
+  document.querySelectorAll('#modal .bk').forEach(x => { x.hidden = !NAV.length; });
+}
+function navBack() {
+  const s = NAV.pop(); if (!s) { navBtn(); return; }
+  NAV_RESTORING = true;
+  try {
+    UI = s.ui; TG = s.tg; SORTS = s.sorts;
+    $('#modal').hidden = true; $('#sg').hidden = true; render();
+    NAV_MODAL = null;
+    if (s.modal && ACT[s.modal.a]) {
+      if (s.modal.a === 'tgc' || s.modal.a === 'tgf') openTgt(); else ACT[s.modal.a](s.modal.p);
+      NAV_MODAL = s.modal;
+    }
+    window.scrollTo(0, s.y || 0);
+  } catch (e) { console.warn('navBack', e); }
+  finally { NAV_RESTORING = false; }
+  navBtn();
+}
+// ধাপ রেকর্ড: কাজ চলার আগে বর্তমান অবস্থা রাখা (capture), কাজ শেষে কোন মডাল খোলা তা মনে রাখা
+window.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('[data-a]'); if (!t) return;
+  const a = t.dataset.a, p = t.dataset.p;
+  if (NAV_ACTS.has(a)) navPush();
+  setTimeout(() => {
+    if (NAV_RESTORING) return;
+    if ($('#modal').hidden) NAV_MODAL = null;
+    else if (NAV_ACTS.has(a) && !['sort', 'plSort'].includes(a)) NAV_MODAL = {a, p};
+    navBtn();
+  }, 0);
+}, true);
+// ফিল্টারের ড্রপডাউন বদলালেও ধাপ (শুধু দেখার ফিল্টার, যেগুলো UI-তে থাকে)
+document.addEventListener('change', e => {
+  const t = e.target, f = t && t.dataset && t.dataset.f;
+  if (f && t.tagName === 'SELECT' && (f in UI || f === 'tgs')) navPush();
+}, true);
+// ব্রাউজারের Back বোতাম / মাউসের পেছনের বোতাম / Alt+← একই কাজ করে
+window.addEventListener('popstate', () => { if (NAV.length) navBack(); });
+
+/* ---- শাখা-প্রধানের তথ্য ---- */
+const inchOf = code => (S && S.inch && S.inch[code]) || null;
+const telOf = s => String(s || '').replace(/[^\d+]/g, '');
+const INCH_F = [['name', 'নাম'], ['mobile', 'মোবাইল'], ['staffId', 'স্টাফ আইডি'], ['email', 'ইমেইল']];
+function normMobile(v) {
+  if (v == null) return '';
+  let s = typeof v === 'number' ? String(Math.round(v)) : String(v).trim();
+  s = s.replace(/[\s\-()]/g, '');
+  if (/^1\d{9}$/.test(s)) s = '0' + s;                 // Excel-এ শুরুর ০ হারালে
+  if (/^8801\d{9}$/.test(s)) s = '+' + s;
+  return s;
+}
+const okMobile = s => !s || /^(\+?88)?01\d{9}$/.test(s) || /^\+?\d{7,15}$/.test(s);
+const okMail = s => !s || (/^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(s) && s.length <= 120);
+function cleanInch(o) {
+  const x = {name: String(o.name || '').trim().slice(0, 100), mobile: normMobile(o.mobile).slice(0, 20), staffId: String(o.staffId == null ? '' : o.staffId).trim().slice(0, 30), email: String(o.email || '').trim().toLowerCase().slice(0, 120)};
+  const bad = [];
+  if (!okMobile(x.mobile)) bad.push('মোবাইল');
+  if (!okMail(x.email)) bad.push('ইমেইল');
+  return {x, bad};
+}
+function inchCells(x) {
+  x = x || {};
+  return {
+    name: esc(x.name || '—'),
+    mobile: x.mobile ? `<a href="tel:${esc(telOf(x.mobile))}">${esc(x.mobile)}</a>` : '—',
+    staffId: esc(x.staffId || '—'),
+    email: x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : '—',
+  };
+}
+function inchBox(b) {
+  const x = inchOf(b.code), c = inchCells(x), has = x && (x.name || x.mobile || x.staffId || x.email);
+  let h = `<div class="card" style="margin-top:10px"><h3>👤 শাখা-প্রধান</h3>` +
+    (has ? `<div class="inch">${INCH_F.map(([k, l]) => `<div><span class="mut">${l}</span><b>${c[k]}</b></div>`).join('')}</div>` : '<div class="mut">শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।</div>');
+  if (ROLE === 'admin' && !VIEW) {
+    const v = k => esc((x && x[k]) || '');
+    h += `<div class="row" style="margin-top:8px"><input type="text" id="in_name" value="${v('name')}" placeholder="নাম" maxlength="100"><input type="text" id="in_mob" value="${v('mobile')}" placeholder="মোবাইল (01XXXXXXXXX)" maxlength="20" style="width:160px"><input type="text" id="in_sid" value="${v('staffId')}" placeholder="স্টাফ আইডি" maxlength="30" style="width:120px"><input type="email" id="in_em" value="${v('email')}" placeholder="ইমেইল" maxlength="120"><button class="b sec" data-a="saveInch" data-p="${b.code}">💾 সংরক্ষণ</button></div>`;
+  }
+  return h + '</div>';
+}
+function saveInch(code) {
+  const b = S.branches.find(x => x.code == code); if (!b) return;
+  const {x, bad} = cleanInch({name: $('#in_name').value, mobile: $('#in_mob').value, staffId: $('#in_sid').value, email: $('#in_em').value});
+  if (bad.length) return toast(bad.join(' ও ') + ' সঠিক নয়');
+  S.inch = S.inch || {};
+  if (!x.name && !x.mobile && !x.staffId && !x.email) delete S.inch[b.code]; else S.inch[b.code] = x;
+  save(); NAV_RESTORING = true; try { openBranch(b.code); } finally { NAV_RESTORING = false; } render(); toast('শাখা-প্রধানের তথ্য সংরক্ষিত');
+}
+// শাখা ট্যাবে পুরো তালিকা
+function inchDirectory() {
+  const rows = S.branches.map(b => { const x = inchOf(b.code), c = inchCells(x); return {a: 'branch', p: b.code, c: [b.code, esc(b.name), esc(dn(b.div)), c.name, c.mobile, c.staffId, c.email]}; });
+  const n = S.branches.filter(b => { const x = inchOf(b.code); return x && x.name; }).length;
+  return `<div class="card" style="margin-top:12px"><h3>📇 শাখা-প্রধানদের তালিকা <small class="mut">${n}/${S.branches.length}টি শাখার তথ্য আছে</small></h3>
+   ${dt('-', [['কোড'], ['শাখা'], ['বিভাগ'], ['শাখা-প্রধান'], ['মোবাইল'], ['স্টাফ আইডি'], ['ইমেইল']], rows, 420)}
+   ${ROLE === 'admin' ? '<div class="mut" style="font-size:12px;margin-top:6px">তথ্য একসঙ্গে দিতে: "ইমপোর্ট ও ব্যাকআপ" ট্যাব → "৮. শাখা-প্রধানের তথ্য"। একটি শাখার তথ্য বদলাতে সারিতে ক্লিক করুন।</div>' : ''}</div>`;
+}
+
+/* ---- শাখা-প্রধানের তথ্য Excel দিয়ে আপলোড ---- */
+let INCH_IMP = null;
+function inchTpl() {
+  const rows = S.branches.map(b => { const x = inchOf(b.code) || {}; return {Code: b.code, Branch: b.name, Incharge_Name: x.name || '', Mobile: x.mobile || '', Staff_ID: x.staffId || '', Email: x.email || ''}; });
+  const ws = XLSX.utils.json_to_sheet(rows, {header: ['Code', 'Branch', 'Incharge_Name', 'Mobile', 'Staff_ID', 'Email']});
+  ws['!cols'] = [{wch: 7}, {wch: 26}, {wch: 28}, {wch: 16}, {wch: 12}, {wch: 30}];
+  // মোবাইল ও স্টাফ আইডি লেখা হিসেবে (শুরুর ০ যেন না হারায়)
+  const r = XLSX.utils.decode_range(ws['!ref']);
+  for (let i = 1; i <= r.e.r; i++) [3, 4].forEach(c => { const a = XLSX.utils.encode_cell({r: i, c}); if (ws[a]) { ws[a].t = 's'; ws[a].v = String(ws[a].v); ws[a].z = '@'; } });
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Incharge');
+  XLSX.writeFile(wb, 'EBM_branch_incharge_' + today() + '.xlsx');
+}
+const INCH_COL = {code: /^(code|branch\s*code|br\.?\s*code|কোড|শাখা\s*কোড)$/i, name: /(incharge|manager|head|name|নাম|প্রধান)/i, mobile: /(mobile|phone|cell|contact|মোবাইল|ফোন)/i, staffId: /(staff|emp|id|পিএফ|আইডি)/i, email: /(e-?mail|ইমেইল|ই-মেইল)/i};
+async function onInchFile(f) {
+  try {
+    const wb = XLSX.read(await f.arrayBuffer(), {type: 'array'});
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1, defval: null, raw: true});
+    let hi = -1, map = null;
+    for (let i = 0; i < Math.min(15, rows.length) && hi < 0; i++) {
+      const m = {};
+      (rows[i] || []).forEach((c, j) => {
+        const s = String(c == null ? '' : c).trim(); if (!s) return;
+        if (m.code == null && INCH_COL.code.test(s)) m.code = j;
+        else if (m.email == null && INCH_COL.email.test(s)) m.email = j;
+        else if (m.mobile == null && INCH_COL.mobile.test(s)) m.mobile = j;
+        else if (m.staffId == null && INCH_COL.staffId.test(s)) m.staffId = j;
+        else if (m.name == null && INCH_COL.name.test(s) && !/^branch(\s*name)?$/i.test(s) && !/^শাখা(র নাম)?$/.test(s)) m.name = j;
+      });
+      if (m.code != null && (m.name != null || m.mobile != null || m.email != null || m.staffId != null)) { hi = i; map = m; }
+    }
+    if (hi < 0) { INCH_IMP = {err: 'হেডার পাওয়া যায়নি: Code এবং Incharge_Name/Mobile/Staff_ID/Email কলাম লাগবে (টেমপ্লেট নামিয়ে ব্যবহার করুন)', fname: f.name}; return render(); }
+    const known = new Set(S.branches.map(b => b.code)), out = [], unknown = [], bad = [];
+    for (let r = hi + 1; r < rows.length; r++) {
+      const v = rows[r] || []; const code = parseInt(v[map.code], 10); if (!isFinite(code)) continue;
+      if (!known.has(code)) { unknown.push(code); continue; }
+      const get = k => map[k] == null ? null : v[map[k]];
+      const raw = {name: get('name'), mobile: get('mobile'), staffId: get('staffId'), email: get('email')};
+      const {x, bad: bd} = cleanInch(raw);
+      // ফাঁকা ঘর = আগের মান থাকবে
+      const keep = {}; ['name', 'mobile', 'staffId', 'email'].forEach(k => { if (raw[k] != null && String(raw[k]).trim() !== '') keep[k] = x[k]; });
+      if (bd.length) { bad.push(code + ': ' + bd.join(', ')); continue; }
+      if (Object.keys(keep).length) out.push({code, keep});
+    }
+    INCH_IMP = {fname: f.name, rows: out, unknown, bad};
+  } catch (e) { INCH_IMP = {err: 'ফাইল পড়া যায়নি: ' + e.message, fname: f.name}; }
+  render();
+}
+function inchCard() {
+  const n = S.branches.filter(b => { const x = inchOf(b.code); return x && x.name; }).length;
+  let h = `<div class="card"><h3>৮. শাখা-প্রধানের তথ্য (Excel)</h3><div class="mut" style="margin-bottom:8px">এখন ${n}/${S.branches.length}টি শাখার তথ্য আছে। টেমপ্লেট নামিয়ে নাম, মোবাইল, স্টাফ আইডি ও ইমেইল লিখে ফেরত দিন। ফাঁকা ঘর হলে আগের তথ্য থাকবে। শাখা মেলানো হয় Code দিয়ে।</div>
+   <div class="row"><button class="b sec" data-a="inchTpl">⬇ টেমপ্লেট নামান</button><label class="b" style="cursor:pointer">⬆ তথ্যের ফাইল দিন<input type="file" accept=".xlsx,.xls,.csv" data-f="inchFile" hidden></label></div>`;
+  if (INCH_IMP) {
+    const I = INCH_IMP;
+    if (I.err) h += `<div class="note er">${esc(I.fname)}: ${esc(I.err)}</div>`;
+    else {
+      h += `<div class="note ${I.bad.length || I.unknown.length ? '' : 'ok'}">${esc(I.fname)}: ${I.rows.length}টি শাখার তথ্য পাওয়া গেছে।</div>`;
+      if (I.unknown.length) h += `<div class="note er">অচেনা শাখা-কোড (বাদ যাবে): ${I.unknown.slice(0, 15).join(', ')}${I.unknown.length > 15 ? ' …' : ''}</div>`;
+      if (I.bad.length) h += `<div class="note er">ভুল তথ্যের সারি (বাদ যাবে): ${esc(I.bad.slice(0, 8).join('; '))}${I.bad.length > 8 ? ' …' : ''}</div>`;
+      h += `<div class="row">${I.rows.length ? '<button class="b grn" data-a="inchApply">✔ প্রয়োগ করুন</button>' : ''}<button class="b sec" data-a="inchClear">বাতিল</button></div>`;
+    }
+  }
+  return h + '</div>';
+}
+function inchApply() {
+  const I = INCH_IMP; if (!I || !I.rows || !I.rows.length) return;
+  S.inch = S.inch || {}; let n = 0;
+  I.rows.forEach(r => { const cur = Object.assign({name: '', mobile: '', staffId: '', email: ''}, S.inch[r.code] || {}); Object.assign(cur, r.keep); S.inch[r.code] = cur; n++; });
+  INCH_IMP = null; save(); render(); toast('শাখা-প্রধানের তথ্য হালনাগাদ: ' + n + 'টি শাখা');
+}
+Object.assign(ACT, {
+  navBack: () => { if (history.state && history.state.ebmNav) history.back(); else navBack(); },
+  saveInch: p => saveInch(p),
+  inchTpl: () => inchTpl(),
+  inchApply: () => inchApply(),
+  inchClear: () => { INCH_IMP = null; render(); },
+  inchList: () => { UI.tab = 'br'; render(); setTimeout(() => { const el = $('#inchDir'); if (el) el.scrollIntoView({behavior: 'smooth'}); }, 50); },
+});
+document.addEventListener('change', e => {
+  const t = e.target, f = t.dataset && t.dataset.f; if (f !== 'inchFile') return;
+  const fl = t.files[0]; t.value = ''; if (fl) onInchFile(fl);
+});
+['navBack', 'inchList'].forEach(a => GUEST_OK.add(a));
+['saveInch', 'inchApply'].forEach(a => VIEW_BLOCK.add(a));
+RISKY_ACTS.add('inchApply');
+Object.assign(HIST_ACT, {inchApply: 'শাখা-প্রধানের তথ্য ইমপোর্ট', saveInch: 'শাখা-প্রধানের তথ্য'});
+Object.assign(HIST_ACT_EN, {inchApply: 'Branch-incharge import', saveInch: 'Branch-incharge info'});
+Object.assign(TR_EXACT, {
+  'অঙ্ক: লাখ টাকায়': 'Figures in lakh Taka', 'অঙ্ক: কোটি টাকায়': 'Figures in crore Taka', 'অঙ্ক: বাজেটের শতাংশ (%)': 'Figures: % of budget',
+  'আপ্যায়ন ব্যয়: লাখ টাকায় · ডিপোজিট: কোটি টাকায়': 'Entertainment cost: lakh Taka · Deposit: crore Taka',
+  'ডিপোজিট ও লাভ/ক্ষতি: কোটি টাকায় · আপ্যায়ন ব্যয়: লাখ টাকায়': 'Deposit and profit/loss: crore Taka · Entertainment cost: lakh Taka',
+  'ডিপোজিট/অ্যাডভান্স: লক্ষ্যের % · প্রফিট: কোটি টাকায়': 'Deposit/advance: % of target · Profit: crore Taka',
+  'অঙ্ক: কোটি টাকায় (% = লক্ষ্যের তুলনায়)': 'Figures in crore Taka (% = of target)', 'অঙ্ক: কোটি টাকায় (অংশ = মোটের %)': 'Figures in crore Taka (share = % of total)',
+  '← পেছনে': '← Back', 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)': 'Click to sort (click again to reverse)', 'আগের অবস্থায় ফিরুন': 'Go back to the previous view', '👤 শাখা-প্রধান': '👤 Branch incharge', 'শাখা-প্রধান': 'Branch incharge', 'নাম': 'Name', 'মোবাইল': 'Mobile', 'স্টাফ আইডি': 'Staff ID',
+  'শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।': 'Branch-incharge details not added yet.', '💾 সংরক্ষণ': '💾 Save',
+  '৮. শাখা-প্রধানের তথ্য (Excel)': '8. Branch-incharge details (Excel)', '⬆ তথ্যের ফাইল দিন': '⬆ Upload details file',
+});
+TR_RX.push(
+  // tr() আগে "১২টি" → "১২" করে, তাই এখানে "টি" ছাড়া মেলানো হয়
+  [/📇 শাখা-প্রধানদের তালিকা/, '📇 Branch-incharge directory'],
+  [/এখন (\d+)\/(\d+) শাখার তথ্য আছে।[^]*$/, 'Details available now for $1/$2 branches. Download the template, fill in name, mobile, staff ID and email, then upload it. Empty cells keep the old value. Branches are matched by Code.'],
+  [/(\d+)\/(\d+) শাখার তথ্য আছে/, 'details available for $1/$2 branches'],
+  [/শাখা-প্রধানের তথ্য হালনাগাদ: (\d+) শাখা/, 'Branch-incharge details updated: $1 branches'],
+  [/: (\d+) শাখার তথ্য পাওয়া গেছে।/, ': details found for $1 branches.'],
+  [/অচেনা শাখা-কোড \(বাদ যাবে\):/, 'Unknown branch codes (skipped):'],
+  [/ভুল তথ্যের সারি \(বাদ যাবে\):/, 'Rows with invalid data (skipped):'],
+  [/^তথ্য একসঙ্গে দিতে:[^]*$/, 'To add details in bulk: "Import & backup" tab → "8. Branch-incharge details". Click a row to change one branch.'],
+  [/^হেডার পাওয়া যায়নি:[^]*$/, 'Header not found: a Code column and an Incharge_Name/Mobile/Staff_ID/Email column are needed (use the template).'],
+  [/^শাখা-প্রধানের তথ্য সংরক্ষিত$/, 'Branch-incharge details saved'],
+  [/^মোবাইল ও ইমেইল সঠিক নয়$/, 'Mobile and email are not valid'],
+  [/^মোবাইল সঠিক নয়$/, 'Mobile number is not valid'],
+  [/^ইমেইল সঠিক নয়$/, 'Email is not valid'],
+);
+
+// আর্কাইভ বছর বদলালে আগের ধাপ ও সাজানো মুছে যায়
+{ const _svy = setViewYear; setViewYear = function (y) { NAV = []; SORTS = {}; NAV_MODAL = null; const r = _svy.apply(this, arguments); navBtn(); return r; }; }
 
 /* ================= চালু ================= */
 async function boot() {
