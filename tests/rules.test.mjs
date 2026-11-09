@@ -156,6 +156,31 @@ test('অচেনা কালেকশনে কেউ লিখতে পা�
   await assertFails(setDoc(doc(as(ADMIN), 'secrets', 'x'), {a: 1}));
   await assertFails(setDoc(doc(as(ADMIN), 'state', 'other'), {a: 1}));
 });
+// ---------- আগের সংস্করণ (history) ----------
+const hist = (uid, extra = {}) => ({data: '{"old":1}', rev: 5, act: 'save', updatedAt: serverTimestamp(), updatedBy: uid, ...extra});
+const hmeta = (uid, next) => ({next, updatedAt: serverTimestamp(), updatedBy: uid});
+test('admin: লেনদেনে ডেটা + আগের কপি + meta একসঙ্গে লেখা ও পড়া যায়', async () => {
+  const db = as(ADMIN);
+  await assertSucceeds(runTransaction(db, async tx => {
+    const s = await tx.get(doc(db, 'state', 'main')), m = await tx.get(doc(db, 'history', 'meta'));
+    const n = m.exists() ? m.data().next : 0;
+    tx.set(doc(db, 'state', 'main'), main(ADMIN, s.data().rev + 1));
+    tx.set(doc(db, 'history', 'h' + (n % 10)), hist(ADMIN, {data: s.data().data, rev: s.data().rev}));
+    tx.set(doc(db, 'history', 'meta'), hmeta(ADMIN, n + 1));
+  }));
+  await assertSucceeds(getDocs(collection(db, 'history')));
+});
+test('history: guest পড়তে/লিখতে পারে না; অবৈধ নাম, বাড়তি ঘর, মোছা আটকায়', async () => {
+  const g = as(GUEST), a = as(ADMIN);
+  await assertFails(getDocs(collection(g, 'history')));
+  await assertFails(setDoc(doc(g, 'history', 'h1'), hist(GUEST)));
+  await assertFails(setDoc(doc(a, 'history', 'h10'), hist(ADMIN)));
+  await assertFails(setDoc(doc(a, 'history', 'h1'), hist(ADMIN, {evil: 1})));
+  await assertFails(setDoc(doc(a, 'history', 'h1'), hist(ADMIN, {updatedBy: ADMIN2})));
+  await assertFails(setDoc(doc(a, 'history', 'meta'), {next: 'x', updatedAt: serverTimestamp(), updatedBy: ADMIN}));
+  await assertSucceeds(setDoc(doc(a, 'history', 'h1'), hist(ADMIN)));
+  await assertFails(deleteDoc(doc(a, 'history', 'h1')));
+});
 test('নিষ্ক্রিয় করা admin কিছু লিখতে পারে না', async () => {
   await env.withSecurityRulesDisabled(async ctx => { await updateDoc(doc(ctx.firestore(), 'users', ADMIN2), {active: false}); });
   await assertFails(setDoc(doc(as(ADMIN2), 'state', 'main'), main(ADMIN2, 6)));

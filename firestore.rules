@@ -85,6 +85,24 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---- আগের সংস্করণ (চলতি ডেটার শেষ ১০টি কপি, ঘুরে ঘুরে h0…h9) — শুধু admin ----
+    match /history/{id} {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin() && stamped() && (
+        (id == 'meta'
+          && onlyKeys(['next', 'updatedAt', 'updatedBy'])
+          && request.resource.data.next is int)
+        || (id.matches('^h[0-9]$')
+          && onlyKeys(['data', 'rev', 'act', 'updatedAt', 'updatedBy'])
+          && request.resource.data.data is string
+          && request.resource.data.data.size() > 2
+          && request.resource.data.data.size() < 950000
+          && request.resource.data.rev is int
+          && request.resource.data.act is string
+          && request.resource.data.act.size() <= 60));
+      allow delete: if false;
+    }
+
     // ---- অডিট লগ: কেউ বদলাতে বা মুছতে পারে না ----
     match /audit/{id} {
       allow create: if known()

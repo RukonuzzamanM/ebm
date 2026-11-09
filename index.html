@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- নিরাপত্তা: শুধু Google/Firebase-এর ঠিকানায় যোগাযোগ; অন্য কোথাও ডেটা পাঠানো ব্রাউজার আটকাবে -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.recaptcha.net; connect-src 'self' https://*.googleapis.com https://www.google.com https://www.recaptcha.net http://127.0.0.1:9099 http://127.0.0.1:8080 ws://127.0.0.1:8080; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<!-- নিরাপত্তা: শুধু Google/Firebase-এর ঠিকানায় যোগাযোগ; অন্য কোথাও ডেটা পাঠানো ব্রাউজার আটকাবে।
+     এমুলেটরের লোকাল ঠিকানা শুধু localhost-এ ?emu=1 দিয়ে খুললে যোগ হয়। অন্য সাইট এই পেজকে frame-এ খুললে পেজ লুকিয়ে যায় (clickjacking ঠেকাতে)। -->
+<script>(function () {
+  if (window.top !== window.self) { document.write('<style>html{display:none!important}</style>'); try { window.top.location = window.self.location.href; } catch (e) {} }
+  var emu = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]emu=1\b/.test(location.search);
+  document.write('<meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'self\' \'unsafe-inline\' https://www.gstatic.com https://www.google.com https://www.recaptcha.net; connect-src \'self\' https://*.googleapis.com https://www.google.com https://www.recaptcha.net' + (emu ? ' http://127.0.0.1:9099 http://127.0.0.1:8080 ws://127.0.0.1:8080' : '') + '; img-src \'self\' data: blob:; style-src \'self\' \'unsafe-inline\'; font-src \'self\' data:; frame-src https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src \'none\'; base-uri \'none\'; form-action \'none\'">');
+})();</script>
 <meta name="referrer" content="no-referrer">
 <title>শাখা ব্যয়-বাজেট ম্যানেজার</title>
 <style>
@@ -14,6 +19,7 @@
  --ok:#1f9d6b;--warn:#d99a00;--crit:#e8710a;--over:#cf3030;--none:#8a97a6;
  --okBg:#e0f5ec;--okTx:#146c49;--warnBg:#fff3cc;--warnTx:#7a5a00;--critBg:#ffe9d6;--critTx:#a14a00;--overBg:#fde6e6;--overTx:#a31c1c;--noneBg:#eaeef2;--noneTx:#5a6672;
  --shadow:0 1px 2px rgba(16,32,52,.06),0 6px 18px rgba(16,32,52,.06);--shadowH:0 2px 4px rgba(16,32,52,.08),0 14px 30px rgba(16,32,52,.12);
+ --m-td:#2f6fb5;--m-snd:#0f9a9c;--m-sb:#3a9b58;--m-ccod:#d9730d;--m-scheme:#7e57c2;--m-margin:#8d5a2b;--m-fc:#c2366f;--m-nr:#5f6f81;--m-others:#6f7a8a;--m-r1:#b9c2cd;--m-r2:#d3d9e0;
  --hdr:linear-gradient(118deg,#06303d 0%,#0b5f73 55%,#1384a3 100%);
  --fnt:"Hind Siliguri","Noto Sans Bengali","Kalpurush","Nirmala UI","Vrinda","Segoe UI",system-ui,Arial,sans-serif;
 }
@@ -23,6 +29,7 @@
  --ok:#3dd598;--warn:#f2c14e;--crit:#ff9142;--over:#ff6b6b;--none:#7f8ea0;
  --okBg:rgba(61,213,152,.14);--okTx:#6fe3b5;--warnBg:rgba(242,193,78,.15);--warnTx:#f5d27a;--critBg:rgba(255,145,66,.16);--critTx:#ffb078;--overBg:rgba(255,107,107,.16);--overTx:#ff9a9a;--noneBg:rgba(127,142,160,.18);--noneTx:#a9b6c5;
  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);--shadowH:0 2px 4px rgba(0,0,0,.5),0 16px 34px rgba(0,0,0,.42);
+ --m-td:#4f93df;--m-snd:#22b8ba;--m-sb:#4fba6d;--m-ccod:#ee8a26;--m-scheme:#9a78dd;--m-margin:#a87345;--m-fc:#dc5a8e;--m-nr:#7a8b9e;--m-others:#8a95a5;--m-r1:#52606f;--m-r2:#6a7888;
  --hdr:linear-gradient(118deg,#060f18 0%,#0c2133 55%,#12384f 100%);
 }
 *{box-sizing:border-box}
@@ -47,6 +54,18 @@ header .sub{font-size:11.5px;opacity:.8}
 .chip{font-size:12px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2)}
 .yrsel{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.12);color:#fff;border-radius:10px;height:36px;padding:0 8px;font:inherit;font-weight:700;cursor:pointer}
 .yrsel option{color:#111;background:#fff}
+.mix{display:flex;height:26px;border-radius:8px;overflow:hidden;background:var(--noneBg)}
+.mix i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;font-weight:700;color:#fff;min-width:2px;overflow:hidden;white-space:nowrap}
+.mix i+i{border-left:2px solid var(--card)}
+.mix i.rest,.ml i.rest{background:repeating-linear-gradient(45deg,var(--m-r1) 0 5px,var(--m-r2) 5px 10px);color:var(--tx)}
+.mix.mini{height:12px;border-radius:6px}.mix.mini i+i{border-left-width:1px}
+.mlg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:12.5px}
+.ml{display:flex;align-items:center;gap:6px}.ml i,.sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:none}.sw{margin-right:6px}
+.ml b{font-weight:600}.ml small{color:var(--mut)}
+.mh{display:grid;grid-template-columns:78px 1fr 70px;gap:8px;align-items:center;margin:5px 0}.mh small{text-align:right;color:var(--mut)}
+.tgrid{display:grid;gap:12px}.tgrid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.tgr .tgh{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.tgr .tgs{font-size:12.5px;color:var(--mut);margin-top:4px}.tgr .tgs b{color:var(--tx)}
+details>summary{cursor:pointer;color:var(--pri);font-size:13px;padding:4px 0}
 nav{background:var(--card);border-bottom:1px solid var(--bd);display:flex;gap:4px;padding:8px 14px;overflow-x:auto;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 var(--bd)}
 nav button{border:0;background:none;padding:7px 14px;font:inherit;cursor:pointer;color:var(--mut);border-radius:999px;white-space:nowrap;transition:.15s}
 nav button:hover{background:var(--card2);color:var(--tx)}
@@ -206,7 +225,7 @@ const FB_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const EMU = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]emu=1\b/.test(location.search);
 // ডেভেলপার কী-জেনারেটর এই (GitHub-এ প্রকাশ্য) সংস্করণ থেকে সরানো হয়েছে; নতুন লাইসেন্স কী লোকাল v3.2 থেকে বানান।
 const LIC_BOOT = "eyJhcHAiOiJFQk0iLCJuYW1lIjoiTWQuIFJ1a29udXp6YW1hbiIsImlzcyI6IjIwMjYtMTAtMjciLCJleHAiOiIyMDI3LTEwLTI3In0.a5FIEsUh3TLNTn2XWTYeDtKYTAh838fFmGMo9a6CmWZwDjdJ8xSyV4LsB6pAPs1iLZd8E4WOKIkW5M_pDIHwjA";
-const APP_VER = '4.0';
+const APP_VER = '4.2';
 const LS = 'ebm_v1', LSL = 'ebm_lic', LSS = 'ebm_seen';
 const MBN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
 const MEN = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -392,19 +411,24 @@ const orgLine = () => 'BASIC Bank PLC — ' + unitName();
 function ensureDiv(d) { S.divs = S.divs || {}; if (!S.divs[d]) S.divs[d] = {bn: DIV_BN[d] || d, en: d}; }
 
 let TRK = null;
+var TR_RX = [];
 const BN_RE = /[ঀ-৿]/;
 function buildTR() {
   const m = Object.assign({}, TR_DICT);
-  S.cats.forEach(c => { if (c.bn && c.en) m[c.bn] = c.en; });
-  TRK = Object.keys(m).filter(k => k).sort((a, b) => b.length - a.length).map(k => [k, m[k]]);
+  // লগইনের আগে S থাকে না: তখন শুধু অভিধান দিয়ে অনুবাদ, আর কাছে রাখা হয় না (ডেটা এলে খাতের নামসহ আবার বানানো হবে)
+  ((S && S.cats) || []).forEach(c => { if (c.bn && c.en) m[c.bn] = c.en; });
+  const list = Object.keys(m).filter(k => k).sort((a, b) => b.length - a.length).map(k => [k, m[k]]);
+  if (S) TRK = list;
+  return list;
 }
 function tr(s) {
   if (LANG !== 'en' || typeof s !== 'string' || !BN_RE.test(s)) return s;
   const t = s.trim();
   if (TR_EXACT[t] !== undefined) return s.replace(t, TR_EXACT[t]);
-  if (!TRK) buildTR();
+  const K = TRK || buildTR();
   let o = s.replace(/(\d)টি/g, '$1');
-  for (const [k, v] of TRK) { if (o.indexOf(k) >= 0) o = o.split(k).join(v); if (!BN_RE.test(o)) break; }
+  for (const [re, rep] of TR_RX) o = o.replace(re, rep);
+  for (const [k, v] of K) { if (o.indexOf(k) >= 0) o = o.split(k).join(v); if (!BN_RE.test(o)) break; }
   return o;
 }
 function trDom(root) {
@@ -459,6 +483,11 @@ function migrate() {
   if (!S.depHist) S.depHist = {};
   if (S.plAsOf === undefined) S.plAsOf = '2026-09'; // নতুন বছরে '' (এখনও লাভ/ক্ষতির ডেটা নেই)
   if (!S.archive) S.archive = {};
+  if (!S.mix) S.mix = {}; if (!S.tgt) S.tgt = {};
+  if (INIT.mix && !Object.keys(S.mix).length) { S.mix = JSON.parse(JSON.stringify(INIT.mix)); S.mixAsOf = INIT.mixAsOf; }
+  if (INIT.tgt && !Object.keys(S.tgt).length) { S.tgt = JSON.parse(JSON.stringify(INIT.tgt)); S.tgtAsOf = INIT.tgtAsOf; }
+  if (!S.depAsOf && INIT.depAsOf) S.depAsOf = INIT.depAsOf;
+  Object.keys(INIT.snaps || {}).forEach(m => { if (!S.snaps[m]) return; Object.keys(INIT.snaps[m]).forEach(c => { const a = INIT.snaps[m][c], t = S.snaps[m][c]; if (a && t && typeof a === 'object' && a.int != null && t.int == null) t.int = a.int; }); });
   if (!S.unit) S.unit = {bn: UNIT0.bn, en: UNIT0.en};
   S.v = 3;
 }
@@ -504,8 +533,8 @@ function suggest(q) {
   box.hidden = false; trDom(box);
 }
 
-const TR_DICT = {"কী": "Key", "আগে": "Before", "কপি": "Copy", "কোড": "Code", "খাত": "Head", "জুন": "June", "ধরন": "Type", "নোট": "Note", "পরে": "After", "বছর": "Year", "মাস": "Month", "মূল": "Original", "মোট": "Total", "কোটি": "crore", "ক্রম": "Sort", "ডেটা": "Data", "ঢাকা": "Dhaka", "দিন)": "days left)", "বনাম": "vs", "মাস:": "Month:", "শাখা": "Branch", "শিট:": "Sheet:", "সময়": "Time", "৯০%+": "90%+", "আগস্ট": "August", "খুলনা": "Khulna", "জুলাই": "July", "ঝুঁকি": "Risk", "তারিখ": "Date", "দিন (": "days (", "বাজেট": "Budget", "বাতিল": "Cancel", "বিভাগ": "Division", "ব্যয়": "Spent", "মার্চ": "March", "মুছুন": "Delete", "রংপুর": "Rangpur", "লুকান": "Hide", "সিলেট": "Sylhet", "GL কোড": "GL code", "অবস্থা": "Status", "এপ্রিল": "April", "করবেন?": "— confirm?", "তারিখ:": "Date:", "তালিকা": "List", "নিরাপদ": "Safe", "বরিশাল": "Barisal", "বাড়তি": "Added", "সঞ্চিত": "Cumulative", "সব খাত": "All heads", "সাধারণ": "General", "🏦 শাখা": "🏦 Branches", "/ ঝুঁকি": "/ risk", "অক্টোবর": "October", "অবরাদ্দ": "Unallocated", "অবশিষ্ট": "Remaining", "ইমপোর্ট": "Import", "গ্লোবাল": "Global", "ঝুঁকিতে": "at risk", "ডিপোজিট": "Deposit", "নভেম্বর": "November", "পর্যন্ত": "as of", "প্রয়োগ": "Apply", "ব্যবহার": "Usage", "ব্যবহৃত": "used", "রাজশাহী": "Rajshahi", "সংশোধিত": "Revised", "সতর্কতা": "Warning", "· বাড়তি": "· added", "· বৈধতা:": "· Valid until:", "অতিরিক্ত": "Excess", "অন্যান্য": "Others", "আগের মাস": "Previous month", "আপ্যায়ন": "Entertainment", "কিছু নেই": "None", "ডিসেম্বর": "December", "ডেটা নেই": "No data", "ডেভেলপার": "Developer", "নতুন খাত": "New head", "পরিবর্তন": "Change", "প্রজেকশন": "Projection", "মাস বাকি": "months left", "লাইসেন্স": "Licence", "সব বিভাগ": "All divisions", "⚙ সেটিংস": "⚙ Settings", "· ব্যবহার": "· used", "একটি শাখা": "Single branch", "এর সঞ্চিত": "cumulative", "খাতওয়ারি": "By head", "চট্টগ্রাম": "Chittagong", "জানুয়ারি": "January", "ডেটা নেই।": "No data.", "পরিস্থিতি": "Position", "বাংলা নাম": "Bangla name", "বাজেট নেই": "No budget", "ব্যবহার %": "Usage %", "ময়মনসিংহ": "Mymensingh", "মাস × ১২।": "months × 12.", "মাস বাছুন": "Select a month", "মূল বাজেট": "Original budget", "মোট বাজেট": "Total budget", "মোট ব্যয়": "Total spent", "যাচাইকারী": "Checked by", "শাখার নাম": "Branch name", "সতর্কতা (": "Warning (", "সব অবস্থা": "All statuses", "♻ রিস্টোর": "♻ Restore", "⚠ সতর্কতা": "⚠ Alerts", "💾 সংরক্ষণ": "💾 Save", "🖨 প্রিন্ট": "🖨 Print", "· পরিবর্তন": "· change", "কপি হয়েছে": "Copied", "কী বৈধ নয়": "Key is not valid", "ক্ষতি বেশি": "Highest loss", "চলতি বাজেট": "Current budget", "ছাড়িয়েছে": "over limit", "শাখা · কোড": "Branch · Code", "শাখাওয়ারি": "By branch", "শুধু এ মাস": "This month only", "সেপ্টেম্বর": "September", "➕ নতুন খাত": "➕ New head", "🟩 হিটম্যাপ": "🟩 Heatmap", "অনুমোদনকারী": "Approved by", "কলামের অর্থ": "Column meaning", "ঝুঁকির শাখা": "Branches at risk", "নাম (বাংলা)": "Name (Bangla)", "ফেব্রুয়ারি": "February", "বিভাগওয়ারি": "By division", "মাসিক ব্যয়": "Monthly spend", "মোট অবশিষ্ট": "Total remaining", "এই % ছাড়ালে": "Above this %,", "কী তৈরি করুন": "Generate key", "খাত অনুযায়ী": "By head", "খাত ও GL কোড": "Heads & GL codes", "ছাড়ানো শাখা": "Branches over", "ডিপোজিট বেশি": "Highest deposit", "তথ্য সংরক্ষণ": "Save details", "প্রস্তুতকারী": "Prepared by", "বিভাগভিত্তিক": "By division", "মেয়াদ বাছুন": "Select an expiry date", "মোট প্রস্তাব": "Total proposed", "লাইসেন্সধারী": "Licensee", "শাখা খুঁজুন…": "Find a branch…", "শেষ ব্যাকআপ:": "Last backup:", "সক্রিয় করুন": "Activate", "সঞ্চিত ব্যয়": "Cumulative spend", "সমগ্র ব্যাংক": "Whole bank", "সীমা ছাড়ানো": "Over limit", "৯০%+ ব্যবহৃত": "90%+ used", "➕ নতুন বিভাগ": "➕ New division", "📊 ড্যাশবোর্ড": "📊 Dashboard", "অবশিষ্ট বাজেট": "Remaining budget", "গ্লোবাল ঘাটতি": "Global shortfall", "গ্লোবাল বাজেট": "Global budget", "বাজেট ব্যবহার": "Budget used", "বাড়তি বরাদ্দ": "Additional allocation", "ব্যয়/ডিপোজিট": "Spent/Deposit", "ব্যাকআপ হয়নি": "Backup failed", "লাইসেন্সধারী:": "Licensee:", "শাখা অনুযায়ী": "By branch", "সংশোধিত বাজেট": "Revised budget", "সময় অতিবাহিত": "Time elapsed", "💾 নাম সংরক্ষণ": "💾 Save names", "· চলতি সংশোধিত": "· current revised", "· শেষ ব্যাকআপ:": "· Last backup:", "। নতুন কী দিন।": ". Enter a new key.", "আপ্যায়ন ব্যয়": "Entertainment spend", "ডিপোজিট (কোটি)": "Deposit (crore)", "পাসওয়ার্ড ভুল": "Wrong password", "প্রস্তাবিত মোট": "Proposed total", "বিভাগ অনুযায়ী": "By division", "মোট ব্যয়ে অংশ": "Share of total spend", "✏ বাজেট সংশোধন": "✏ Budget revision", ") পাওয়া যায়নি": ") not found", ": সংশোধিত বাজেট": ": revised budget", "এর ডেটা মুছবেন?": "data — delete it?", "খাত · বিস্তারিত": "Head · details", "খাতওয়ারি চৌকো:": "Head-wise squares:", "গড় মাসিক ব্যয়": "Average monthly spend", "দুই শাখার তুলনা": "Compare two branches", "বছরশেষ প্রজেকশন": "Year-end projection", "বাজেট হালনাগাদ:": "Budget updated:", "মূল ডেটা ফিরেছে": "Original data restored", "রিস্টোর ব্যর্থ:": "Restore failed:", "রিস্টোর সম্পন্ন": "Restore complete", "লাভ/ক্ষতি (লাখ)": "Profit/Loss (lakh)", "সংশোধিত বাজেটের": "of the revised budget", "সতর্কতার সীমা %": "Warning threshold %", "সীমা ছাড়িয়েছে": "Over limit", "সেটিংস সংরক্ষিত": "Settings saved", "💾 বাজেট সংরক্ষণ": "💾 Save budget", "অঙ্ক: লাখ টাকায়": "Figures in lakh Taka", "আগে কী তৈরি করুন": "Generate a key first", "আপ্যায়ন/ডিপোজিট": "Entertainment/Deposit", "টেমপ্লেট ইমপোর্ট": "Template import", "ডেটা: জানুয়ারি–": "Data: January–", "মূল বাজেট (শাখা)": "Original budget (branches)", "মেয়াদ (পর্যন্ত)": "Valid until", "মোঃ রুকনুজ্জামান": "Md. Rukonuzzaman", "মোট সঞ্চিত ব্যয়": "Total cumulative spend", "লাভ/ক্ষতি (কোটি)": "Profit/loss (crore)", "শাখার কলাম (যেমন": "Branch columns (e.g.", "⬇ টেমপ্লেট নামান": "⬇ Download template", "💾 ব্যাকআপ (JSON)": "💾 Backup (JSON)", "TB থেকে মোট (লাখ)": "Total from TB (lakh)", "অবরাদ্দ ব্যালেন্স": "Unallocated balance", "কোনো পরিবর্তন নেই": "No changes", "খাত অনুযায়ী গণনা": "Count by head", "প্রস্তাব অনুযায়ী": "As proposed", "প্রস্তাবিত বাড়তি": "Proposed addition", "প্রস্তাবিত সংশোধন": "Proposed revision", "ফাইল পড়া যায়নি:": "Could not read file:", "বর্তমান হারে চললে": "At the current rate", "বিভাগ · বিস্তারিত": "Division · details", "মোট সংশোধিত বাজেট": "Total revised budget", "সম্ভাব্য অতিরিক্ত": "Likely excess", "⬇ Excel এক্সপোর্ট": "⬇ Export Excel", "📈 ট্রেন্ড ও তুলনা": "📈 Trends & comparison", "🖨 প্রিন্ট রিপোর্ট": "🖨 Print report", "কিছু পাওয়া যায়নি": "Nothing found", "কোনো সতর্কতা নেই 🎉": "No alerts 🎉", "খাত অনুযায়ী ব্যয়": "Spend by head", "মোট অতিরিক্ত ব্যয়": "Total excess spend", "শুধু এ মাসের ব্যয়": "This month's spend only", "সফটওয়্যার পরিচিতি": "About the software", "এই কী-এর মেয়াদ শেষ": "This key has expired", "কোনো প্রস্তাব নেই 🎉": "No proposals 🎉", "প্রত্যাশিত বৃদ্ধি %": "Expected growth %", "লাইসেন্স কী বৈধ নয়": "Licence key is not valid", "শাখা তালিকায় দেখুন": "View in branch list", "শাখার তথ্য সংরক্ষিত": "Branch details saved", "সময়কাল: জানুয়ারি–": "Period: January–", "৩. সংরক্ষিত মাসগুলো": "3. Saved months", "⬆ ইমপোর্ট ও ব্যাকআপ": "⬆ Import & backup", "⬆ সম্পাদিত ফাইল দিন": "⬆ Upload edited file", "🖨 পুরো পাতা প্রিন্ট": "🖨 Print whole page", "এখনও কোনো সংশোধন নেই": "No revisions yet", "বছরশেষে ছাড়াতে পারে": "May exceed by year-end", "বিভাগ অনুযায়ী ব্যয়": "Spend by division", "বিভাগের নাম সংরক্ষিত": "Division names saved", "মাসপ্রতি গড় অবশিষ্ট": "Average remaining per month", "শেষবার নিশ্চিত করুন।": "Confirm one last time.", "৪. ব্যাকআপ ও রিস্টোর": "4. Backup & restore", "-এর ডেটা প্রয়োগ করুন": " — apply this month’s data", "আপ্যায়ন/ডিপোজিট বেশি": "Highest Entertainment/Deposit", "এই কম্পিউটারে প্রয়োগ": "Apply on this computer", "টেমপ্লেট পড়া যায়নি:": "Could not read template:", "মোট ব্যয় (জানুয়ারি–": "Total spent (January–", "মোট ব্যয় — বিস্তারিত": "Total spend — details", "সংশোধিত বাজেট অতিক্রম": "Exceeds revised budget", "সম্ভাব্য মোট অতিরিক্ত": "Likely total excess", "সীমা ছাড়ানো শাখা-খাত": "Branch-heads over limit", "💾 ডেটার ব্যাকআপ নামান": "💾 Download data backup", "আগে বৈধ ফাইল/শিট বাছুন": "Select a valid file/sheet first", "এর ডেটা প্রয়োগ হয়েছে": "data applied", "টি · চেনা শাখা মিলেছে:": " · known branches matched:", "ধাঁচের কলাম থাকতে হবে।": "style columns.", "ব্যাকআপ ডাউনলোড হয়েছে": "Backup downloaded", "শাখা-কলাম পাওয়া গেছে:": "Branch columns found:", "⚠ লাইসেন্সের মেয়াদ আর": "⚠ Licence expires in", "লাইসেন্স সক্রিয় হয়েছে": "Licence activated", "শাখায় বরাদ্দ (সংশোধিত)": "Allocated to branches (revised)", "সীমা ছাড়িয়েছে = ব্যয়": "Over limit = spend", "💰 আপ্যায়ন বনাম ডিপোজিট": "💰 Entertainment vs Deposit", "খাত অনুযায়ী (গ্লোবালসহ)": "By head (with global)", "অবশিষ্ট বাজেট — বিস্তারিত": "Remaining budget — details", "এখনও ব্যাকআপ নেওয়া হয়নি": "No backup taken yet", "গ্লোবাল থেকে মেটানো সম্ভব": "Can be met from global", "ট্যাবে Trial Balance দিন।": "tab and load a Trial Balance.", "পর্যন্ত ব্যয়ের ভিত্তিতে)": ")", "শাখা ব্যয়-বাজেট ম্যানেজার": "Branch Expenditure-Budget Manager", "সংশোধনের কারণ/নোট (ঐচ্ছিক)": "Reason / note for revision (optional)", "সংশোধনের লগ (সর্বশেষ ২০টি)": "Revision log (latest 20)", "সর্বোচ্চ বাজেটের ১০টি শাখা": "Top 10 branches by budget", "সর্বোচ্চ ব্যয়ের ১০টি শাখা": "Top 10 branches by spend", "সিনিয়র প্রিন্সিপাল অফিসার": "Senior Principal Officer", "এখনও কোনো ব্যয়ের ডেটা নেই।": "No expense data yet. Open the", "নতুন লাইসেন্স কী পেস্ট করুন": "Paste a new licence key", "প্রয়োগ হয়েছে, রিলোড হচ্ছে": "Applied, reloading", "বিভাগের নাম (বাংলা ও ইংরেজি)": "Division names (Bangla & English)", "মোট সঞ্চিত ব্যয় (মাসওয়ারি)": "Total cumulative spend (monthly)", "লাইসেন্স কী এখানে পেস্ট করুন": "Paste the licence key here", "লাইসেন্সের মেয়াদ শেষ হয়েছে": "Licence has expired", "শাখা ব্যয়-বাজেট ম্যানেজার v": "Branch Expenditure-Budget Manager v", "সংশোধিত বাজেট বাড়ানো হয়েছে": "Revised budget increased", "সালের বাজেট প্রস্তাব (খসড়া)": "budget proposal (draft)", "🔒 শাখা ব্যয়-বাজেট ম্যানেজার": "🔒 Branch Expenditure-Budget Manager", "· ⚠ এখনও ব্যাকআপ নেওয়া হয়নি": "· ⚠ No backup taken yet", "এই GL কোড শিটে পাওয়া যায়নি:": "These GL codes were not found in the sheet:", "মোট সংশোধিত বাজেট — বিস্তারিত": "Total revised budget — details", "সবচেয়ে ঝুঁকিতে ১০টি শাখা-খাত": "10 branch-heads most at risk", "ফাইল বাছুন। Trial Balance শিটে": "Choose a file. The Trial Balance sheet must have", "শাখা ব্যয় বনাম বাজেট বিবরণী —": "Branch Expenditure vs Budget Statement —", "সবচেয়ে কম অবশিষ্টের ১৫টি শাখা": "15 branches with the least remaining", "১. মাসিক Trial Balance ইমপোর্ট": "1. Monthly Trial Balance import", "এটি এই সফটওয়্যারের ব্যাকআপ নয়": "This is not a backup of this software", "সঞ্চিত ব্যয় বনাম সংশোধিত বাজেট": "Cumulative spend vs revised budget", "গ্লোবাল বাজেট বনাম শাখায় বরাদ্দ": "Global budget vs branch allocation", "প্রস্তাবিত বাজেট সংশোধন তালিকা (": "Proposed budget revision list (based on spending through", "বছরশেষে ছাড়াতে পারে — বিস্তারিত": "May exceed by year-end — details", "সঞ্চিত (জানুয়ারি থেকে এ পর্যন্ত)": "Cumulative (January to date)", "তালিকা (অতিরিক্তের পরিমাণ অনুযায়ী)": "List (by excess amount)", "প্রস্তাবিত বাড়তি বরাদ্দের তালিকা (": "List of proposed additional allocations (", "শাখাওয়ারি (ব্যবহারের হার অনুযায়ী)": "By branch (by usage rate)", "🔍 শাখার নাম/কোড, বিভাগ বা খাত লিখুন…": "🔍 Type a branch name/code, division or head…", "BASIC Bank PLC — কমন সার্ভিসেস ডিভিশন": "BASIC Bank PLC — Common Services Division", "নতুন খাত যোগ হয়েছে; নাম ও GL কোড দিন": "New head added; enter its name and GL code", "কার্ডে ক্লিক করলে বিস্তারিত দেখা যাবে।": "Click a card to see details.", "⚠ সব ডেটা মুছে খালি অবস্থায় ফিরুন": "⚠ Restore the original (Excel-based) data", "এর আগের ডেটা প্রতিস্থাপিত হবে। নিশ্চিত?": "existing data will be replaced. Confirm?", "২. বাজেট টেমপ্লেট (এক্সপোর্ট ↔ ইমপোর্ট)": "2. Budget template (export ↔ import)", "(হলুদ), ৯০%+ হলে কমলা, ১০০% ছাড়ালে লাল।": "(yellow); at 90%+ orange; above 100% red.", "মাসওয়ারি সঞ্চিত ব্যয় (নির্বাচিত পরিসর)": "Monthly cumulative spend (selected scope)", "চাপলে সংশোধিত বাজেট বাড়ে ও লগে লেখা হয়।": "raises the revised budget and is logged.", "মাসিক = পরপর দুই মাসের সঞ্চিতের পার্থক্য।": "Monthly = difference between two consecutive cumulative figures.", "খাতভিত্তিক প্রস্তাব বনাম অবরাদ্দ ব্যালেন্স": "Proposals vs unallocated balance, by head", "নতুন বিভাগের নাম (English, যেমন Rangamati)": "New division name (English, e.g. Rangamati)", "এই সফটওয়্যার চালাতে বৈধ লাইসেন্স কী লাগবে।": "A valid licence key is required to run this software.", "কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়, ঢাকা": "Common Services Division, Head Office, Dhaka", "একই GL কোড একাধিকবার আছে; প্রথমটি ধরা হয়েছে:": "The same GL code appears more than once; the first was used:", "নতুন বিভাগ যোগ হয়েছে; এবার শাখায় বিভাগ বসান": "New division added; now assign it to branches", "তালিকার এই শাখা কোড TB-তে নেই (ব্যয় ০ ধরা হবে):": "These branch codes are not in the TB (spend will be taken as 0):", "মোট ব্যয়ের ধারা (সঞ্চিত) বনাম মোট সংশোধিত বাজেট": "Total spend trend (cumulative) vs total revised budget", "সব সংশোধন ও ইমপোর্ট মুছে মূল ডেটা ফিরিয়ে আনবেন?": "Delete all revisions and imports and restore the original data?", "ট্যাবে বাজেট টেমপ্লেটে ডিপোজিট কলাম ব্যবহার করুন।": "tab, use the Deposit column of the budget template.", "বারের ছোট ত্রিকোণ-দাগ = বছরের যতটা সময় চলে গেছে (": "The small triangle on a bar = how much of the year has passed (", ")। বার তা ছাড়িয়ে গেলে ব্যয় সময়ের চেয়ে দ্রুত হচ্ছে।": "). If the bar goes beyond it, spending is faster than time.", "BASIC Bank PLC — কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়": "BASIC Bank PLC — Common Services Division, Head Office", "এর ডেটা আগে থেকেই আছে; প্রয়োগ করলে তা প্রতিস্থাপিত হবে।": "already has data; applying will replace it.", "বর্তমান সব ডেটা ব্যাকআপ দিয়ে প্রতিস্থাপিত হবে। নিশ্চিত?": "All current data will be replaced by the backup. Confirm?", "সঞ্চিত মান আগের মাসের চেয়ে কমেছে (রিভার্সাল বা ভুল মাস?):": "Cumulative values dropped below the previous month (reversal or wrong month?):", "সংখ্যা: লাভ/ক্ষতি = অপারেটিং লাভ − অপারেটিং ক্ষতি (লাখ টাকা)": "Note: Profit/Loss = operating profit − operating loss (lakh Taka)", "সব ডেটা আপনার কম্পিউটারের ব্রাউজারেই থাকে; কোথাও পাঠানো হয় না।": "All data stays in your computer’s browser; nothing is sent anywhere.", "এতে ক্লাউডের সব শাখা, বাজেট, ইমপোর্ট ও আর্কাইভ মুছে যাবে (খাত ও GL থাকবে)। আগে অবশ্যই ব্যাকআপ নিন।": "This erases all revisions and imports made so far. Take a backup first.", "যোগাযোগ: মোঃ রুকনুজ্জামান, কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়": "Contact: Md. Rukonuzzaman, Common Services Division, Head Office", "(ক্রমানুসারে)। সারিতে ক্লিক করলে শাখার বিস্তারিত ও বাজেট সম্পাদনা।": "(in order). Click a row for branch details and budget editing.", "⚠ ডেটা সংরক্ষণ করা যায়নি (ব্রাউজারের স্টোরেজ পূর্ণ?)। ব্যাকআপ নিন।": "⚠ Could not save data (browser storage full?). Take a backup.", "মাসিক = এ মাসের সঞ্চিত − আগের মাসের সঞ্চিত (আগের মাস না থাকলে ফাঁকা)।": "Monthly = this month’s cumulative − previous month’s cumulative (blank if there is no previous month).", "সব অঙ্ক লাখ টাকায়। Code ঠিক রাখুন; নতুন শাখা যোগ করতে নতুন সারি লিখুন।": "All figures in lakh Taka. Keep Code unchanged; add a new row to add a branch.", "কম্পিউটারের তারিখ আগের চেয়ে পিছিয়ে আছে। তারিখ ঠিক করুন বা নতুন কী দিন।": "The computer’s date is earlier than before. Fix the date or enter a new key.", "BASIC Bank PLC · কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয় · অঙ্ক: লাখ টাকায়": "BASIC Bank PLC · Common Services Division, Head Office · Figures in lakh Taka", "· ডেভেলপার: মোঃ রুকনুজ্জামান · ডেটা শুধু এই কম্পিউটারের ব্রাউজারে সংরক্ষিত": "· Developer: Md. Rukonuzzaman · Data is stored only in this computer’s browser", "TB-তে এমন শাখা আছে যা তালিকায় নেই (টিক দিলে নতুন শাখা হিসেবে যোগ হবে, বাজেট ০):": "The TB has branches that are not in the list (tick to add them as new branches, budget 0):", "সংশোধিত বাজেট (বাজেট ০ কিন্তু ব্যয় আছে এমনও এর মধ্যে)। প্রজেকশন = এ পর্যন্ত ব্যয় ÷": "revised budget (this includes a zero budget with spending). Projection = spend so far ÷", "প্রতিটি ঘরে সংশোধিত বাজেটের কত % ব্যয় হয়েছে। ঘরে/সারিতে ক্লিক করলে শাখার বিস্তারিত।": "Each cell shows what % of the revised budget has been spent. Click a cell/row for branch details.", "ডেটা ক্লাউডে (Firebase) থাকে; তবু মাসে অন্তত একবার নিজের কাছে ব্যাকআপ রাখুন। রিস্টোর করলে ক্লাউডের চলতি ডেটা ও আর্কাইভ প্রতিস্থাপিত হয়। আগের সংস্করণ (v3.x) থেকে ডেটা আনতে সেখানে ব্যাকআপ নিয়ে এখানে রিস্টোর করুন।": "Data lives only in this browser. Clearing browser data erases it, so take regular backups.", "বাছা হয়েছে কিন্তু আগের কোনো সঞ্চিত মাস সংরক্ষিত নেই; তাই এ মাসের সংখ্যাই সঞ্চিত ধরা হবে।": "is selected but no earlier cumulative month is saved, so this month’s figures will be treated as cumulative.", "এখানে নাম বদলালে পুরো সফটওয়্যারে (বাংলা/ইংরেজি দুই ভাষায়) সেই নাম দেখাবে। কোড/কী অপরিবর্তিত থাকে।": "Changing a name here shows it throughout the software (in both Bangla and English). The code/key stays unchanged.", "একাধিক GL কোড কমা দিয়ে লিখুন (যেমন যানবাহন জ্বালানি: 84210000, 84230000)। গ্লোবাল বাজেট লাখ টাকায়।": "Separate multiple GL codes with commas (e.g. vehicle fuel: 84210000, 84230000). Global budget in lakh Taka.", "বর্তমান গড় হারে চললে বছরশেষে সংশোধিত বাজেটের ৫%-এর বেশি ছাড়াবে, কিন্তু এখনও সীমার ভেতরে। মৌসুমি খরচ ধরা নেই।": "At the current average rate this will exceed the revised budget by more than 5% by year-end, but is still within the limit. Seasonal costs are not considered.", "শাখাভিত্তিক ব্যয় ও বাজেট ট্র্যাকিং — মাসিক Trial Balance থেকে স্বয়ংক্রিয় হিসাব, সতর্কতা, ট্রেন্ড ও প্রতিবেদন।": "Branch-wise expenditure and budget tracking — automatic calculation from the monthly Trial Balance, alerts, trends and reports.", "বর্তমান বাজেট, ডিপোজিট ও বিভাগ Excel-এ নামান, সম্পাদনা করে ফেরত দিন। নতুন শাখাও এভাবে যোগ করা যায় (Code, Name ঠিক রাখুন)।": "Download the current budgets, deposits and divisions to Excel, edit them and upload them back. New branches can be added this way too (keep Code and Name).", "আপ্যায়ন ব্যয়কে ডিপোজিটের শতাংশ হিসেবে দেখানো হয়েছে (দুটিই লাখ টাকায়)। ডিপোজিট ও লাভ/ক্ষতির সংখ্যা মূল Excel ফাইল থেকে নেওয়া; হালনাগাদ করতে": "Entertainment spend is shown as a percentage of deposit (both in lakh Taka). Deposit and profit/loss figures are taken from the original Excel file; to update, open the", "= এখনও সীমার ভেতরে, কিন্তু প্রজেকশন সংশোধিত বাজেটের ৫%-এর বেশি ছাড়ায়। প্রজেকশন সরল গড় ধরে; মৌসুমি খরচ (গরমে বিদ্যুৎ, বছরশেষে স্টেশনারি) আলাদা বিবেচ্য।": "= still within the limit, but the projection exceeds the revised budget by more than 5%. The projection is a simple average; seasonal costs (electricity in summer, stationery near year-end) need separate consideration.", "প্রস্তাবিত বাড়তি বরাদ্দ = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) − সংশোধিত বাজেট, ০.০৫ লাখে উপরের দিকে গোল করা। এটি শুধু সহায়ক হিসাব; সিদ্ধান্ত আপনার।": "Proposed addition = (the larger of spend so far and the year-end projection) − revised budget, rounded up to 0.05 lakh. This is only a helper calculation; the decision is yours.", "প্রস্তাব = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) × (১ + বৃদ্ধির হার), ০.০৫ লাখে গোল করা। এটি শুধু শুরুর খসড়া; শাখার বিশেষ পরিকল্পনা, ভাড়া/দর বৃদ্ধি ও মৌসুমি খরচ আলাদা বিবেচ্য।": "Proposal = (the larger of spend so far and the year-end projection) × (1 + growth rate), rounded to 0.05 lakh. This is only a starting draft; branch-specific plans, rent/price increases and seasonal costs need separate consideration.", "(আর": "(", "প্রশাসনিক ব্যয়": "Administrative expenses", "কর্মচারী-সংক্রান্ত ব্যয়": "Employee-related expenses", "কর্মচারী-সংক্রান্ত": "Employee-related", "প্রশাসনিক": "Administrative", "নিয়ন্ত্রণ-বহির্ভূত ও অন্যান্য": "Non-controllable & other", "হেড অফিসের মোট ব্যয়": "Head Office total expenditure", "প্রশাসনিক: গড় মাসিক": "Administrative: monthly average", "আলাদা গ্রুপ": "Separate group", "বাজেট দেওয়া হয়নি": "No budget entered", "সুদ, ঋণ-ক্ষতি, বিনিময়-ক্ষতি ইত্যাদিসহ": "Incl. interest, loan loss, exchange loss etc.", "সব ঠিক": "All fine", "হেড অফিস": "Head Office", "🏛 হেড অফিস": "🏛 Head Office", "ট্যাব · ব্যয় ও বাজেট": "Tab · expenditure & budget", "হেড অফিসের অংশ": "Head Office share", "হেড অফিসের ব্যয়": "Head Office spend", "শাখার ব্যয়": "Branch spend", "+ হেড অফিস": "+ Head Office", "= ব্যাংকের মোট": "= Bank total", "ব্যাংকের মোট": "Bank total", "🏛 ব্যাংকের মোট (হেড অফিসসহ)": "🏛 Bank total (incl. Head Office)", "ব্যাংকের মোট ব্যয় (হেড অফিসসহ)": "Bank total expenditure (incl. Head Office)", "তুলনীয় খাত": "Comparable heads", "শাখার বাজেট-বিশ্লেষণ ও সতর্কতা শুধু শাখাভিত্তিক থাকে; এটি কেবল মোট ব্যয়ের পূর্ণ চিত্রের জন্য। ক্লিক করলে খাতওয়ারি বিস্তারিত।": "Branch budget analysis and alerts stay branch-based only; this is just for the full picture of total spend. Click for head-wise details.", "পর্যন্ত, তুলনীয় খাত। আপ্যায়ন বলতে ক্লায়েন্ট আপ্যায়ন (84170000) ধরা হয়েছে, যাতে শাখার সাথে মেলে।": ", comparable heads. Entertainment here means client entertainment (84170000) so that it matches the branches.", "হেড অফিস · ডেটা:": "Head Office · Data:", "পর্যন্ত · অঙ্ক: লাখ টাকায়। বাজেট না দিলে শুধু ব্যয় দেখাবে (কোনো সতর্কতা আসবে না); বাজেট দিলে পূর্ণ বিশ্লেষণ পাবেন।": "· Figures in lakh Taka. Without a budget only spending is shown (no alerts); with a budget you get the full analysis.", "এখনও হেড অফিসের কোনো ব্যয়ের ডেটা নেই। \"ইমপোর্ট\" ট্যাবে কনভার্টারে বানানো ফাইল (বা CBS-এর P&L ফাইল) দিন। এর মধ্যে নিচের খাত-তালিকা ও বাজেট ঘর ব্যবহার করা যায়।": "There is no Head Office expenditure data yet. Open the \"Import\" tab and load the file made by the converter (or the CBS P&L file). Meanwhile you can use the head list and budget boxes below.", "১. প্রশাসনিক ব্যয়": "1. Administrative expenses", "২. কর্মচারী-সংক্রান্ত ব্যয় (আলাদা গ্রুপ)": "2. Employee-related expenses (separate group)", "৩. নিয়ন্ত্রণ-বহির্ভূত ও অন্যান্য (অবশিষ্ট)": "3. Non-controllable & other (remainder)", "খাতের নামে ক্লিক করলে বিস্তারিত। বাজেট/সংশোধিত ঘরে সংখ্যা দিয়ে নিচের বোতামে সংরক্ষণ করুন; ফাঁকা রাখলে ওই খাতে শুধু ব্যয় দেখাবে। সংশোধিত ফাঁকা থাকলে বাজেটই সংশোধিত ধরা হয়।": "Click a head name for details. Enter numbers in the Budget/Revised boxes and save with the button below; leave blank to see only spending for that head. If Revised is blank, the budget is taken as revised.", "বাজেট (ঐচ্ছিক)": "Budget (optional)", "💾 হেড অফিসের বাজেট সংরক্ষণ": "💾 Save Head Office budget", "বাজেট মুছুন": "Clear budget", "প্রশাসনিক ব্যয় — সঞ্চিত ব্যয়": "Administrative expenses — cumulative spend", "কর্মচারী-সংক্রান্ত ব্যয় — সঞ্চিত ব্যয়": "Employee-related expenses — cumulative spend", "হেড অফিসের মোট ব্যয় (GL 70000000) থেকে উপরের দুই গ্রুপের বাছাই-করা খাতগুলো বাদ দিলে যা থাকে। এর মধ্যে সুদ ব্যয়, ঋণ-ক্ষতির চার্জ, বিনিয়োগ পুনর্মূল্যায়ন ও বিনিময় ক্ষতির মতো বড় আর্থিক ব্যবস্থাপনার খরচ আছে; কোনো ব্যয় যেন আড়ালে না থাকে সেজন্য এখানে দেখানো হলো।": "What remains after deducting the selected heads of the two groups above from Head Office total expenditure (GL 70000000). It includes large financial-management costs such as interest expense, loan-loss charges, investment revaluation and exchange loss; shown here so that no spending stays hidden.", "বাছাই-করা খাতের যোগফল": "Sum of selected heads", "অবশিষ্টের অংশ": "Share of remainder", "হেড অফিসের খাত-তালিকা (সম্পাদনাযোগ্য)": "Head Office head list (editable)", "প্রতিটি খাতের জন্য সবচেয়ে উপরের লেভেলের একটিমাত্র GL দিন; বাবা-GL ও ছেলে-GL একসাথে দিলে ব্যয় দুইবার গণনা হবে। একাধিক GL কমা দিয়ে লিখুন। নতুন GL যোগ করলে কনভার্টারের \"অতিরিক্ত GL\" ঘরেও দিতে হবে (নিচের বোতামে GL তালিকা কপি করা যায়)।": "Give only one GL (the highest level) per head; giving a parent GL and its child GL together counts the spend twice. Separate multiple GLs with commas. A newly added GL must also be given in the converter’s \"Extra GL\" box (the button below copies the GL list).", "গ্রুপ": "Group", "💾 খাত-তালিকা সংরক্ষণ": "💾 Save head list", "📋 সব GL কপি": "📋 Copy all GLs", "↺ ডিফল্ট তালিকা": "↺ Default list", "English name": "English name", "মাসওয়ারি": "Monthly breakdown", "মাসিক": "Monthly", "৫. ডিপোজিট ইমপোর্ট": "5. Deposit import", "৬. ইমপোর্টের ধাপ": "6. Import steps", "⬇ ডিপোজিট টেমপ্লেট": "⬇ Deposit template", "⬆ ডিপোজিট ফাইল দিন": "⬆ Upload deposit file", "✔ ডিপোজিট প্রয়োগ করুন": "✔ Apply deposit", "বর্তমান ডিপোজিট: মূল Excel ফাইল থেকে নেওয়া (তারিখ অজানা)। শাখার কোড ও ডিপোজিটের সংখ্যাসহ Excel দিন; আপ্যায়ন/ডিপোজিট অনুপাত নতুন ডিপোজিটে হিসাব হবে।": "Current deposit: taken from the original Excel file (date unknown). Upload an Excel with branch code and deposit figures; the Entertainment/Deposit ratio will then use the new deposit.", "বর্তমান ডিপোজিট:": "Current deposit:", "ডিপোজিট:": "Deposit:", "ডিপোজিটের তারিখ": "Deposit date", "একক": "Unit", "লাখ টাকা": "Lakh Taka", "কোটি টাকা": "crore Taka", "টাকা": "Taka", "আগের (লাখ)": "Previous (lakh)", "নতুন (লাখ)": "New (lakh)", "মিলেছে:": "Matched:", "বাদ যাবে:": "Will be skipped:", "(অচেনা কোড)": "(unknown code)", "(ঋণাত্মক)": "(negative)", "(ফাঁকা/অবৈধ)": "(blank/invalid)", "ফাইলে নেই:": "not in file:", "(আগের মান থাকবে)": "(previous value stays)", "সমস্যা/অচেনা:": "problem/unknown:", "ডিপোজিট: মূল Excel ফাইল থেকে (তারিখ অজানা) — হালনাগাদ করতে ইমপোর্ট ট্যাবে ডিপোজিট ইমপোর্ট করুন": "Deposit: from the original Excel file (date unknown) — to update, use Deposit import in the Import tab", "আপ্যায়ন = ক্লায়েন্ট আপ্যায়ন (GL 84170000),": "Entertainment = client entertainment (GL 84170000),", "১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে \"১. মাসিক Trial Balance ইমপোর্ট\"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) ডিপোজিট বদলালে \"৫. ডিপোজিট ইমপোর্ট\" ব্যবহার করুন। CBS-এর মূল ফাইল সরাসরি দিলেও চলে।": "1) Make the small Excel in the converter from the CBS file · 2) give that Excel here in \"1. Monthly Trial Balance import\" · 3) match the month and apply · 4) when deposits change, use \"5. Deposit import\". Giving the original CBS file directly also works.", "হেড অফিস:": "Head Office:", "টি খাতের ব্যয় পাওয়া গেছে · বাছাই-করা খাতের যোগফল": " heads found · sum of selected heads", "· মোট ব্যয়": "· total spend", "· অবশিষ্ট": "· remainder", "হেড অফিসের এই GL ফাইলে নেই (০ ধরা হবে):": "These Head Office GLs are not in the file (taken as 0):", "ফাইলে 001-HEAD OFFICE কলাম নেই; হেড অফিসের ডেটা এ মাসে যোগ হবে না।": "The file has no 001-HEAD OFFICE column; Head Office data will not be added for this month.", "সব ব্যাংক-স্তরের": "", "ডিপোজিটের তারিখ দিন": "Enter the deposit date", "টি শাখার ডিপোজিট হালনাগাদ হয়েছে": " branch deposits updated", "টি খাতের বাজেট সংরক্ষিত": " head budgets saved", "হেড অফিসের সব বাজেট মুছবেন? (ব্যয়ের ডেটা থাকবে)": "Delete all Head Office budgets? (spending data stays)", "হেড অফিসের খাত-তালিকা সংরক্ষিত": "Head Office head list saved", "খাত মুছবেন?": "— delete this head?", "হেড অফিসের খাত-তালিকা ডিফল্টে ফিরবে (বাজেট থাকবে)। নিশ্চিত?": "The Head Office head list will return to default (budgets stay). Confirm?", "GL তালিকা কপি হয়েছে": "GL list copied", "কোড/ডিপোজিট কলাম পাওয়া যায়নি (Code, Deposit_lakh)": "Code/deposit columns not found (Code, Deposit_lakh)", "তারিখ সফটওয়্যারে ইমপোর্টের সময় দিতে হবে।": "The date must be given in the software at import time.", "Deposit_lakh কলামে লাখ টাকায় সংখ্যা দিন। Code ঠিক রাখুন।": "Enter figures in lakh Taka in the Deposit_lakh column. Keep Code unchanged.", "ডিপোজিট (লাখ)": "Deposit (lakh)", "শাখার কোড": "Branch code", "জানু": "Jan", "ফেব্রু": "Feb", "এপ্রি": "Apr", "সেপ্টে": "Sep", "অক্টো": "Oct", "নভে": "Nov", "ডিসে": "Dec", "মে:": "May:", "জুন:": "Jun:", "বিভাগ/ইউনিটের নাম (প্রিন্ট ও রিপোর্ট হেডারে)": "Division/unit name (for print & report headers)", "যে বিভাগ এই সফটওয়্যার ব্যবহার করবে, তাদের নাম এখানে দিন। প্রতিটি প্রিন্ট ও রিপোর্টের শিরোনামে \"BASIC Bank PLC — (এই নাম)\" ছাপা হবে।": "Enter the name of the division using this software. Every print and report heading will show \"BASIC Bank PLC — (this name)\".", "ইউনিটের নাম সংরক্ষিত": "Unit name saved", "— পরের শিট:": "— next sheet:", "📈 লাভ/ক্ষতির অবস্থা": "📈 Profit / loss position", "অপারেটিং": "Operating", "লাভজনক শাখা": "Profitable branches", "মোট লাভ": "Total profit", "ক্ষতিতে থাকা শাখা": "Branches in loss", "মোট ক্ষতি": "Total loss", "নিট লাভ/ক্ষতি (শাখা)": "Net profit/loss (branches)", "নিট লাভ/ক্ষতি": "Net profit/loss", "শাখায় লাভ-ক্ষতি নেই": "branches with no profit or loss", "সবচেয়ে বেশি ক্ষতি:": "Highest loss:", "ক্লিক করলে শাখাওয়ারি তালিকা (লাভ, ক্ষতি, ডিপোজিট ইত্যাদি)।": "Click for the branch-wise list (profit, loss, deposit etc.).", "লাভ/ক্ষতির অবস্থা — শাখাওয়ারি": "Profit / loss position — branch-wise", "অপারেটিং লাভ/ক্ষতি (CBS-এর GL 70000001 ও 90000001),": "Operating profit/loss (CBS GL 70000001 and 90000001),", "মূল Excel ফাইল থেকে": "from the original Excel file", "অঙ্ক কোটি টাকায়। সারিতে ক্লিক করলে শাখার বিস্তারিত।": "Figures in crore Taka. Click a row for branch details.", "মোট ডিপোজিট": "Total deposit", "লাভ-ক্ষতি শূন্য": "Zero profit/loss", "লাভে": "In profit", "ক্ষতিতে": "In loss", "মোট লাভ (কোটি)": "Total profit (crore)", "মোট ক্ষতি (কোটি)": "Total loss (crore)", "নিট (কোটি)": "Net (crore)", "ক্ষতিতে থাকা শাখা (": "Branches in loss (", "টি, বেশি ক্ষতি আগে)": ", largest loss first)", "লাভজনক শাখা (": "Profitable branches (", "টি, বেশি লাভ আগে)": ", largest profit first)", "লাভ-ক্ষতি শূন্য (": "Zero profit/loss (", "কোনো শাখা ক্ষতিতে নেই 🎉": "No branch is in loss 🎉", "কোনো শাখা লাভে নেই": "No branch is in profit", "লাভ/ডিপোজিট": "Profit/Deposit", "লাভ": "Profit", "ক্ষতি": "Loss", "শূন্য": "Zero", "লাভ/ক্ষতি (GL 70000001 ও 90000001) পাওয়া গেছে; লাভ/ক্ষতির কার্ড এই মাসের সংখ্যায় হালনাগাদ হবে।": "Profit/loss (GL 70000001 and 90000001) found; the profit/loss card will update with this month’s figures.", "ফাইলে অপারেটিং লাভ/ক্ষতির GL (70000001, 90000001) নেই; লাভ/ক্ষতি আগের মতো থাকবে।": "The file has no operating profit/loss GLs (70000001, 90000001); profit/loss stays as before.", ", বেশি ক্ষতি আগে)": ", largest loss first)", ", বেশি লাভ আগে)": ", largest profit first)", "বেশি ক্ষতি আগে": "largest loss first", "বেশি লাভ আগে": "largest profit first", "(সঞ্চিত)": "(cumulative)", "আপ্যায়ন ব্যয় (লাখ)": "Entertainment spend (lakh)"};
-const TR_EXACT = {"মে": "May", "জানু": "Jan", "ফেব্রু": "Feb", "মার্চ": "Mar", "এপ্রি": "Apr", "জুন": "Jun", "জুলাই": "Jul", "আগস্ট": "Aug", "সেপ্টে": "Sep", "অক্টো": "Oct", "নভে": "Nov", "ডিসে": "Dec", "টি": ""};
+const TR_DICT = {"কী":"Key","আগে":"Before","কপি":"Copy","কোড":"Code","খাত":"Head","জুন":"June","ধরন":"Type","নোট":"Note","পরে":"After","বছর":"Year","মাস":"Month","মূল":"Original","মোট":"Total","কোটি":"crore","ক্রম":"Sort","ডেটা":"Data","ঢাকা":"Dhaka","দিন)":"days left)","বনাম":"vs","মাস:":"Month:","শাখা":"Branch","শিট:":"Sheet:","সময়":"Time","৯০%+":"90%+","আগস্ট":"August","খুলনা":"Khulna","জুলাই":"July","ঝুঁকি":"Risk","তারিখ":"Date","দিন (":"days (","বাজেট":"Budget","বাতিল":"Cancel","বিভাগ":"Division","ব্যয়":"Spent","মার্চ":"March","মুছুন":"Delete","রংপুর":"Rangpur","লুকান":"Hide","সিলেট":"Sylhet","GL কোড":"GL code","অবস্থা":"Status","এপ্রিল":"April","করবেন?":"— confirm?","তারিখ:":"Date:","তালিকা":"List","নিরাপদ":"Safe","বরিশাল":"Barisal","বাড়তি":"Added","সঞ্চিত":"Cumulative","সব খাত":"All heads","সাধারণ":"General","🏦 শাখা":"🏦 Branches","/ ঝুঁকি":"/ risk","অক্টোবর":"October","অবরাদ্দ":"Unallocated","অবশিষ্ট":"Remaining","ইমপোর্ট":"Import","গ্লোবাল":"Global","ঝুঁকিতে":"at risk","ডিপোজিট":"Deposit","নভেম্বর":"November","পর্যন্ত":"as of","প্রয়োগ":"Apply","ব্যবহার":"Usage","ব্যবহৃত":"used","রাজশাহী":"Rajshahi","সংশোধিত":"Revised","সতর্কতা":"Warning","· বাড়তি":"· added","· বৈধতা:":"· Valid until:","অতিরিক্ত":"Excess","অন্যান্য":"Others","আগের মাস":"Previous month","আপ্যায়ন":"Entertainment","কিছু নেই":"None","ডিসেম্বর":"December","ডেটা নেই":"No data","ডেভেলপার":"Developer","নতুন খাত":"New head","পরিবর্তন":"Change","প্রজেকশন":"Projection","মাস বাকি":"months left","লাইসেন্স":"Licence","সব বিভাগ":"All divisions","⚙ সেটিংস":"⚙ Settings","· ব্যবহার":"· used","একটি শাখা":"Single branch","এর সঞ্চিত":"cumulative","খাতওয়ারি":"By head","চট্টগ্রাম":"Chittagong","জানুয়ারি":"January","ডেটা নেই।":"No data.","পরিস্থিতি":"Position","বাংলা নাম":"Bangla name","বাজেট নেই":"No budget","ব্যবহার %":"Usage %","ময়মনসিংহ":"Mymensingh","মাস × ১২।":"months × 12.","মাস বাছুন":"Select a month","মূল বাজেট":"Original budget","মোট বাজেট":"Total budget","মোট ব্যয়":"Total spent","যাচাইকারী":"Checked by","শাখার নাম":"Branch name","সতর্কতা (":"Warning (","সব অবস্থা":"All statuses","♻ রিস্টোর":"♻ Restore","⚠ সতর্কতা":"⚠ Alerts","💾 সংরক্ষণ":"💾 Save","🖨 প্রিন্ট":"🖨 Print","· পরিবর্তন":"· change","কপি হয়েছে":"Copied","কী বৈধ নয়":"Key is not valid","ক্ষতি বেশি":"Highest loss","চলতি বাজেট":"Current budget","ছাড়িয়েছে":"over limit","শাখা · কোড":"Branch · Code","শাখাওয়ারি":"By branch","শুধু এ মাস":"This month only","সেপ্টেম্বর":"September","➕ নতুন খাত":"➕ New head","🟩 হিটম্যাপ":"🟩 Heatmap","অনুমোদনকারী":"Approved by","কলামের অর্থ":"Column meaning","ঝুঁকির শাখা":"Branches at risk","নাম (বাংলা)":"Name (Bangla)","ফেব্রুয়ারি":"February","বিভাগওয়ারি":"By division","মাসিক ব্যয়":"Monthly spend","মোট অবশিষ্ট":"Total remaining","এই % ছাড়ালে":"Above this %,","কী তৈরি করুন":"Generate key","খাত অনুযায়ী":"By head","খাত ও GL কোড":"Heads & GL codes","ছাড়ানো শাখা":"Branches over","ডিপোজিট বেশি":"Highest deposit","তথ্য সংরক্ষণ":"Save details","প্রস্তুতকারী":"Prepared by","বিভাগভিত্তিক":"By division","মেয়াদ বাছুন":"Select an expiry date","মোট প্রস্তাব":"Total proposed","লাইসেন্সধারী":"Licensee","শাখা খুঁজুন…":"Find a branch…","শেষ ব্যাকআপ:":"Last backup:","সক্রিয় করুন":"Activate","সঞ্চিত ব্যয়":"Cumulative spend","সমগ্র ব্যাংক":"Whole bank","সীমা ছাড়ানো":"Over limit","৯০%+ ব্যবহৃত":"90%+ used","➕ নতুন বিভাগ":"➕ New division","📊 ড্যাশবোর্ড":"📊 Dashboard","অবশিষ্ট বাজেট":"Remaining budget","গ্লোবাল ঘাটতি":"Global shortfall","গ্লোবাল বাজেট":"Global budget","বাজেট ব্যবহার":"Budget used","বাড়তি বরাদ্দ":"Additional allocation","ব্যয়/ডিপোজিট":"Spent/Deposit","ব্যাকআপ হয়নি":"Backup failed","লাইসেন্সধারী:":"Licensee:","শাখা অনুযায়ী":"By branch","সংশোধিত বাজেট":"Revised budget","সময় অতিবাহিত":"Time elapsed","💾 নাম সংরক্ষণ":"💾 Save names","· চলতি সংশোধিত":"· current revised","· শেষ ব্যাকআপ:":"· Last backup:","। নতুন কী দিন।":". Enter a new key.","আপ্যায়ন ব্যয়":"Entertainment spend","ডিপোজিট (কোটি)":"Deposit (crore)","পাসওয়ার্ড ভুল":"Wrong password","প্রস্তাবিত মোট":"Proposed total","বিভাগ অনুযায়ী":"By division","মোট ব্যয়ে অংশ":"Share of total spend","✏ বাজেট সংশোধন":"✏ Budget revision",") পাওয়া যায়নি":") not found",": সংশোধিত বাজেট":": revised budget","এর ডেটা মুছবেন?":"data — delete it?","খাত · বিস্তারিত":"Head · details","খাতওয়ারি চৌকো:":"Head-wise squares:","গড় মাসিক ব্যয়":"Average monthly spend","দুই শাখার তুলনা":"Compare two branches","বছরশেষ প্রজেকশন":"Year-end projection","বাজেট হালনাগাদ:":"Budget updated:","মূল ডেটা ফিরেছে":"Original data restored","রিস্টোর ব্যর্থ:":"Restore failed:","রিস্টোর সম্পন্ন":"Restore complete","লাভ/ক্ষতি (লাখ)":"Profit/Loss (lakh)","সংশোধিত বাজেটের":"of the revised budget","সতর্কতার সীমা %":"Warning threshold %","সীমা ছাড়িয়েছে":"Over limit","সেটিংস সংরক্ষিত":"Settings saved","💾 বাজেট সংরক্ষণ":"💾 Save budget","অঙ্ক: লাখ টাকায়":"Figures in lakh Taka","আগে কী তৈরি করুন":"Generate a key first","আপ্যায়ন/ডিপোজিট":"Entertainment/Deposit","টেমপ্লেট ইমপোর্ট":"Template import","ডেটা: জানুয়ারি–":"Data: January–","মূল বাজেট (শাখা)":"Original budget (branches)","মেয়াদ (পর্যন্ত)":"Valid until","মোঃ রুকনুজ্জামান":"Md. Rukonuzzaman","মোট সঞ্চিত ব্যয়":"Total cumulative spend","লাভ/ক্ষতি (কোটি)":"Profit/loss (crore)","শাখার কলাম (যেমন":"Branch columns (e.g.","⬇ টেমপ্লেট নামান":"⬇ Download template","💾 ব্যাকআপ (JSON)":"💾 Backup (JSON)","TB থেকে মোট (লাখ)":"Total from TB (lakh)","অবরাদ্দ ব্যালেন্স":"Unallocated balance","কোনো পরিবর্তন নেই":"No changes","খাত অনুযায়ী গণনা":"Count by head","প্রস্তাব অনুযায়ী":"As proposed","প্রস্তাবিত বাড়তি":"Proposed addition","প্রস্তাবিত সংশোধন":"Proposed revision","ফাইল পড়া যায়নি:":"Could not read file:","বর্তমান হারে চললে":"At the current rate","বিভাগ · বিস্তারিত":"Division · details","মোট সংশোধিত বাজেট":"Total revised budget","সম্ভাব্য অতিরিক্ত":"Likely excess","⬇ Excel এক্সপোর্ট":"⬇ Export Excel","📈 ট্রেন্ড ও তুলনা":"📈 Trends & comparison","🖨 প্রিন্ট রিপোর্ট":"🖨 Print report","কিছু পাওয়া যায়নি":"Nothing found","কোনো সতর্কতা নেই 🎉":"No alerts 🎉","খাত অনুযায়ী ব্যয়":"Spend by head","মোট অতিরিক্ত ব্যয়":"Total excess spend","শুধু এ মাসের ব্যয়":"This month's spend only","সফটওয়্যার পরিচিতি":"About the software","এই কী-এর মেয়াদ শেষ":"This key has expired","কোনো প্রস্তাব নেই 🎉":"No proposals 🎉","প্রত্যাশিত বৃদ্ধি %":"Expected growth %","লাইসেন্স কী বৈধ নয়":"Licence key is not valid","শাখা তালিকায় দেখুন":"View in branch list","শাখার তথ্য সংরক্ষিত":"Branch details saved","সময়কাল: জানুয়ারি–":"Period: January–","৩. সংরক্ষিত মাসগুলো":"3. Saved months","⬆ ইমপোর্ট ও ব্যাকআপ":"⬆ Import & backup","⬆ সম্পাদিত ফাইল দিন":"⬆ Upload edited file","🖨 পুরো পাতা প্রিন্ট":"🖨 Print whole page","এখনও কোনো সংশোধন নেই":"No revisions yet","বছরশেষে ছাড়াতে পারে":"May exceed by year-end","বিভাগ অনুযায়ী ব্যয়":"Spend by division","বিভাগের নাম সংরক্ষিত":"Division names saved","মাসপ্রতি গড় অবশিষ্ট":"Average remaining per month","শেষবার নিশ্চিত করুন।":"Confirm one last time.","৪. ব্যাকআপ ও রিস্টোর":"4. Backup & restore","-এর ডেটা প্রয়োগ করুন":" — apply this month’s data","আপ্যায়ন/ডিপোজিট বেশি":"Highest Entertainment/Deposit","এই কম্পিউটারে প্রয়োগ":"Apply on this computer","টেমপ্লেট পড়া যায়নি:":"Could not read template:","মোট ব্যয় (জানুয়ারি–":"Total spent (January–","মোট ব্যয় — বিস্তারিত":"Total spend — details","সংশোধিত বাজেট অতিক্রম":"Exceeds revised budget","সম্ভাব্য মোট অতিরিক্ত":"Likely total excess","সীমা ছাড়ানো শাখা-খাত":"Branch-heads over limit","💾 ডেটার ব্যাকআপ নামান":"💾 Download data backup","আগে বৈধ ফাইল/শিট বাছুন":"Select a valid file/sheet first","এর ডেটা প্রয়োগ হয়েছে":"data applied","টি · চেনা শাখা মিলেছে:":" · known branches matched:","ধাঁচের কলাম থাকতে হবে।":"style columns.","ব্যাকআপ ডাউনলোড হয়েছে":"Backup downloaded","শাখা-কলাম পাওয়া গেছে:":"Branch columns found:","⚠ লাইসেন্সের মেয়াদ আর":"⚠ Licence expires in","লাইসেন্স সক্রিয় হয়েছে":"Licence activated","শাখায় বরাদ্দ (সংশোধিত)":"Allocated to branches (revised)","সীমা ছাড়িয়েছে = ব্যয়":"Over limit = spend","💰 আপ্যায়ন বনাম ডিপোজিট":"💰 Entertainment vs Deposit","খাত অনুযায়ী (গ্লোবালসহ)":"By head (with global)","অবশিষ্ট বাজেট — বিস্তারিত":"Remaining budget — details","এখনও ব্যাকআপ নেওয়া হয়নি":"No backup taken yet","গ্লোবাল থেকে মেটানো সম্ভব":"Can be met from global","ট্যাবে Trial Balance দিন।":"tab and load a Trial Balance.","পর্যন্ত ব্যয়ের ভিত্তিতে)":")","শাখা ব্যয়-বাজেট ম্যানেজার":"Branch Expenditure-Budget Manager","সংশোধনের কারণ/নোট (ঐচ্ছিক)":"Reason / note for revision (optional)","সংশোধনের লগ (সর্বশেষ ২০টি)":"Revision log (latest 20)","সর্বোচ্চ বাজেটের ১০টি শাখা":"Top 10 branches by budget","সর্বোচ্চ ব্যয়ের ১০টি শাখা":"Top 10 branches by spend","সিনিয়র প্রিন্সিপাল অফিসার":"Senior Principal Officer","এখনও কোনো ব্যয়ের ডেটা নেই।":"No expense data yet. Open the","নতুন লাইসেন্স কী পেস্ট করুন":"Paste a new licence key","প্রয়োগ হয়েছে, রিলোড হচ্ছে":"Applied, reloading","বিভাগের নাম (বাংলা ও ইংরেজি)":"Division names (Bangla & English)","মোট সঞ্চিত ব্যয় (মাসওয়ারি)":"Total cumulative spend (monthly)","লাইসেন্স কী এখানে পেস্ট করুন":"Paste the licence key here","লাইসেন্সের মেয়াদ শেষ হয়েছে":"Licence has expired","শাখা ব্যয়-বাজেট ম্যানেজার v":"Branch Expenditure-Budget Manager v","সংশোধিত বাজেট বাড়ানো হয়েছে":"Revised budget increased","সালের বাজেট প্রস্তাব (খসড়া)":"budget proposal (draft)","🔒 শাখা ব্যয়-বাজেট ম্যানেজার":"🔒 Branch Expenditure-Budget Manager","· ⚠ এখনও ব্যাকআপ নেওয়া হয়নি":"· ⚠ No backup taken yet","এই GL কোড শিটে পাওয়া যায়নি:":"These GL codes were not found in the sheet:","মোট সংশোধিত বাজেট — বিস্তারিত":"Total revised budget — details","সবচেয়ে ঝুঁকিতে ১০টি শাখা-খাত":"10 branch-heads most at risk","ফাইল বাছুন। Trial Balance শিটে":"Choose a file. The Trial Balance sheet must have","শাখা ব্যয় বনাম বাজেট বিবরণী —":"Branch Expenditure vs Budget Statement —","সবচেয়ে কম অবশিষ্টের ১৫টি শাখা":"15 branches with the least remaining","১. মাসিক Trial Balance ইমপোর্ট":"1. Monthly Trial Balance import","এটি এই সফটওয়্যারের ব্যাকআপ নয়":"This is not a backup of this software","সঞ্চিত ব্যয় বনাম সংশোধিত বাজেট":"Cumulative spend vs revised budget","গ্লোবাল বাজেট বনাম শাখায় বরাদ্দ":"Global budget vs branch allocation","প্রস্তাবিত বাজেট সংশোধন তালিকা (":"Proposed budget revision list (based on spending through","বছরশেষে ছাড়াতে পারে — বিস্তারিত":"May exceed by year-end — details","সঞ্চিত (জানুয়ারি থেকে এ পর্যন্ত)":"Cumulative (January to date)","তালিকা (অতিরিক্তের পরিমাণ অনুযায়ী)":"List (by excess amount)","প্রস্তাবিত বাড়তি বরাদ্দের তালিকা (":"List of proposed additional allocations (","শাখাওয়ারি (ব্যবহারের হার অনুযায়ী)":"By branch (by usage rate)","🔍 শাখার নাম/কোড, বিভাগ বা খাত লিখুন…":"🔍 Type a branch name/code, division or head…","BASIC Bank PLC — কমন সার্ভিসেস ডিভিশন":"BASIC Bank PLC — Common Services Division","নতুন খাত যোগ হয়েছে; নাম ও GL কোড দিন":"New head added; enter its name and GL code","কার্ডে ক্লিক করলে বিস্তারিত দেখা যাবে।":"Click a card to see details.","⚠ সব ডেটা মুছে খালি অবস্থায় ফিরুন":"⚠ Restore the original (Excel-based) data","এর আগের ডেটা প্রতিস্থাপিত হবে। নিশ্চিত?":"existing data will be replaced. Confirm?","২. বাজেট টেমপ্লেট (এক্সপোর্ট ↔ ইমপোর্ট)":"2. Budget template (export ↔ import)","(হলুদ), ৯০%+ হলে কমলা, ১০০% ছাড়ালে লাল।":"(yellow); at 90%+ orange; above 100% red.","মাসওয়ারি সঞ্চিত ব্যয় (নির্বাচিত পরিসর)":"Monthly cumulative spend (selected scope)","চাপলে সংশোধিত বাজেট বাড়ে ও লগে লেখা হয়।":"raises the revised budget and is logged.","মাসিক = পরপর দুই মাসের সঞ্চিতের পার্থক্য।":"Monthly = difference between two consecutive cumulative figures.","খাতভিত্তিক প্রস্তাব বনাম অবরাদ্দ ব্যালেন্স":"Proposals vs unallocated balance, by head","নতুন বিভাগের নাম (English, যেমন Rangamati)":"New division name (English, e.g. Rangamati)","এই সফটওয়্যার চালাতে বৈধ লাইসেন্স কী লাগবে।":"A valid licence key is required to run this software.","কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়, ঢাকা":"Common Services Division, Head Office, Dhaka","একই GL কোড একাধিকবার আছে; প্রথমটি ধরা হয়েছে:":"The same GL code appears more than once; the first was used:","নতুন বিভাগ যোগ হয়েছে; এবার শাখায় বিভাগ বসান":"New division added; now assign it to branches","তালিকার এই শাখা কোড TB-তে নেই (ব্যয় ০ ধরা হবে):":"These branch codes are not in the TB (spend will be taken as 0):","মোট ব্যয়ের ধারা (সঞ্চিত) বনাম মোট সংশোধিত বাজেট":"Total spend trend (cumulative) vs total revised budget","সব সংশোধন ও ইমপোর্ট মুছে মূল ডেটা ফিরিয়ে আনবেন?":"Delete all revisions and imports and restore the original data?","ট্যাবে বাজেট টেমপ্লেটে ডিপোজিট কলাম ব্যবহার করুন।":"tab, use the Deposit column of the budget template.","বারের ছোট ত্রিকোণ-দাগ = বছরের যতটা সময় চলে গেছে (":"The small triangle on a bar = how much of the year has passed (",")। বার তা ছাড়িয়ে গেলে ব্যয় সময়ের চেয়ে দ্রুত হচ্ছে।":"). If the bar goes beyond it, spending is faster than time.","BASIC Bank PLC — কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়":"BASIC Bank PLC — Common Services Division, Head Office","এর ডেটা আগে থেকেই আছে; প্রয়োগ করলে তা প্রতিস্থাপিত হবে।":"already has data; applying will replace it.","বর্তমান সব ডেটা ব্যাকআপ দিয়ে প্রতিস্থাপিত হবে। নিশ্চিত?":"All current data will be replaced by the backup. Confirm?","সঞ্চিত মান আগের মাসের চেয়ে কমেছে (রিভার্সাল বা ভুল মাস?):":"Cumulative values dropped below the previous month (reversal or wrong month?):","সংখ্যা: লাভ/ক্ষতি = অপারেটিং লাভ − অপারেটিং ক্ষতি (লাখ টাকা)":"Note: Profit/Loss = operating profit − operating loss (lakh Taka)","সব ডেটা আপনার কম্পিউটারের ব্রাউজারেই থাকে; কোথাও পাঠানো হয় না।":"All data stays in your computer’s browser; nothing is sent anywhere.","এতে ক্লাউডের সব শাখা, বাজেট, ইমপোর্ট ও আর্কাইভ মুছে যাবে (খাত ও GL থাকবে)। আগে অবশ্যই ব্যাকআপ নিন।":"This erases all revisions and imports made so far. Take a backup first.","যোগাযোগ: মোঃ রুকনুজ্জামান, কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়":"Contact: Md. Rukonuzzaman, Common Services Division, Head Office","(ক্রমানুসারে)। সারিতে ক্লিক করলে শাখার বিস্তারিত ও বাজেট সম্পাদনা।":"(in order). Click a row for branch details and budget editing.","⚠ ডেটা সংরক্ষণ করা যায়নি (ব্রাউজারের স্টোরেজ পূর্ণ?)। ব্যাকআপ নিন।":"⚠ Could not save data (browser storage full?). Take a backup.","মাসিক = এ মাসের সঞ্চিত − আগের মাসের সঞ্চিত (আগের মাস না থাকলে ফাঁকা)।":"Monthly = this month’s cumulative − previous month’s cumulative (blank if there is no previous month).","সব অঙ্ক লাখ টাকায়। Code ঠিক রাখুন; নতুন শাখা যোগ করতে নতুন সারি লিখুন।":"All figures in lakh Taka. Keep Code unchanged; add a new row to add a branch.","কম্পিউটারের তারিখ আগের চেয়ে পিছিয়ে আছে। তারিখ ঠিক করুন বা নতুন কী দিন।":"The computer’s date is earlier than before. Fix the date or enter a new key.","BASIC Bank PLC · কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয় · অঙ্ক: লাখ টাকায়":"BASIC Bank PLC · Common Services Division, Head Office · Figures in lakh Taka","· ডেভেলপার: মোঃ রুকনুজ্জামান · ডেটা শুধু এই কম্পিউটারের ব্রাউজারে সংরক্ষিত":"· Developer: Md. Rukonuzzaman · Data is stored only in this computer’s browser","TB-তে এমন শাখা আছে যা তালিকায় নেই (টিক দিলে নতুন শাখা হিসেবে যোগ হবে, বাজেট ০):":"The TB has branches that are not in the list (tick to add them as new branches, budget 0):","সংশোধিত বাজেট (বাজেট ০ কিন্তু ব্যয় আছে এমনও এর মধ্যে)। প্রজেকশন = এ পর্যন্ত ব্যয় ÷":"revised budget (this includes a zero budget with spending). Projection = spend so far ÷","প্রতিটি ঘরে সংশোধিত বাজেটের কত % ব্যয় হয়েছে। ঘরে/সারিতে ক্লিক করলে শাখার বিস্তারিত।":"Each cell shows what % of the revised budget has been spent. Click a cell/row for branch details.","ডেটা ক্লাউডে (Firebase) থাকে; তবু মাসে অন্তত একবার নিজের কাছে ব্যাকআপ রাখুন। রিস্টোর করলে ক্লাউডের চলতি ডেটা ও আর্কাইভ প্রতিস্থাপিত হয়। আগের সংস্করণ (v3.x) থেকে ডেটা আনতে সেখানে ব্যাকআপ নিয়ে এখানে রিস্টোর করুন।":"Data lives only in this browser. Clearing browser data erases it, so take regular backups.","বাছা হয়েছে কিন্তু আগের কোনো সঞ্চিত মাস সংরক্ষিত নেই; তাই এ মাসের সংখ্যাই সঞ্চিত ধরা হবে।":"is selected but no earlier cumulative month is saved, so this month’s figures will be treated as cumulative.","এখানে নাম বদলালে পুরো সফটওয়্যারে (বাংলা/ইংরেজি দুই ভাষায়) সেই নাম দেখাবে। কোড/কী অপরিবর্তিত থাকে।":"Changing a name here shows it throughout the software (in both Bangla and English). The code/key stays unchanged.","একাধিক GL কোড কমা দিয়ে লিখুন (যেমন যানবাহন জ্বালানি: 84210000, 84230000)। গ্লোবাল বাজেট লাখ টাকায়।":"Separate multiple GL codes with commas (e.g. vehicle fuel: 84210000, 84230000). Global budget in lakh Taka.","বর্তমান গড় হারে চললে বছরশেষে সংশোধিত বাজেটের ৫%-এর বেশি ছাড়াবে, কিন্তু এখনও সীমার ভেতরে। মৌসুমি খরচ ধরা নেই।":"At the current average rate this will exceed the revised budget by more than 5% by year-end, but is still within the limit. Seasonal costs are not considered.","শাখাভিত্তিক ব্যয় ও বাজেট ট্র্যাকিং — মাসিক Trial Balance থেকে স্বয়ংক্রিয় হিসাব, সতর্কতা, ট্রেন্ড ও প্রতিবেদন।":"Branch-wise expenditure and budget tracking — automatic calculation from the monthly Trial Balance, alerts, trends and reports.","বর্তমান বাজেট, ডিপোজিট ও বিভাগ Excel-এ নামান, সম্পাদনা করে ফেরত দিন। নতুন শাখাও এভাবে যোগ করা যায় (Code, Name ঠিক রাখুন)।":"Download the current budgets, deposits and divisions to Excel, edit them and upload them back. New branches can be added this way too (keep Code and Name).","আপ্যায়ন ব্যয়কে ডিপোজিটের শতাংশ হিসেবে দেখানো হয়েছে (দুটিই লাখ টাকায়)। ডিপোজিট ও লাভ/ক্ষতির সংখ্যা মূল Excel ফাইল থেকে নেওয়া; হালনাগাদ করতে":"Entertainment spend is shown as a percentage of deposit (both in lakh Taka). Deposit and profit/loss figures are taken from the original Excel file; to update, open the","= এখনও সীমার ভেতরে, কিন্তু প্রজেকশন সংশোধিত বাজেটের ৫%-এর বেশি ছাড়ায়। প্রজেকশন সরল গড় ধরে; মৌসুমি খরচ (গরমে বিদ্যুৎ, বছরশেষে স্টেশনারি) আলাদা বিবেচ্য।":"= still within the limit, but the projection exceeds the revised budget by more than 5%. The projection is a simple average; seasonal costs (electricity in summer, stationery near year-end) need separate consideration.","প্রস্তাবিত বাড়তি বরাদ্দ = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) − সংশোধিত বাজেট, ০.০৫ লাখে উপরের দিকে গোল করা। এটি শুধু সহায়ক হিসাব; সিদ্ধান্ত আপনার।":"Proposed addition = (the larger of spend so far and the year-end projection) − revised budget, rounded up to 0.05 lakh. This is only a helper calculation; the decision is yours.","প্রস্তাব = (এ পর্যন্ত ব্যয় ও বছরশেষ প্রজেকশনের বড়টি) × (১ + বৃদ্ধির হার), ০.০৫ লাখে গোল করা। এটি শুধু শুরুর খসড়া; শাখার বিশেষ পরিকল্পনা, ভাড়া/দর বৃদ্ধি ও মৌসুমি খরচ আলাদা বিবেচ্য।":"Proposal = (the larger of spend so far and the year-end projection) × (1 + growth rate), rounded to 0.05 lakh. This is only a starting draft; branch-specific plans, rent/price increases and seasonal costs need separate consideration.","(আর":"(","প্রশাসনিক ব্যয়":"Administrative expenses","কর্মচারী-সংক্রান্ত ব্যয়":"Employee-related expenses","কর্মচারী-সংক্রান্ত":"Employee-related","প্রশাসনিক":"Administrative","নিয়ন্ত্রণ-বহির্ভূত ও অন্যান্য":"Non-controllable & other","হেড অফিসের মোট ব্যয়":"Head Office total expenditure","প্রশাসনিক: গড় মাসিক":"Administrative: monthly average","আলাদা গ্রুপ":"Separate group","বাজেট দেওয়া হয়নি":"No budget entered","সুদ, ঋণ-ক্ষতি, বিনিময়-ক্ষতি ইত্যাদিসহ":"Incl. interest, loan loss, exchange loss etc.","সব ঠিক":"All fine","হেড অফিস":"Head Office","🏛 হেড অফিস":"🏛 Head Office","ট্যাব · ব্যয় ও বাজেট":"Tab · expenditure & budget","হেড অফিসের অংশ":"Head Office share","হেড অফিসের ব্যয়":"Head Office spend","শাখার ব্যয়":"Branch spend","+ হেড অফিস":"+ Head Office","= ব্যাংকের মোট":"= Bank total","ব্যাংকের মোট":"Bank total","🏛 ব্যাংকের মোট (হেড অফিসসহ)":"🏛 Bank total (incl. Head Office)","ব্যাংকের মোট ব্যয় (হেড অফিসসহ)":"Bank total expenditure (incl. Head Office)","তুলনীয় খাত":"Comparable heads","শাখার বাজেট-বিশ্লেষণ ও সতর্কতা শুধু শাখাভিত্তিক থাকে; এটি কেবল মোট ব্যয়ের পূর্ণ চিত্রের জন্য। ক্লিক করলে খাতওয়ারি বিস্তারিত।":"Branch budget analysis and alerts stay branch-based only; this is just for the full picture of total spend. Click for head-wise details.","পর্যন্ত, তুলনীয় খাত। আপ্যায়ন বলতে ক্লায়েন্ট আপ্যায়ন (84170000) ধরা হয়েছে, যাতে শাখার সাথে মেলে।":", comparable heads. Entertainment here means client entertainment (84170000) so that it matches the branches.","হেড অফিস · ডেটা:":"Head Office · Data:","পর্যন্ত · অঙ্ক: লাখ টাকায়। বাজেট না দিলে শুধু ব্যয় দেখাবে (কোনো সতর্কতা আসবে না); বাজেট দিলে পূর্ণ বিশ্লেষণ পাবেন।":"· Figures in lakh Taka. Without a budget only spending is shown (no alerts); with a budget you get the full analysis.","এখনও হেড অফিসের কোনো ব্যয়ের ডেটা নেই। \"ইমপোর্ট\" ট্যাবে কনভার্টারে বানানো ফাইল (বা CBS-এর P&L ফাইল) দিন। এর মধ্যে নিচের খাত-তালিকা ও বাজেট ঘর ব্যবহার করা যায়।":"There is no Head Office expenditure data yet. Open the \"Import\" tab and load the file made by the converter (or the CBS P&L file). Meanwhile you can use the head list and budget boxes below.","১. প্রশাসনিক ব্যয়":"1. Administrative expenses","২. কর্মচারী-সংক্রান্ত ব্যয় (আলাদা গ্রুপ)":"2. Employee-related expenses (separate group)","৩. নিয়ন্ত্রণ-বহির্ভূত ও অন্যান্য (অবশিষ্ট)":"3. Non-controllable & other (remainder)","খাতের নামে ক্লিক করলে বিস্তারিত। বাজেট/সংশোধিত ঘরে সংখ্যা দিয়ে নিচের বোতামে সংরক্ষণ করুন; ফাঁকা রাখলে ওই খাতে শুধু ব্যয় দেখাবে। সংশোধিত ফাঁকা থাকলে বাজেটই সংশোধিত ধরা হয়।":"Click a head name for details. Enter numbers in the Budget/Revised boxes and save with the button below; leave blank to see only spending for that head. If Revised is blank, the budget is taken as revised.","বাজেট (ঐচ্ছিক)":"Budget (optional)","💾 হেড অফিসের বাজেট সংরক্ষণ":"💾 Save Head Office budget","বাজেট মুছুন":"Clear budget","প্রশাসনিক ব্যয় — সঞ্চিত ব্যয়":"Administrative expenses — cumulative spend","কর্মচারী-সংক্রান্ত ব্যয় — সঞ্চিত ব্যয়":"Employee-related expenses — cumulative spend","হেড অফিসের মোট ব্যয় (GL 70000000) থেকে উপরের দুই গ্রুপের বাছাই-করা খাতগুলো বাদ দিলে যা থাকে। এর মধ্যে সুদ ব্যয়, ঋণ-ক্ষতির চার্জ, বিনিয়োগ পুনর্মূল্যায়ন ও বিনিময় ক্ষতির মতো বড় আর্থিক ব্যবস্থাপনার খরচ আছে; কোনো ব্যয় যেন আড়ালে না থাকে সেজন্য এখানে দেখানো হলো।":"What remains after deducting the selected heads of the two groups above from Head Office total expenditure (GL 70000000). It includes large financial-management costs such as interest expense, loan-loss charges, investment revaluation and exchange loss; shown here so that no spending stays hidden.","বাছাই-করা খাতের যোগফল":"Sum of selected heads","অবশিষ্টের অংশ":"Share of remainder","হেড অফিসের খাত-তালিকা (সম্পাদনাযোগ্য)":"Head Office head list (editable)","প্রতিটি খাতের জন্য সবচেয়ে উপরের লেভেলের একটিমাত্র GL দিন; বাবা-GL ও ছেলে-GL একসাথে দিলে ব্যয় দুইবার গণনা হবে। একাধিক GL কমা দিয়ে লিখুন। নতুন GL যোগ করলে কনভার্টারের \"অতিরিক্ত GL\" ঘরেও দিতে হবে (নিচের বোতামে GL তালিকা কপি করা যায়)।":"Give only one GL (the highest level) per head; giving a parent GL and its child GL together counts the spend twice. Separate multiple GLs with commas. A newly added GL must also be given in the converter’s \"Extra GL\" box (the button below copies the GL list).","গ্রুপ":"Group","💾 খাত-তালিকা সংরক্ষণ":"💾 Save head list","📋 সব GL কপি":"📋 Copy all GLs","↺ ডিফল্ট তালিকা":"↺ Default list","English name":"English name","মাসওয়ারি":"Monthly breakdown","মাসিক":"Monthly","৫. ডিপোজিট ইমপোর্ট":"5. Deposit import","৬. ইমপোর্টের ধাপ":"6. Import steps","⬇ ডিপোজিট টেমপ্লেট":"⬇ Deposit template","⬆ ডিপোজিট ফাইল দিন":"⬆ Upload deposit file","✔ ডিপোজিট প্রয়োগ করুন":"✔ Apply deposit","বর্তমান ডিপোজিট: মূল Excel ফাইল থেকে নেওয়া (তারিখ অজানা)। শাখার কোড ও ডিপোজিটের সংখ্যাসহ Excel দিন; আপ্যায়ন/ডিপোজিট অনুপাত নতুন ডিপোজিটে হিসাব হবে।":"Current deposit: taken from the original Excel file (date unknown). Upload an Excel with branch code and deposit figures; the Entertainment/Deposit ratio will then use the new deposit.","বর্তমান ডিপোজিট:":"Current deposit:","ডিপোজিট:":"Deposit:","ডিপোজিটের তারিখ":"Deposit date","একক":"Unit","লাখ টাকা":"Lakh Taka","কোটি টাকা":"crore Taka","টাকা":"Taka","আগের (লাখ)":"Previous (lakh)","নতুন (লাখ)":"New (lakh)","মিলেছে:":"Matched:","বাদ যাবে:":"Will be skipped:","(অচেনা কোড)":"(unknown code)","(ঋণাত্মক)":"(negative)","(ফাঁকা/অবৈধ)":"(blank/invalid)","ফাইলে নেই:":"not in file:","(আগের মান থাকবে)":"(previous value stays)","সমস্যা/অচেনা:":"problem/unknown:","ডিপোজিট: মূল Excel ফাইল থেকে (তারিখ অজানা) — হালনাগাদ করতে ইমপোর্ট ট্যাবে ডিপোজিট ইমপোর্ট করুন":"Deposit: from the original Excel file (date unknown) — to update, use Deposit import in the Import tab","আপ্যায়ন = ক্লায়েন্ট আপ্যায়ন (GL 84170000),":"Entertainment = client entertainment (GL 84170000),","১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে \"১. মাসিক Trial Balance ইমপোর্ট\"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) ডিপোজিট বদলালে \"৫. ডিপোজিট ইমপোর্ট\" ব্যবহার করুন। CBS-এর মূল ফাইল সরাসরি দিলেও চলে।":"1) Make the small Excel in the converter from the CBS file · 2) give that Excel here in \"1. Monthly Trial Balance import\" · 3) match the month and apply · 4) when deposits change, use \"5. Deposit import\". Giving the original CBS file directly also works.","হেড অফিস:":"Head Office:","টি খাতের ব্যয় পাওয়া গেছে · বাছাই-করা খাতের যোগফল":" heads found · sum of selected heads","· মোট ব্যয়":"· total spend","· অবশিষ্ট":"· remainder","হেড অফিসের এই GL ফাইলে নেই (০ ধরা হবে):":"These Head Office GLs are not in the file (taken as 0):","ফাইলে 001-HEAD OFFICE কলাম নেই; হেড অফিসের ডেটা এ মাসে যোগ হবে না।":"The file has no 001-HEAD OFFICE column; Head Office data will not be added for this month.","সব ব্যাংক-স্তরের":"","ডিপোজিটের তারিখ দিন":"Enter the deposit date","টি শাখার ডিপোজিট হালনাগাদ হয়েছে":" branch deposits updated","টি খাতের বাজেট সংরক্ষিত":" head budgets saved","হেড অফিসের সব বাজেট মুছবেন? (ব্যয়ের ডেটা থাকবে)":"Delete all Head Office budgets? (spending data stays)","হেড অফিসের খাত-তালিকা সংরক্ষিত":"Head Office head list saved","খাত মুছবেন?":"— delete this head?","হেড অফিসের খাত-তালিকা ডিফল্টে ফিরবে (বাজেট থাকবে)। নিশ্চিত?":"The Head Office head list will return to default (budgets stay). Confirm?","GL তালিকা কপি হয়েছে":"GL list copied","কোড/ডিপোজিট কলাম পাওয়া যায়নি (Code, Deposit_lakh)":"Code/deposit columns not found (Code, Deposit_lakh)","তারিখ সফটওয়্যারে ইমপোর্টের সময় দিতে হবে।":"The date must be given in the software at import time.","Deposit_lakh কলামে লাখ টাকায় সংখ্যা দিন। Code ঠিক রাখুন।":"Enter figures in lakh Taka in the Deposit_lakh column. Keep Code unchanged.","ডিপোজিট (লাখ)":"Deposit (lakh)","শাখার কোড":"Branch code","জানু":"Jan","ফেব্রু":"Feb","এপ্রি":"Apr","সেপ্টে":"Sep","অক্টো":"Oct","নভে":"Nov","ডিসে":"Dec","মে:":"May:","জুন:":"Jun:","বিভাগ/ইউনিটের নাম (প্রিন্ট ও রিপোর্ট হেডারে)":"Division/unit name (for print & report headers)","যে বিভাগ এই সফটওয়্যার ব্যবহার করবে, তাদের নাম এখানে দিন। প্রতিটি প্রিন্ট ও রিপোর্টের শিরোনামে \"BASIC Bank PLC — (এই নাম)\" ছাপা হবে।":"Enter the name of the division using this software. Every print and report heading will show \"BASIC Bank PLC — (this name)\".","ইউনিটের নাম সংরক্ষিত":"Unit name saved","— পরের শিট:":"— next sheet:","📈 লাভ/ক্ষতির অবস্থা":"📈 Profit / loss position","অপারেটিং":"Operating","লাভজনক শাখা":"Profitable branches","মোট লাভ":"Total profit","ক্ষতিতে থাকা শাখা":"Branches in loss","মোট ক্ষতি":"Total loss","নিট লাভ/ক্ষতি (শাখা)":"Net profit/loss (branches)","নিট লাভ/ক্ষতি":"Net profit/loss","শাখায় লাভ-ক্ষতি নেই":"branches with no profit or loss","সবচেয়ে বেশি ক্ষতি:":"Highest loss:","ক্লিক করলে শাখাওয়ারি তালিকা (লাভ, ক্ষতি, ডিপোজিট ইত্যাদি)।":"Click for the branch-wise list (profit, loss, deposit etc.).","লাভ/ক্ষতির অবস্থা — শাখাওয়ারি":"Profit / loss position — branch-wise","অপারেটিং লাভ/ক্ষতি (CBS-এর GL 70000001 ও 90000001),":"Operating profit/loss (CBS GL 70000001 and 90000001),","মূল Excel ফাইল থেকে":"from the original Excel file","অঙ্ক কোটি টাকায়। সারিতে ক্লিক করলে শাখার বিস্তারিত।":"Figures in crore Taka. Click a row for branch details.","মোট ডিপোজিট":"Total deposit","লাভ-ক্ষতি শূন্য":"Zero profit/loss","লাভে":"In profit","ক্ষতিতে":"In loss","মোট লাভ (কোটি)":"Total profit (crore)","মোট ক্ষতি (কোটি)":"Total loss (crore)","নিট (কোটি)":"Net (crore)","ক্ষতিতে থাকা শাখা (":"Branches in loss (","টি, বেশি ক্ষতি আগে)":", largest loss first)","লাভজনক শাখা (":"Profitable branches (","টি, বেশি লাভ আগে)":", largest profit first)","লাভ-ক্ষতি শূন্য (":"Zero profit/loss (","কোনো শাখা ক্ষতিতে নেই 🎉":"No branch is in loss 🎉","কোনো শাখা লাভে নেই":"No branch is in profit","লাভ/ডিপোজিট":"Profit/Deposit","লাভ":"Profit","ক্ষতি":"Loss","শূন্য":"Zero","লাভ/ক্ষতি (GL 70000001 ও 90000001) পাওয়া গেছে; লাভ/ক্ষতির কার্ড এই মাসের সংখ্যায় হালনাগাদ হবে।":"Profit/loss (GL 70000001 and 90000001) found; the profit/loss card will update with this month’s figures.","ফাইলে অপারেটিং লাভ/ক্ষতির GL (70000001, 90000001) নেই; লাভ/ক্ষতি আগের মতো থাকবে।":"The file has no operating profit/loss GLs (70000001, 90000001); profit/loss stays as before.",", বেশি ক্ষতি আগে)":", largest loss first)",", বেশি লাভ আগে)":", largest profit first)","বেশি ক্ষতি আগে":"largest loss first","বেশি লাভ আগে":"largest profit first","(সঞ্চিত)":"(cumulative)","আপ্যায়ন ব্যয় (লাখ)":"Entertainment spend (lakh)","⚠ মূল (Excel থেকে নেওয়া) ডেটায় ফিরুন":"⚠ Restore the original (Excel-based) data","এতে এ পর্যন্ত করা সব সংশোধন ও ইমপোর্ট মুছে যাবে। আগে ব্যাকআপ নিন।":"This erases all revisions and imports made so far. Take a backup first.","ডেটা শুধু এই ব্রাউজারে থাকে। ব্রাউজারের ডেটা মুছলে হারিয়ে যায়, তাই নিয়মিত ব্যাকআপ নিন।":"Data lives only in this browser. Clearing browser data erases it, so take regular backups.","🎯 লক্ষ্য বনাম অর্জন":"🎯 Target vs achievement","💳 ডিপোজিট মিক্স":"💳 Deposit mix","লক্ষ্য বনাম অর্জন ও ডিপোজিট মিক্স — শাখাওয়ারি":"Target vs achievement and deposit mix — branch-wise","প্রয়োজন":"Needed","প্রফিট (ব্যাংক)":"Profit (bank)","প্রফিট (কোটি)":"Profit (crore)","প্রফিট":"Profit","অ্যাডভান্স":"Advance","লক্ষ্য নেই":"No target","সীমার মধ্যে":"Within limit","লক্ষ্য পূরণ ✔":"Target met ✔","সময়ের হিসাবে সীমার মধ্যে ✔":"Within the limit for the time elapsed ✔","লক্ষ্য পূরণকারী শাখা — ডিপোজিটে":"Branches meeting target — deposit","· অ্যাডভান্সে":"· advance","· প্রফিটে সময়ের গতির সঙ্গে তাল মিলিয়েছে":"· profit on time pace","শাখাগুলোর ডিপোজিট মিক্স (মোট":"Branches’ deposit mix (total","ক্লিক করলে শাখাওয়ারি তালিকা (লক্ষ্য, অর্জন, ডিপোজিট মিক্স)।":"Click for the branch-wise list (target, achievement, deposit mix).","মেয়াদি":"Term","সঞ্চয় (SB)":"Savings (SB)","চলতি (CCOD)":"Current (CCOD)","স্কিম":"Scheme","মার্জিন":"Margin","NR টাকা":"NR Taka","অন্যান্য আমানত":"Other deposits","বাকি সব":"All others","কম খরচের আমানত":"Low-cost deposits","শাখা-গড়":"branch avg","আমানতের ব্যয়-হার (আনুমানিক)":"Deposit cost rate (approx.)","বার্ষিক":"annualised","সুদের তথ্য নেই":"No interest data","৯টি ধরনের বিস্তারিত":"Details of all 9 types","অংশ":"Share","মাসওয়ারি পরিবর্তন":"Month-wise change","ডান পাশে মোট ডিপোজিট (কোটি)।":"Total deposit (crore) on the right.","আগের ইমপোর্টের সঙ্গে তুলনা":"Comparison with earlier imports","অঙ্ক কোটি টাকায়। বারের দাগ = বছরের কতটা সময় গেছে। সারিতে ক্লিক করলে শাখার বিস্তারিত।":"Figures in crore Taka. The tick on each bar = how much of the year has passed. Click a row for branch details.","লক্ষ্যমাত্রার ফাইল ইমপোর্ট করা হয়নি":"No target file imported","ডিপোজিট লক্ষ্য":"Deposit target","অ্যাডভান্স লক্ষ্য":"Advance target","শাখার তালিকা (":"Branch list (","ডিপোজিট ৮০%-এর নিচে":"Deposit below 80%","অ্যাডভান্স ৮০%-এর নিচে":"Advance below 80%","প্রফিটে পিছিয়ে":"Behind on profit","সাজান":"Sort","ডিপোজিট % (কম আগে)":"Deposit % (lowest first)","অ্যাডভান্স % (কম আগে)":"Advance % (lowest first)","কম খরচের আমানত (বেশি আগে)":"Low-cost deposits (highest first)","ডিপোজিট মিক্স":"Deposit mix","৫. ডিপোজিট মিক্স ও লক্ষ্যমাত্রা (CBS রিপোর্ট)":"5. Deposit mix and targets (CBS reports)","৬. ডিপোজিট ইমপোর্ট (Excel টেমপ্লেট)":"6. Deposit import (Excel template)","৭. ইমপোর্টের ধাপ":"7. Import steps","বর্তমান: ডিপোজিট মিক্স":"Current: deposit mix","· লক্ষ্যমাত্রা-অর্জন":"· target & achievement","। CBS-এর \"Deposit Mix\" ও \"Deposit, Advance & Profit Achievement against Target\" রিপোর্ট (.xls) যেমন আছে তেমনই দিন; একসঙ্গে দুটি ফাইল বাছাই করা যায়।":". Give the CBS \"Deposit Mix\" and \"Deposit, Advance & Profit Achievement against Target\" reports (.xls) as they are; you can select both files together.","⬆ রিপোর্ট ফাইল দিন":"⬆ Choose report files","ডিপোজিট মিক্স · তারিখ":"Deposit mix · date","লক্ষ্যমাত্রা ও অর্জন · তারিখ":"Target & achievement · date","ফাইলে পাওয়া যায়নি":"not found in the file","+ ATM":"+ ATM","(ফাইলের মোটের সঙ্গে মিলেছে)":"(matches the file total)","(ফাইলের মোটের সঙ্গে মেলেনি)":"(does not match the file total)","ডিপোজিট অর্জন":"Deposit achieved","নাম না মিললেও কোড দিয়ে মিলিয়েছি:":"Names did not match, matched by code:","অচেনা শাখা (বাদ যাবে):":"Unknown branches (will be skipped):","সমস্যাযুক্ত সারি (বাদ যাবে):":"Problem rows (will be skipped):","শাখার ডিপোজিট এই ফাইল থেকে হালনাগাদ করুন (আপ্যায়ন/ডিপোজিট অনুপাতেও কাজে লাগবে)":"Update branch deposits from this file (also used for the entertainment/deposit ratio)","✔ প্রয়োগ করুন":"✔ Apply","ফাইলে তারিখ নেই, প্রয়োগ করা যাবে না":"The file has no date; it cannot be applied","১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে \"১. মাসিক Trial Balance ইমপোর্ট\"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) CBS-এর ডিপোজিট মিক্স ও লক্ষ্যমাত্রা রিপোর্ট সরাসরি \"৫\"-এ দিন (ডিপোজিটও এর থেকেই হালনাগাদ হয়) · ৫) শুধু ডিপোজিট বদলাতে চাইলে \"৬. ডিপোজিট ইমপোর্ট\" ব্যবহার করুন। CBS-এর মূল Trial Balance ফাইল সরাসরি দিলেও চলে।":"1) Make a small Excel from the CBS file in the converter · 2) Give that Excel under \"1. Monthly Trial Balance import\" here · 3) Check the month and apply · 4) Give the CBS deposit mix and target reports directly under \"5\" (deposits are updated from them too) · 5) To change only the deposit, use \"6. Deposit import\". You can also give the original CBS Trial Balance file directly.","ডিপোজিট মিক্স (হিস্ট্রি) নেই":"No deposit mix history","পর্যন্ত। শাখার কোড ও ডিপোজিটের সংখ্যাসহ Excel দিন; আপ্যায়ন/ডিপোজিট অনুপাত নতুন ডিপোজিটে হিসাব হবে।":"as of. Give an Excel with branch codes and deposit figures; the entertainment/deposit ratio will be computed on the new deposit.",": চেনা রিপোর্ট নয় (ডিপোজিট মিক্স বা লক্ষ্যমাত্রা-অর্জন রিপোর্ট দিন)":": not a recognised report (give the Deposit Mix or the Target & Achievement report)",": ফাইল পড়া যায়নি (":": could not read the file (","ডিপোজিট মিক্স ফাইলের হেডার (\"Branch Name\") পাওয়া যায়নি":"Header (\"Branch Name\") of the deposit mix file not found","ডিপোজিটের ৯টি ধরনের কলাম চেনা যায়নি":"Could not recognise the 9 deposit-type columns","কোনো শাখার সারি পাওয়া যায়নি":"No branch rows found","লক্ষ্যমাত্রা ফাইলের হেডার (\"Target(Latest)\") পাওয়া যায়নি":"Header (\"Target(Latest)\") of the target file not found","সারির কাঠামো অচেনা":"unrecognised row structure","ধরনের সংখ্যা ৯টি নয়":"not 9 deposit types","মোট পাওয়া যায়নি":"total not found","ধরনগুলোর যোগফল মোটের সঙ্গে মেলে না":"types do not add up to the total","সংখ্যা অসম্পূর্ণ":"incomplete figures","ডিপোজিট (লক্ষ্যের %)":"Deposit (% of target)","অ্যাডভান্স (লক্ষ্যের %)":"Advance (% of target)","তারিখ বা পড়ার মতো সারি নেই, প্রয়োগ করা যাবে না":"No date or readable rows, cannot apply"};
+const TR_EXACT = {"মে": "May", "জানু": "Jan", "ফেব্রু": "Feb", "মার্চ": "Mar", "এপ্রি": "Apr", "জুন": "Jun", "জুলাই": "Jul", "আগস্ট": "Aug", "সেপ্টে": "Sep", "অক্টো": "Oct", "নভে": "Nov", "ডিসে": "Dec", "টি": "", "লক্ষ্য": "Target", "অর্জন": "Achieved", "· অর্জন": "· Achieved", "%": "%", "সব": "All"};
 
 /* ================= ভিউ ================= */
 const TABS = [['dash','📊 ড্যাশবোর্ড'],['hm','🟩 হিটম্যাপ'],['br','🏦 শাখা'],['ho','🏛 হেড অফিস'],['al','⚠ সতর্কতা'],['tr','📈 ট্রেন্ড ও তুলনা'],['rv','✏ বাজেট সংশোধন'],['pl','💰 আপ্যায়ন বনাম ডিপোজিট'],['im','⬆ ইমপোর্ট ও ব্যাকআপ'],['st','⚙ সেটিংস'],['ab','ℹ About']];
@@ -550,6 +579,7 @@ function openBranch(code) {
   modal(`<h2 style="margin:0">${esc(b.name)} <small class="mut">কোড ${b.code} · ${esc(dn(b.div))}</small></h2>
    <div class="row" style="margin-top:6px"><label>শাখার নাম <input type="text" id="bi_name" value="${esc(b.name)}"></label><label>বিভাগ <select id="bi_div">${allDivs().map(d => `<option value="${esc(d)}" ${b.div === d ? 'selected' : ''}>${esc(dn(d))}</option>`).join('')}</select></label><label>ডিপোজিট (লাখ) <input type="number" step="any" id="bi_dep" value="${b.dep || 0}" style="width:110px"></label><button class="b sec" data-a="saveBr" data-p="${b.code}">তথ্য সংরক্ষণ</button></div>
    <div class="row">${stChip(worst(cs.map(o => o.x)))} <span>মোট বাজেট <b>${num(tot.rev)}</b></span> <span>ব্যয় <b>${num(tot.sp)}</b></span> <span class="${tot.bal < 0 ? 'neg' : 'pos'}">অবশিষ্ট <b>${num(tot.bal)}</b></span> <span class="mut">ডিপোজিট ${num(b.dep / 100)} কোটি</span></div>
+   ${branchExtra(b)}
    <div class="tw" style="max-height:none"><table><tr>${th('খাত')}${th('মূল বাজেট', 'n')}${th('সংশোধিত', 'n')}${th('ব্যয়', 'n')}${th('অবশিষ্ট', 'n')}${th('ব্যবহার')}${th('বছরশেষ প্রজেকশন', 'n')}${th('অবস্থা')}</tr>` +
     cs.map(({c, x}) => `<tr><td>${esc(c.bn)}</td><td class="n"><input type="number" step="0.01" id="eb_${c.k}" value="${x.bud}" style="width:90px;text-align:right"></td><td class="n"><input type="number" step="0.01" id="er_${c.k}" value="${x.rev}" style="width:90px;text-align:right"></td><td class="n">${num(x.sp)}</td><td class="n ${x.bal < 0 ? 'neg' : ''}">${num(x.bal)}</td><td style="min-width:110px">${bar(x.pct, x.st, true)}<small>${pc(x.pct)}</small></td><td class="n ${x.risk ? 'neg' : ''}">${num(x.proj)}</td><td>${stChip(x.st)}</td></tr>`).join('') +
     `<tr style="font-weight:700"><td>মোট</td><td class="n">${num(tot.bud)}</td><td class="n">${num(tot.rev)}</td><td class="n">${num(tot.sp)}</td><td class="n">${num(tot.bal)}</td><td>${pc(tot.pct)}</td><td></td><td></td></tr></table></div>
@@ -669,21 +699,22 @@ function parseTB(wb, sheet) {
   rows[hi].forEach((c, i) => { if (c == null) return; const m = String(c).match(/^\s*(\d{3})\s*-\s*(.*)$/); if (m) cols[parseInt(m[1], 10)] = {i, name: m[2].trim()}; });
   const glmap = {}; cats().forEach(c => c.gl.forEach(g => { glmap[String(g).trim()] = c.k; }));
   const hogl = {}; (S.ho ? S.ho.heads : []).forEach(h => h.gl.forEach(g => { (hogl[g] = hogl[g] || []).push(h.k); }));
-  const seen = {}, dup = [], data = {}, ho = {}; let hoTot = null, plSeen = false;
+  const seen = {}, dup = [], data = {}, ho = {}; let hoTot = null, plSeen = false, intSeen = false;
   const num0 = v => { const x = typeof v === 'number' ? v : parseFloat(String(v == null ? '' : v).replace(/,/g, '')); return isFinite(x) ? x : null; };
   for (let r = hi + 1; r < rows.length; r++) {
     const row = rows[r]; let code = null;
     for (let j = 0; j < Math.min(4, row.length); j++) { const v = row[j]; if (v == null) continue; const m = String(v).trim().match(/^(\d{8})(?!\d)/); if (m) { code = m[1]; break; } }
     if (!code) continue;
-    const isPl = code === '70000001' || code === '90000001';
+    const isPl = code === '70000001' || code === '90000001', isInt = code === '71100000';
     const isBr = !!glmap[code], isHo = !!hogl[code] || code === '70000000';
-    if (!isBr && !isHo && !isPl) continue;
+    if (!isBr && !isHo && !isPl && !isInt) continue;
     if (seen[code]) { dup.push(code); continue; }
     seen[code] = true;
     if (isBr) {
       const k = glmap[code];
       for (const bc in cols) { const x = num0(row[cols[bc].i]); if (x != null) { (data[bc] = data[bc] || {}); data[bc][k] = (data[bc][k] || 0) + x / 100000; } }
     }
+    if (isInt) { for (const bc in cols) { const x = num0(row[cols[bc].i]); if (x != null) { (data[bc] = data[bc] || {}); data[bc]._int = x / 100000; } } intSeen = true; }
     if (isPl) { const pk = code === '70000001' ? '_opp' : '_opl'; for (const bc in cols) { const x = num0(row[cols[bc].i]); if (x != null) { (data[bc] = data[bc] || {}); data[bc][pk] = x / 100000; } } plSeen = true; }
     if (isHo && cols[1]) {
       const x = num0(row[cols[1].i]);
@@ -698,7 +729,7 @@ function parseTB(wb, sheet) {
   const totals = {};
   cats().forEach(c => { totals[c.k] = 0; });
   for (const bc in data) if (known.has(+bc)) for (const k in data[bc]) totals[k] = (totals[k] || 0) + data[bc][k];
-  return {hi, cols, data, missingGL, dup, unknown, missingBr, totals, glmap, nRows: rows.length, ho, hoTot, hoMissing, plSeen, hoPresent: !!cols[1] && Object.keys(ho).length > 0};
+  return {hi, cols, data, missingGL, dup, unknown, missingBr, totals, glmap, nRows: rows.length, ho, hoTot, hoMissing, plSeen, intSeen, hoPresent: !!cols[1] && Object.keys(ho).length > 0};
 }
 const MFULL = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 function guessMonth(s) {
@@ -765,7 +796,7 @@ function vImport0() {
     <div class="row"><button class="b sec" data-a="tplExport">⬇ টেমপ্লেট নামান</button><label class="b" style="cursor:pointer">⬆ সম্পাদিত ফাইল দিন<input type="file" accept=".xlsx" data-f="tplFile" hidden></label></div></div></div>
    <div class="grid g2" style="margin-top:12px"><div class="card"><h3>৩. সংরক্ষিত মাসগুলো</h3><div class="tw" style="max-height:240px"><table><tr>${th('মাস')}${th('মোট সঞ্চিত ব্যয়', 'n')}${th('')}</tr>` +
     (ks.length ? ks.map(k => `<tr><td>${lbl(k)}</td><td class="n">${num(S.branches.reduce((s, b) => s + cats().reduce((t, c) => t + sp(b.code, c.k, k), 0), 0))}</td><td><button class="b sec red" style="color:#fff" data-a="delSnap" data-p="${k}">মুছুন</button></td></tr>`).join('') : '<tr><td colspan="3" class="mut">কিছু নেই</td></tr>') + `</table></div></div>
-   <div class="card"><h3>৪. ব্যাকআপ ও রিস্টোর</h3><div class="mut" style="margin-bottom:8px">ডেটা ক্লাউডে (Firebase) থাকে; তবু মাসে অন্তত একবার নিজের কাছে ব্যাকআপ রাখুন। রিস্টোর করলে ক্লাউডের চলতি ডেটা ও আর্কাইভ প্রতিস্থাপিত হয়। আগের সংস্করণ (v3.x) থেকে ডেটা আনতে সেখানে ব্যাকআপ নিয়ে এখানে রিস্টোর করুন।</div><div class="row"><button class="b" data-a="backup">💾 ব্যাকআপ (JSON)</button><label class="b sec" style="cursor:pointer">♻ রিস্টোর<input type="file" accept=".json" data-f="restoreFile" hidden></label></div>${S.lastBackup ? `<div class="mut">শেষ ব্যাকআপ: ${S.lastBackup}</div>` : '<div class="neg">এখনও ব্যাকআপ নেওয়া হয়নি</div>'}</div></div>`;
+   <div class="card"><h3>৪. ব্যাকআপ ও রিস্টোর</h3><div class="mut" style="margin-bottom:8px">ডেটা ক্লাউডে (Firebase) থাকে; তবু মাসে অন্তত একবার নিজের কাছে ব্যাকআপ রাখুন। রিস্টোর করলে ক্লাউডের চলতি ডেটা ও আর্কাইভ প্রতিস্থাপিত হয়। আগের সংস্করণ (v3.x) থেকে ডেটা আনতে সেখানে ব্যাকআপ নিয়ে এখানে রিস্টোর করুন।</div><div class="row"><button class="b" data-a="backup">💾 ব্যাকআপ (JSON)</button><label class="b sec" style="cursor:pointer">♻ রিস্টোর<input type="file" accept=".json" data-f="restoreFile" hidden></label><button class="b sec" data-a="histOpen">🕘 আগের সংস্করণ</button></div>${S.lastBackup ? `<div class="mut">শেষ ব্যাকআপ: ${S.lastBackup}</div>` : '<div class="neg">এখনও ব্যাকআপ নেওয়া হয়নি</div>'}</div></div>`;
 }
 async function onImpFile(f) {
   try {
@@ -802,6 +833,7 @@ function impApply() {
     }
     if (P.plSeen) { const dd = P.data[b.code] || {}; snap[b.code].opp = +(dd._opp || 0).toFixed(6); snap[b.code].opl = +(dd._opl || 0).toFixed(6); }
   }
+  if (P.intSeen) S.branches.forEach(b => { snap[b.code].int = +(((P.data[b.code] || {})._int) || 0).toFixed(6); });
   if (P.plSeen && (!S.plAsOf || key >= S.plAsOf)) { S.branches.forEach(b => { b.opp = snap[b.code].opp; b.opl = snap[b.code].opl; }); S.plAsOf = key; }
   if (P.hoPresent) {
     const hs = {}; const pv = prev && S.snaps[prev] && S.snaps[prev].HO;
@@ -853,9 +885,27 @@ async function onTplFile(f) {
     if (badCells.length) setTimeout(() => alert(tr('এই ঘরগুলোতে সংখ্যা নেই, তাই বাদ দেওয়া হয়েছে (আগের মান আছে):') + '\n' + badCells.slice(0, 30).join(', ') + (badCells.length > 30 ? ' … +' + (badCells.length - 30) : '')), 50);
   } catch (e) { toast('টেমপ্লেট পড়া যায়নি: ' + e.message); }
 }
+// ব্যাকআপ/কপির কাঠামো যাচাই: শাখা-কোড অবশ্যই পূর্ণসংখ্যা, খাত-কী সাধারণ লেখা (বানানো ফাইল দিয়ে HTML/স্ক্রিপ্ট ঢোকানো ঠেকাতে)
+const SAFE_KEY = /^[A-Za-z0-9_\-]{1,40}$/;
+function validState(d) {
+  if (!d || typeof d !== 'object' || !Array.isArray(d.branches) || !Array.isArray(d.cats) || !d.snaps || typeof d.snaps !== 'object') return false;
+  if (!d.branches.every(b => b && Number.isInteger(b.code) && b.code > 0 && b.code < 1e6)) return false;
+  if (!d.cats.every(c => c && SAFE_KEY.test(String(c.k)))) return false;
+  if (!Object.keys(d.snaps).every(k => /^\d{4}-\d{2}$/.test(k))) return false;
+  if (d.ho && Array.isArray(d.ho.heads) && !d.ho.heads.every(h => h && SAFE_KEY.test(String(h.k)))) return false;
+  // v3.3+: ডিপোজিট মিক্স, লক্ষ্যমাত্রা ও ডিপোজিট-ইতিহাস — তারিখ YYYY-MM-DD, ভেতরে শাখা-কোড সংখ্যা
+  const DAY = /^\d{4}-\d{2}-\d{2}$/;
+  for (const k of ['mix', 'tgt', 'depHist']) {
+    const o = d[k]; if (o == null) continue;
+    if (typeof o !== 'object' || Array.isArray(o)) return false;
+    if (!Object.keys(o).every(x => DAY.test(x) && o[x] && typeof o[x] === 'object' && Object.keys(o[x]).every(c => /^\d{1,6}$/.test(c)))) return false;
+  }
+  for (const k of ['mixAsOf', 'tgtAsOf']) if (d[k] != null && d[k] !== '' && !DAY.test(String(d[k]))) return false;
+  return true;
+}
 function onRestore(f) {
   const r = new FileReader();
-  r.onload = () => { try { const d = JSON.parse(r.result); if (!d.branches || !d.cats || !d.snaps) throw new Error('এটি এই সফটওয়্যারের ব্যাকআপ নয়'); if (!Array.isArray(d.branches) || !Array.isArray(d.cats)) throw new Error('ব্যাকআপ ফাইলটি অসম্পূর্ণ'); if (!cf('বর্তমান সব ডেটা ব্যাকআপ দিয়ে প্রতিস্থাপিত হবে। নিশ্চিত?')) return; const old = S; S = d; try { migrate(); } catch (e2) { S = old; throw new Error('পুরোনো ব্যাকআপ রূপান্তর করা যায়নি (' + e2.message + ')'); } TRK = null; save(); render(); toast('রিস্টোর সম্পন্ন'); } catch (e) { toast('রিস্টোর ব্যর্থ: ' + e.message); } };
+  r.onload = () => { try { const d = JSON.parse(r.result); if (!d.branches || !d.cats || !d.snaps) throw new Error('এটি এই সফটওয়্যারের ব্যাকআপ নয়'); if (!validState(d)) throw new Error('ব্যাকআপ ফাইলটি অসম্পূর্ণ বা অবৈধ'); for (const y in (d.archive || {})) { if (!/^20\d{2}$/.test(y) || !validState(d.archive[y])) throw new Error(y + ' সালের আর্কাইভ অবৈধ'); } if (!cf('বর্তমান সব ডেটা ব্যাকআপ দিয়ে প্রতিস্থাপিত হবে। নিশ্চিত?')) return; const old = S; S = d; try { migrate(); } catch (e2) { S = old; throw new Error('পুরোনো ব্যাকআপ রূপান্তর করা যায়নি (' + e2.message + ')'); } TRK = null; save(); render(); toast('রিস্টোর সম্পন্ন'); } catch (e) { toast('রিস্টোর ব্যর্থ: ' + e.message); } };
   r.readAsText(f);
 }
 
@@ -891,7 +941,7 @@ function vAbout() {
   const li = licInfo || {};
   return `<div class="grid g2"><div class="card"><h3>সফটওয়্যার পরিচিতি</h3><p><b>শাখা ব্যয়-বাজেট ম্যানেজার</b> v${APP_VER}<br>শাখাভিত্তিক ব্যয় ও বাজেট ট্র্যাকিং — মাসিক Trial Balance থেকে স্বয়ংক্রিয় হিসাব, সতর্কতা, ট্রেন্ড ও প্রতিবেদন।</p>
     <p class="mut">ডেটা থাকে আপনার প্রতিষ্ঠানের নিজস্ব Firebase প্রজেক্টে; শুধু অনুমোদিত ব্যবহারকারী লগইন করে দেখতে পারেন। প্রতিটি পরিবর্তন অডিট লগে লেখা থাকে।</p></div>
-   <div class="card"><h3>ডেভেলপার</h3><p style="font-size:16px;margin:0"><b>মোঃ রুকনুজ্জামান</b></p><p style="margin:2px 0">সিনিয়র প্রিন্সিপাল অফিসার<br>কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়, ঢাকা<br>BASIC Bank PLC</p></div></div>
+   <div class="card"><h3>ডেভেলপার</h3><p style="font-size:16px;margin:0"><b>মোঃ রুকনুজ্জামান</b></p><p style="margin:2px 0">সিনিয়র প্রিন্সিপাল অফিসার<br>কমন সার্ভিসেস ডিভিশন, প্রধান কার্যালয়, ঢাকা<br>BASIC Bank PLC</p><p class="mut" style="margin:6px 0 0">Md. Rukonuzzaman · mrzaman22@gmail.com</p></div></div>
    <div class="card" style="margin-top:12px"><h3>লাইসেন্স</h3><p>লাইসেন্সধারী: <b>${esc(li.name || '—')}</b> · বৈধতা: <b>${esc(li.exp || '—')}</b> পর্যন্ত${li.days != null ? ` (আর ${li.days} দিন)` : ''}</p>
    <div class="row"><input type="text" id="licIn" placeholder="নতুন লাইসেন্স কী পেস্ট করুন" style="flex:1;min-width:260px"><button class="b" data-a="licApply">সক্রিয় করুন</button></div></div>`;
 }
@@ -1013,7 +1063,7 @@ function vDash() {
    ${kpi(a.over ? 'red' : 'grn', '🚨', 'সীমা ছাড়ানো শাখা-খাত', a.over, 'সংশোধিত বাজেট অতিক্রম', 'over')}
    ${kpi(a.risk ? 'yel' : 'grn', '⏳', 'বছরশেষে ছাড়াতে পারে', a.risk, 'বর্তমান হারে চললে', 'risk')}
   </div><div class="mut" style="font-size:12px;margin:6px 2px">কার্ডে ক্লিক করলে বিস্তারিত দেখা যাবে।</div>`;
-  h += plCard() + bankCard();
+  h += plCard() + tgCard() + bankCard();
   h += `<div class="grid g3" style="margin-top:6px">` + cats().map(c => {
     const t = agg(S.branches, [c.k]), st = totalStatus(t);
     return `<div class="card cc" data-a="cat" data-p="${c.k}"><h3>${esc(c.bn)} <small class="mut">${esc(c.en)}</small></h3>
@@ -1307,7 +1357,7 @@ function openBank() {
 /* ---- ডিপোজিট ইমপোর্ট ---- */
 let DEP = {unit: 'lakh', date: ''};
 function depCard() {
-  let h = `<div class="card"><h3>৫. ডিপোজিট ইমপোর্ট</h3><div class="mut" style="margin-bottom:8px">${S.depAsOf ? 'বর্তমান ডিপোজিট: <b>' + esc(S.depAsOf) + '</b> পর্যন্ত' : 'বর্তমান ডিপোজিট: মূল Excel ফাইল থেকে নেওয়া (তারিখ অজানা)'}। শাখার কোড ও ডিপোজিটের সংখ্যাসহ Excel দিন; আপ্যায়ন/ডিপোজিট অনুপাত নতুন ডিপোজিটে হিসাব হবে।</div>
+  let h = `<div class="card"><h3>৬. ডিপোজিট ইমপোর্ট (Excel টেমপ্লেট)</h3><div class="mut" style="margin-bottom:8px">${S.depAsOf ? 'বর্তমান ডিপোজিট: <b>' + fmtD(S.depAsOf) + '</b> পর্যন্ত' : 'বর্তমান ডিপোজিট: মূল Excel ফাইল থেকে নেওয়া (তারিখ অজানা)'}। শাখার কোড ও ডিপোজিটের সংখ্যাসহ Excel দিন; আপ্যায়ন/ডিপোজিট অনুপাত নতুন ডিপোজিটে হিসাব হবে।</div>
    <div class="row"><button class="b sec" data-a="depTpl">⬇ ডিপোজিট টেমপ্লেট</button><label class="b" style="cursor:pointer">⬆ ডিপোজিট ফাইল দিন<input type="file" accept=".xlsx,.xls" data-f="depFile" hidden></label></div>`;
   if (DEP.rows) {
     const R = DEP.rows, ok = R.filter(r => r.b && r.v != null && r.v >= 0), bad = R.filter(r => !r.b || r.v == null || r.v < 0);
@@ -1356,9 +1406,9 @@ function depApply() {
 }
 
 /* ---- মোড়ক: ইমপোর্ট ও আপ্যায়ন-ডিপোজিট ট্যাব ---- */
-function vImport() { return vImport0() + `<div class="grid g2" style="margin-top:12px">${depCard()}<div class="card"><h3>৬. ইমপোর্টের ধাপ</h3><div class="mut">১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে "১. মাসিক Trial Balance ইমপোর্ট"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) ডিপোজিট বদলালে "৫. ডিপোজিট ইমপোর্ট" ব্যবহার করুন। CBS-এর মূল ফাইল সরাসরি দিলেও চলে।</div></div></div>`; }
+function vImport() { return vImport0() + `<div class="grid g2" style="margin-top:12px">${mixCard()}${depCard()}</div><div class="card" style="margin-top:12px"><h3>৭. ইমপোর্টের ধাপ</h3><div class="mut">১) কনভার্টারে CBS ফাইল দিয়ে ছোট Excel বানান · ২) এখানে "১. মাসিক Trial Balance ইমপোর্ট"-এ সেই Excel দিন · ৩) মাস মিলিয়ে প্রয়োগ করুন · ৪) CBS-এর ডিপোজিট মিক্স ও লক্ষ্যমাত্রা রিপোর্ট সরাসরি "৫"-এ দিন (ডিপোজিটও এর থেকেই হালনাগাদ হয়) · ৫) শুধু ডিপোজিট বদলাতে চাইলে "৬. ডিপোজিট ইমপোর্ট" ব্যবহার করুন। CBS-এর মূল Trial Balance ফাইল সরাসরি দিলেও চলে।</div></div>`; }
 function vPL() {
-  const lab = S.depAsOf ? `ডিপোজিট: <b>${esc(S.depAsOf)}</b> পর্যন্ত` : 'ডিপোজিট: মূল Excel ফাইল থেকে (তারিখ অজানা) — হালনাগাদ করতে ইমপোর্ট ট্যাবে ডিপোজিট ইমপোর্ট করুন';
+  const lab = S.depAsOf ? `ডিপোজিট: <b>${fmtD(S.depAsOf)}</b> পর্যন্ত` : 'ডিপোজিট: মূল Excel ফাইল থেকে (তারিখ অজানা) — হালনাগাদ করতে ইমপোর্ট ট্যাবে ডিপোজিট ইমপোর্ট করুন';
   return `<div class="mut" style="margin:0 2px 8px">${lab} · আপ্যায়ন = ক্লায়েন্ট আপ্যায়ন (GL 84170000), জানুয়ারি–${lbl(lastKey())} পর্যন্ত সঞ্চিত</div>` + vPL0();
 }
 
@@ -1437,13 +1487,363 @@ function plTable(list, maxH) {
 function openPlc() {
   const rows = plRows(), t = plSum(rows), loss = rows.filter(r => r.st === 'l').sort((a, b) => a.pl - b.pl), prof = rows.filter(r => r.st === 'p').sort((a, b) => b.pl - a.pl), zero = rows.filter(r => r.st === 'z');
   const dv = divs().map(d => { const l = rows.filter(r => r.b.div === d), s = plSum(l); return {a: 'div', p: d, c: [esc(dn(d)), l.length, s.np, s.nl, crore(s.prof), crore(-s.loss), `<b class="${s.net < 0 ? 'neg' : 'pos'}">${s.net < 0 ? '−' : ''}${crore(Math.abs(s.net))}</b>`, crore(l.reduce((a, r) => a + r.dep, 0))]}; });
-  modal(mHead('লাভ/ক্ষতির অবস্থা — শাখাওয়ারি') + `<div class="note">অপারেটিং লাভ/ক্ষতি (CBS-এর GL 70000001 ও 90000001), ${plAsLabel()}। ডিপোজিট: ${S.depAsOf ? esc(S.depAsOf) + ' পর্যন্ত' : 'মূল Excel ফাইল থেকে'}। অঙ্ক কোটি টাকায়। সারিতে ক্লিক করলে শাখার বিস্তারিত।</div>
+  modal(mHead('লাভ/ক্ষতির অবস্থা — শাখাওয়ারি') + `<div class="note">অপারেটিং লাভ/ক্ষতি (CBS-এর GL 70000001 ও 90000001), ${plAsLabel()}। ডিপোজিট: ${S.depAsOf ? fmtD(S.depAsOf) + ' পর্যন্ত' : 'মূল Excel ফাইল থেকে'}। অঙ্ক কোটি টাকায়। সারিতে ক্লিক করলে শাখার বিস্তারিত।</div>
    <div class="grid g5">${kmini('লাভজনক শাখা', t.np, 'মোট লাভ ' + crore(t.prof) + ' কোটি', 'grn')}${kmini('ক্ষতিতে থাকা শাখা', t.nl, 'মোট ক্ষতি ' + crore(-t.loss) + ' কোটি', t.nl ? 'red' : 'grn')}${kmini('নিট লাভ/ক্ষতি', (t.net < 0 ? '−' : '') + crore(Math.abs(t.net)), 'কোটি টাকা', t.net < 0 ? 'red' : 'grn')}${kmini('মোট ডিপোজিট', crore(rows.reduce((a, r) => a + r.dep, 0)), 'কোটি টাকা')}${kmini('লাভ-ক্ষতি শূন্য', t.nz, 'শাখা')}</div>
    <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt([['বিভাগ'], ['শাখা', 'n'], ['লাভে', 'n'], ['ক্ষতিতে', 'n'], ['মোট লাভ (কোটি)', 'n'], ['মোট ক্ষতি (কোটি)', 'n'], ['নিট (কোটি)', 'n'], ['ডিপোজিট (কোটি)', 'n']], dv)}</div>
    <div class="card" style="margin-top:12px"><h3>ক্ষতিতে থাকা শাখা (${loss.length}টি, বেশি ক্ষতি আগে)</h3>${loss.length ? plTable(loss) : '<div class="mut">কোনো শাখা ক্ষতিতে নেই 🎉</div>'}</div>
    <div class="card" style="margin-top:12px"><h3>লাভজনক শাখা (${prof.length}টি, বেশি লাভ আগে)</h3>${prof.length ? plTable(prof) : '<div class="mut">কোনো শাখা লাভে নেই</div>'}</div>${zero.length ? `<div class="card" style="margin-top:12px"><h3>লাভ-ক্ষতি শূন্য (${zero.length}টি)</h3>${plTable(zero, 200)}</div>` : ''}`);
 }
 ACT.plc = () => openPlc();
+
+/* ---- ডিপোজিট মিক্স ও লক্ষ্যমাত্রা (CBS রিপোর্ট) ---- */
+const MIXT = [
+  {k: 'td', bn: 'মেয়াদি', re: /term/i},
+  {k: 'snd', bn: 'SND', re: /^\s*snd/i},
+  {k: 'sb', bn: 'সঞ্চয় (SB)', re: /^\s*sb/i},
+  {k: 'ccod', bn: 'চলতি (CCOD)', re: /ccod|^\s*cd\b/i},
+  {k: 'scheme', bn: 'স্কিম', re: /scheme/i},
+  {k: 'margin', bn: 'মার্জিন', re: /margin/i},
+  {k: 'fc', bn: 'FC', re: /^\s*fc/i},
+  {k: 'nr', bn: 'NR টাকা', re: /^\s*nr/i},
+  {k: 'others', bn: 'অন্যান্য আমানত', re: /^\s*others/i},
+];
+const sg = v => (v < 0 ? '−' : '') + crore(Math.abs(v));
+const tgMo = d => { const y = +d.slice(0, 4), m = +d.slice(5, 7), dd = +d.slice(8, 10), dim = new Date(y, m, 0).getDate(); return (m - 1) + Math.min(dd, dim) / dim; };
+const fmtD = d => { d = String(d || ''); return d ? (/^\d{4}-\d{2}-\d{2}$/.test(d) ? d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) : esc(d)) : '—'; };
+const mxKeys = o => Object.keys(o || {}).sort();
+const mixD = () => S.mixAsOf || mxKeys(S.mix).pop();
+const tgtD = () => S.tgtAsOf || mxKeys(S.tgt).pop();
+const mixOf = (code, d) => { d = d || mixD(); return (d && S.mix && S.mix[d] && S.mix[d][code]) || null; };
+const tgtOf = (code, d) => { d = d || tgtD(); return (d && S.tgt && S.tgt[d] && S.tgt[d][code]) || null; };
+const lowCost = m => m && m.total > 0 ? ((m.ccod || 0) + (m.snd || 0) + (m.sb || 0)) / m.total * 100 : null;
+
+
+TR_RX.push(
+  [/ডিপোজিট: ([\d/]+) পর্যন্ত/, 'Deposit: as of $1'],
+  [/বাকি ([\d.]+) মাসে প্রয়োজন ([\d,.]+) কোটি \(মাসে ≈ ([\d,.]+)\)/, 'Needed $2 crore in the remaining $1 months (≈ $3 a month)'],
+  [/ঘাটতি ([\d,.]+) কোটি/, 'Shortfall $1 crore'],
+  [/লক্ষ্য পূরণ ✔ \(([\d,.]+) কোটি বেশি\)/, 'Target met ✔ ($1 crore above)'],
+  [/লক্ষ্যের চেয়ে ([\d,.]+) কোটি বেশি ক্ষতি/, 'Loss exceeds the target by $1 crore'],
+  [/বছরের সীমার মধ্যে, তবে সময়ের গতির চেয়ে ([\d,.]+) কোটি বেশি ক্ষতি/, 'Within the full-year limit, but $1 crore more loss than the time pace'],
+  [/সময়ের হিসাবে এগিয়ে \(([\d,.]+) কোটি\)/, 'Ahead of time pace ($1 crore)'],
+  [/সময়ের হিসাবে পিছিয়ে \(([\d,.]+) কোটি\)/, 'Behind time pace ($1 crore)'],
+  [/ডিসেম্বর (\d{4})-এর লক্ষ্য · ([\d/]+) পর্যন্ত/, 'Target for December $1 · as of $2'],
+  [/লক্ষ্য: ডিসেম্বর (\d{4}), অর্জন ([\d/]+) পর্যন্ত/, 'Target: December $1, achievement as of $2'],
+  [/ডিপোজিট মিক্স ([\d/]+) পর্যন্ত/, 'Deposit mix as of $1'],
+  [/([\d/]+) পর্যন্ত · মোট ([\d,.]+) কোটি/, 'as of $1 · total $2 crore'],
+  [/তারিখ ([\d/]+) · মিলেছে (\d+) শাখা/, 'Date $1 · matched $2 branches'],
+  [/ফাইলে নেই: (\d+) শাখা \(আগের মান থাকবে\)/, 'Not in the file: $1 branches (previous values stay)'],
+  [/ফাইলে নেই: (\d+)টি শাখা \(আগের মান থাকবে\)/, 'Not in the file: $1 branches (previous values stay)'],
+  [/ইমপোর্ট হয়েছে: (\d+)টি শাখার তথ্য/, 'Imported: data for $1 branches'],
+  [/দুই ফাইলের তারিখ আলাদা \(([\d/]+) ও ([\d/]+)\); আলাদা তারিখ হিসেবেই জমা হবে।/, 'The two files have different dates ($1 and $2); they will be stored under their own dates.'],
+);
+
+/* ---- পার্সার ---- */
+const isoDMY = m => m[3] + '-' + m[2] + '-' + m[1];
+const mxText = rows => rows.slice(0, 25).map(r => r.filter(c => c != null && c !== '').join(' | ')).join('\n');
+function mxParseMix(rows) {
+  const dm = mxText(rows).match(/as\s*on\s*:?\s*(\d{2})\/(\d{2})\/(\d{4})/i);
+  let hr = -1; for (let i = 0; i < Math.min(25, rows.length); i++) if (rows[i].some(c => typeof c === 'string' && /branch\s*name/i.test(c))) { hr = i; break; }
+  if (hr < 0) return {err: 'ডিপোজিট মিক্স ফাইলের হেডার ("Branch Name") পাওয়া যায়নি'};
+  const labs = [];
+  rows[hr].forEach((c, i) => { if (i >= 2 && typeof c === 'string' && c.trim() && !/^total/i.test(c.trim())) { const t = MIXT.find(x => x.re.test(c)); labs.push(t ? t.k : null); } });
+  if (labs.length !== 9 || labs.includes(null) || new Set(labs).size !== 9) return {err: 'ডিপোজিটের ৯টি ধরনের কলাম চেনা যায়নি'};
+  const out = []; let fileTot = null;
+  for (let r = hr + 1; r < rows.length; r++) {
+    const v = rows[r], name = typeof v[1] === 'string' ? v[1].trim() : '', sl = typeof v[0] === 'number' ? v[0] : null;
+    if (!name) continue;
+    if (sl == null) { if (/^total/i.test(name)) { const f = v.filter(c => typeof c === 'number'); if (f.length) fileTot = f[f.length - 1]; } continue; }
+    const toks = v.slice(2).filter(c => c != null && c !== ''), amt = []; let tot = null, bad = null;
+    for (let j = 0; j < toks.length;) {
+      const t = toks[j], n = toks[j + 1];
+      if (typeof t === 'number') {
+        if (typeof n === 'string') { amt.push(t); j += 2; }
+        else if (typeof n === 'number' && n === t) j++;
+        else if (n === undefined) { tot = t; j++; }
+        else { bad = 'সারির কাঠামো অচেনা'; break; }
+      } else j++;
+    }
+    if (!bad && amt.length !== 9) bad = 'ধরনের সংখ্যা ৯টি নয়';
+    if (!bad && tot == null) bad = 'মোট পাওয়া যায়নি';
+    const vals = {}; labs.forEach((k, i) => { vals[k] = amt[i] || 0; });
+    if (!bad && Math.abs(amt.reduce((a, b) => a + b, 0) - tot) > 0.05) bad = 'ধরনগুলোর যোগফল মোটের সঙ্গে মেলে না';
+    out.push({sl, name, vals, tot, bad});
+  }
+  if (!out.length) return {err: 'কোনো শাখার সারি পাওয়া যায়নি'};
+  return {kind: 'mix', date: dm ? isoDMY(dm) : '', rows: out, fileTot};
+}
+function mxParseTgt(rows) {
+  let dm = null;
+  for (let i = 0; i < Math.min(25, rows.length) && !dm; i++) for (const c of rows[i]) { if (typeof c === 'string') { const m = c.match(/^\s*Date:\s*(\d{2})\/(\d{2})\/(\d{4})/i); if (m) { dm = m; break; } } }
+  let hr = -1, tc = []; for (let i = 0; i < Math.min(30, rows.length); i++) { const c = []; rows[i].forEach((x, j) => { if (typeof x === 'string' && /target\s*\(latest\)/i.test(x)) c.push(j); }); if (c.length >= 3) { hr = i; tc = c; break; } }
+  if (hr < 0) return {err: 'লক্ষ্যমাত্রা ফাইলের হেডার ("Target(Latest)") পাওয়া যায়নি'};
+  let nc = 1; for (let i = 0; i < hr; i++) rows[i].forEach((x, j) => { if (typeof x === 'string' && /branch\s*name/i.test(x)) nc = j; });
+  const out = []; let fileTot = null;
+  for (let r = hr + 1; r < rows.length; r++) {
+    const v = rows[r], name = typeof v[nc] === 'string' ? v[nc].trim() : '', sl = typeof v[0] === 'number' ? v[0] : null;
+    if (!name) continue;
+    const g = i => typeof v[i] === 'number' ? v[i] : null;
+    const x = {dt: g(tc[0]), da: g(tc[0] + 1), at: g(tc[1]), aa: g(tc[1] + 1), pt: g(tc[2]), pa: g(tc[2] + 1)};
+    if (sl == null) { if (/^total/i.test(name)) fileTot = x; continue; }
+    out.push({sl, name, x, bad: Object.values(x).some(q => q == null) ? 'সংখ্যা অসম্পূর্ণ' : null});
+  }
+  if (!out.length) return {err: 'কোনো শাখার সারি পাওয়া যায়নি'};
+  return {kind: 'tgt', date: dm ? isoDMY(dm) : '', rows: out, fileTot};
+}
+const nName = s => String(s || '').toUpperCase().replace(/\s*BRANCH\s*$/, '').replace(/\s+/g, ' ').trim();
+function mxMatch(name, sl) {
+  const n = nName(name);
+  if (n === 'HEAD OFFICE') return {code: 1, kind: 'ho'};
+  if (n === 'ATM') return {code: 999, kind: 'atm'};
+  let b = S.branches.find(x => nName(x.name) === n); if (b) return {code: b.code, kind: 'br', b};
+  b = S.branches.find(x => x.code === sl); if (b) return {code: b.code, kind: 'br', b, byCode: true};
+  return null;
+}
+let MX = {};
+async function onMxFiles(files) {
+  const res = {mix: null, tgt: null, errs: []};
+  for (const f of files) {
+    try {
+      const wb = XLSX.read(await f.arrayBuffer(), {type: 'array'});
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1, defval: null, raw: true});
+      const txt = mxText(rows);
+      let p;
+      if (/deposit\s*mix/i.test(txt)) p = mxParseMix(rows); else if (/target\s*\(latest\)|achievement\s*against\s*target/i.test(txt)) p = mxParseTgt(rows);
+      else { res.errs.push(f.name + ': চেনা রিপোর্ট নয় (ডিপোজিট মিক্স বা লক্ষ্যমাত্রা-অর্জন রিপোর্ট দিন)'); continue; }
+      if (p.err) { res.errs.push(f.name + ': ' + p.err); continue; }
+      p.fname = f.name; p.rows.forEach(r => { r.m = mxMatch(r.name, r.sl); });
+      res[p.kind] = p;
+    } catch (e) { res.errs.push(f.name + ': ফাইল পড়া যায়নি (' + e.message + ')'); }
+  }
+  MX = res; render();
+}
+function mxSummary(p) {
+  const ok = p.rows.filter(r => r.m && !r.bad), bad = p.rows.filter(r => r.bad), un = p.rows.filter(r => !r.m);
+  const brs = ok.filter(r => r.m.kind === 'br'), byCode = brs.filter(r => r.m.byCode);
+  return {ok, bad, un, brs, byCode, missing: S.branches.filter(b => !ok.some(r => r.m.code === b.code))};
+}
+function mxNote(p, label) {
+  const s = mxSummary(p);
+  let h = `<div class="note ${s.bad.length || s.un.length ? '' : 'ok'}">${label} · তারিখ ${p.date ? fmtD(p.date) : 'ফাইলে পাওয়া যায়নি'} · মিলেছে ${s.brs.length} শাখা${s.ok.some(r => r.m.kind === 'ho') ? ' + হেড অফিস' : ''}${s.ok.some(r => r.m.kind === 'atm') ? ' + ATM' : ''}`;
+  if (p.kind === 'mix') h += ` · মোট ${crore(s.ok.reduce((a, r) => a + r.tot * 100, 0))} কোটি${p.fileTot != null ? (Math.abs(s.ok.reduce((a, r) => a + r.tot, 0) - p.fileTot) < 0.5 ? ' (ফাইলের মোটের সঙ্গে মিলেছে)' : ' (ফাইলের মোটের সঙ্গে মেলেনি)') : ''}`;
+  else if (p.fileTot) h += ` · ডিপোজিট অর্জন ${crore(s.ok.reduce((a, r) => a + r.x.da / 1e5, 0))} কোটি${Math.abs(s.ok.reduce((a, r) => a + r.x.da, 0) - p.fileTot.da) < 1e5 ? ' (ফাইলের মোটের সঙ্গে মিলেছে)' : ' (ফাইলের মোটের সঙ্গে মেলেনি)'}`;
+  h += '</div>';
+  if (s.byCode.length) h += `<div class="note">নাম না মিললেও কোড দিয়ে মিলিয়েছি: ${s.byCode.slice(0, 6).map(r => esc(r.name + ' → ' + r.m.b.name)).join('; ')}</div>`;
+  if (s.un.length) h += `<div class="note er">অচেনা শাখা (বাদ যাবে): ${s.un.slice(0, 8).map(r => esc(r.name)).join('; ')}${s.un.length > 8 ? ' …' : ''}</div>`;
+  if (s.bad.length) h += `<div class="note er">সমস্যাযুক্ত সারি (বাদ যাবে): ${s.bad.slice(0, 6).map(r => esc(r.name + ' — ' + r.bad)).join('; ')}</div>`;
+  if (s.missing.length) h += `<div class="mut" style="font-size:12px">ফাইলে নেই: ${s.missing.length}টি শাখা (আগের মান থাকবে)</div>`;
+  return h;
+}
+function mixCard() {
+  const md = mixD(), td = tgtD();
+  let h = `<div class="card"><h3>৫. ডিপোজিট মিক্স ও লক্ষ্যমাত্রা (CBS রিপোর্ট)</h3><div class="mut" style="margin-bottom:8px">বর্তমান: ডিপোজিট মিক্স <b>${md ? fmtD(md) : '—'}</b> · লক্ষ্যমাত্রা-অর্জন <b>${td ? fmtD(td) : '—'}</b>। CBS-এর "Deposit Mix" ও "Deposit, Advance &amp; Profit Achievement against Target" রিপোর্ট (.xls) যেমন আছে তেমনই দিন; একসঙ্গে দুটি ফাইল বাছাই করা যায়।</div>
+   <div class="row"><label class="b" style="cursor:pointer">⬆ রিপোর্ট ফাইল দিন<input type="file" accept=".xls,.xlsx" multiple data-f="mxFiles" hidden></label></div>`;
+  (MX.errs || []).forEach(e => { h += `<div class="note er">${esc(e)}</div>`; });
+  if (MX.mix) h += mxNote(MX.mix, 'ডিপোজিট মিক্স');
+  if (MX.tgt) h += mxNote(MX.tgt, 'লক্ষ্যমাত্রা ও অর্জন');
+  if (MX.mix && MX.tgt && MX.mix.date && MX.tgt.date && MX.mix.date !== MX.tgt.date) h += `<div class="note">দুই ফাইলের তারিখ আলাদা (${fmtD(MX.mix.date)} ও ${fmtD(MX.tgt.date)}); আলাদা তারিখ হিসেবেই জমা হবে।</div>`;
+  if (MX.mix || MX.tgt) {
+    const useful = p => !p || mxSummary(p).ok.length > 0, dateOk = (!MX.mix || MX.mix.date) && (!MX.tgt || MX.tgt.date) && useful(MX.mix) && useful(MX.tgt);
+    h += `<label style="display:block;margin:8px 0"><input type="checkbox" id="mx_dep" checked> শাখার ডিপোজিট এই ফাইল থেকে হালনাগাদ করুন (আপ্যায়ন/ডিপোজিট অনুপাতেও কাজে লাগবে)</label>
+     <div class="row">${dateOk ? '<button class="b grn" data-a="mxApply">✔ প্রয়োগ করুন</button>' : '<span class="neg">তারিখ বা পড়ার মতো সারি নেই, প্রয়োগ করা যাবে না</span>'}<button class="b sec" data-a="mxClear">বাতিল</button></div>`;
+  }
+  return h + '</div>';
+}
+function mxApply() {
+  const useDep = !$('#mx_dep') || $('#mx_dep').checked, put = (root, d, code, o) => { root[d] = root[d] || {}; root[d][code] = o; };
+  S.mix = S.mix || {}; S.tgt = S.tgt || {}; let nb = 0;
+  const dep = {};
+  if (MX.mix) {
+    const d = MX.mix.date, s = mxSummary(MX.mix); S.mix[d] = {};
+    s.ok.forEach(r => { const o = {total: +(r.tot * 100).toFixed(4)}; MIXT.forEach(t => { o[t.k] = +((r.vals[t.k] || 0) * 100).toFixed(4); }); put(S.mix, d, r.m.code, o); if (r.m.kind === 'br') { dep[r.m.code] = o.total; } });
+    if (!S.mixAsOf || d >= S.mixAsOf) S.mixAsOf = d; nb = s.brs.length;
+  }
+  if (MX.tgt) {
+    const d = MX.tgt.date, s = mxSummary(MX.tgt); S.tgt[d] = {};
+    s.ok.forEach(r => { const o = {}; Object.keys(r.x).forEach(k => { o[k] = +(r.x[k] / 1e5).toFixed(4); }); put(S.tgt, d, r.m.code, o); if (!MX.mix && r.m.kind === 'br') dep[r.m.code] = o.da; });
+    if (!S.tgtAsOf || d >= S.tgtAsOf) S.tgtAsOf = d; nb = nb || s.brs.length;
+  }
+  ['mix', 'tgt'].forEach(k => { Object.keys(S[k]).sort().slice(0, -13).forEach(d => delete S[k][d]); });
+  const dd = (MX.mix && MX.mix.date) || (MX.tgt && MX.tgt.date);
+  if (useDep && dd) {
+    const newest = !S.depAsOf || dd >= S.depAsOf;
+    S.depHist = S.depHist || {}; S.depHist[dd] = {};
+    S.branches.forEach(b => { if (dep[b.code] != null) { S.depHist[dd][b.code] = dep[b.code]; if (newest) b.dep = dep[b.code]; } });
+    Object.keys(S.depHist).sort().slice(0, -13).forEach(k => delete S.depHist[k]);
+    if (newest) S.depAsOf = dd;
+  }
+  save(); MX = {}; render(); toast('ইমপোর্ট হয়েছে: ' + nb + 'টি শাখার তথ্য');
+}
+
+/* ---- ব্যয়-হার ---- */
+function intInfo(code) {
+  const ks = snapKeys().slice().reverse();
+  for (const k of ks) { const s = S.snaps[k] && S.snaps[k][code]; if (s && s.int != null) return {int: s.int, k}; }
+  return null;
+}
+function costRate(b) { const x = intInfo(b.code); if (!x || !(b.dep > 0) || !(x.int > 0)) return null; return x.int / b.dep * 12 / parseInt(x.k.slice(5), 10) * 100; }
+function costRateBank() {
+  let i = 0, dp = 0;
+  S.branches.forEach(b => { const x = intInfo(b.code); if (x && x.int > 0 && b.dep > 0) { i += x.int * 12 / parseInt(x.k.slice(5), 10); dp += b.dep; } });
+  return dp ? i / dp * 100 : null;
+}
+function mixBank(d) {
+  const M = S.mix && S.mix[d]; if (!M) return null;
+  const o = {total: 0}; MIXT.forEach(t => { o[t.k] = 0; });
+  S.branches.forEach(b => { const m = M[b.code]; if (m) { MIXT.forEach(t => { o[t.k] += m[t.k] || 0; }); o.total += m.total || 0; } });
+  return o;
+}
+
+/* ---- রিবন ---- */
+function mixSegs(m) {
+  const tot = m.total || MIXT.reduce((s, t) => s + (m[t.k] || 0), 0);
+  const arr = MIXT.map(t => ({t, v: m[t.k] || 0})).filter(x => x.v > 0);
+  const topK = arr.slice().sort((a, b) => b.v - a.v).slice(0, 4).map(x => x.t.k);
+  const rest = arr.filter(x => !topK.includes(x.t.k));
+  return {tot, segs: arr.filter(x => topK.includes(x.t.k)), nRest: rest.length, rest: rest.reduce((s, x) => s + x.v, 0)};
+}
+function mixRibbon(m, o) {
+  o = o || {}; const s = mixSegs(m); if (!s.tot) return '<div class="mut">ডেটা নেই</div>';
+  const tip = (n, v) => esc(n) + ': ' + crore(v) + ' কোটি (' + num(v / s.tot * 100, 1) + '%)';
+  let h = `<div class="mix${o.mini ? ' mini' : ''}">`;
+  s.segs.forEach(x => { const p = x.v / s.tot * 100; h += `<i style="flex:${x.v};background:var(--m-${x.t.k})" title="${tip(x.t.bn, x.v)}">${!o.mini && p >= 9 ? num(p, 0) + '%' : ''}</i>`; });
+  if (s.rest > 0) { const p = s.rest / s.tot * 100; h += `<i class="rest" style="flex:${s.rest}" title="${tip('বাকি সব', s.rest)}">${!o.mini && p >= 9 ? num(p, 0) + '%' : ''}</i>`; }
+  return h + '</div>';
+}
+function mixLegend(m) {
+  const s = mixSegs(m); if (!s.tot) return '';
+  const it = (sw, n, v) => `<div class="ml"><i ${sw}></i><span>${n}</span><b>${crore(v)}</b><small>${num(v / s.tot * 100, 1)}%</small></div>`;
+  return `<div class="mlg">` + s.segs.map(x => it(`style="background:var(--m-${x.t.k})"`, esc(x.t.bn), x.v)).join('') + (s.rest > 0 ? it('class="rest"', 'বাকি সব', s.rest) : '') + `</div>`;
+}
+function mixHist(code) {
+  const ds = mxKeys(S.mix).filter(d => S.mix[d][code]); if (ds.length < 2) return '';
+  return `<details style="margin-top:8px"><summary>মাসওয়ারি পরিবর্তন</summary>` + ds.slice(-12).reverse().map(d => `<div class="mh"><span class="mut">${fmtD(d)}</span>${mixRibbon(S.mix[d][code], {mini: true})}<small>${crore(S.mix[d][code].total)}</small></div>`).join('') + `<div class="mut" style="font-size:12px">ডান পাশে মোট ডিপোজিট (কোটি)।</div></details>`;
+}
+function mixCardBr(b) {
+  const d = mixD(), m = mixOf(b.code, d); if (!m || !m.total) return '';
+  const bank = mixBank(d), lc = lowCost(m), lcb = bank ? lowCost(bank) : null, cr = costRate(b), crb = costRateBank();
+  const det = MIXT.map(t => `<tr><td><i class="sw" style="background:var(--m-${t.k})"></i>${esc(t.bn)}</td><td class="n">${crore(m[t.k] || 0)}</td><td class="n">${pc((m[t.k] || 0) / m.total * 100)}</td><td class="n mut">${bank && bank.total ? pc((bank[t.k] || 0) / bank.total * 100) : '—'}</td></tr>`).join('');
+  return `<div class="card"><h3>💳 ডিপোজিট মিক্স <small class="mut">${fmtD(d)} পর্যন্ত · মোট ${crore(m.total)} কোটি</small></h3>${mixRibbon(m)}${mixLegend(m)}
+   <div class="grid g2" style="margin-top:8px">${kmini('কম খরচের আমানত', lc == null ? '—' : pc(lc), 'CCOD + SND + SB' + (lcb != null ? ' · শাখা-গড় ' + pc(lcb) : ''))}${kmini('আমানতের ব্যয়-হার (আনুমানিক)', cr == null ? '—' : num(cr, 2) + '%', cr == null ? 'সুদের তথ্য নেই' : 'বার্ষিক' + (crb != null ? ' · শাখা-গড় ' + num(crb, 2) + '%' : ''))}</div>
+   <details style="margin-top:8px"><summary>৯টি ধরনের বিস্তারিত</summary><div class="tw" style="max-height:260px"><table><tr>${th('ধরন')}${th('কোটি', 'n')}${th('অংশ', 'n')}${th('শাখা-গড়', 'n')}</tr>${det}</table></div></details>${mixHist(b.code)}</div>`;
+}
+
+/* ---- লক্ষ্য বনাম অর্জন ---- */
+function tgState(kind, t, a, mo) {
+  if (!t) return {none: true};
+  if (kind !== 'p') { const pct = a / t * 100; return {pct, st: pct >= 100 ? 'ok' : pct >= 80 ? 'warn' : 'over'}; }
+  const pace = t * mo / 12;
+  if (t > 0) { const pr = a / pace * 100; return {pct: a / t * 100, pace, st: pr >= 100 ? 'ok' : pr >= 80 ? 'warn' : 'over'}; }
+  return {pct: a / t * 100, pace, loss: true, st: a >= pace ? 'ok' : a >= t ? 'warn' : 'over'};
+}
+function tgBar(pct, st, mo) {
+  const w = Math.max(0, Math.min(100, isFinite(pct) ? pct : 0));
+  return `<div class="bar"><i class="f-${st}" style="width:${w}%"></i><b title="সময় অতিবাহিত ${num(mo / 12 * 100, 0)}%" style="left:${mo / 12 * 100}%"></b></div>`;
+}
+function tgHint(kind, t, a, s, mo) {
+  const rem = Math.max(0, 12 - mo), rs = num(rem, rem % 1 > 0.05 ? 1 : 0);
+  if (kind !== 'p') {
+    if (a >= t) return `<span class="pos">লক্ষ্য পূরণ ✔ (${crore(a - t)} কোটি বেশি)</span>`;
+    return rem > 0.05 ? `বাকি ${rs} মাসে প্রয়োজন ${crore(t - a)} কোটি (মাসে ≈ ${crore((t - a) / rem)})` : `ঘাটতি ${crore(t - a)} কোটি`;
+  }
+  if (s.loss) {
+    if (a < t) return `<span class="neg">লক্ষ্যের চেয়ে ${crore(t - a)} কোটি বেশি ক্ষতি</span>`;
+    if (a < s.pace) return `<span class="warn-t">বছরের সীমার মধ্যে, তবে সময়ের গতির চেয়ে ${crore(s.pace - a)} কোটি বেশি ক্ষতি</span>`;
+    return `<span class="pos">সময়ের হিসাবে সীমার মধ্যে ✔</span>`;
+  }
+  if (a >= t) return `<span class="pos">লক্ষ্য পূরণ ✔</span>`;
+  return a >= s.pace ? `<span class="pos">সময়ের হিসাবে এগিয়ে (${crore(a - s.pace)} কোটি)</span>` : `<span class="${s.st === 'over' ? 'neg' : 'warn-t'}">সময়ের হিসাবে পিছিয়ে (${crore(s.pace - a)} কোটি)</span>`;
+}
+function tgRow(label, kind, t, a, mo) {
+  const s = tgState(kind, t, a, mo);
+  if (s.none) return `<div class="tgr"><div class="tgh"><b>${label}</b><span class="st s-none">লক্ষ্য নেই</span></div><div class="tgs">অর্জন ${sg(a)} কোটি</div></div>`;
+  const chip = s.loss ? (s.st === 'over' ? 'সীমা ছাড়িয়েছে' : 'সীমার মধ্যে') : pc(s.pct);
+  return `<div class="tgr"><div class="tgh"><b>${label}</b><span class="st s-${s.st}">${chip}</span></div>${tgBar(s.pct, s.st, mo)}
+   <div class="tgs">লক্ষ্য <b>${sg(t)}</b> · অর্জন <b>${sg(a)}</b> কোটি</div><div class="tgs">${tgHint(kind, t, a, s, mo)}</div></div>`;
+}
+function tgHist(code) {
+  const ds = mxKeys(S.tgt).filter(d => S.tgt[d][code]); if (ds.length < 2) return '';
+  return `<details style="margin-top:8px"><summary>আগের ইমপোর্টের সঙ্গে তুলনা</summary><div class="tw" style="max-height:200px"><table><tr>${th('তারিখ')}${th('ডিপোজিট', 'n')}${th('অ্যাডভান্স', 'n')}${th('প্রফিট (কোটি)', 'n')}</tr>` + ds.slice(-12).reverse().map(d => { const r = S.tgt[d][code]; return `<tr><td>${fmtD(d)}</td><td class="n">${r.dt ? pc(r.da / r.dt * 100) : '—'}</td><td class="n">${r.at ? pc(r.aa / r.at * 100) : '—'}</td><td class="n">${sg(r.pa)}</td></tr>`; }).join('') + `</table></div></details>`;
+}
+function tgtCardBr(b) {
+  const d = tgtD(), r = tgtOf(b.code, d); if (!r) return '';
+  const mo = tgMo(d);
+  return `<div class="card"><h3>🎯 লক্ষ্য বনাম অর্জন <small class="mut">ডিসেম্বর ${d.slice(0, 4)}-এর লক্ষ্য · ${fmtD(d)} পর্যন্ত</small></h3><div class="tgrid">${tgRow('ডিপোজিট', 'd', r.dt, r.da, mo)}${tgRow('অ্যাডভান্স', 'a', r.at, r.aa, mo)}${tgRow('প্রফিট', 'p', r.pt, r.pa, mo)}</div>${tgHist(b.code)}</div>`;
+}
+function branchExtra(b) {
+  const a = mixCardBr(b), c = tgtCardBr(b); if (!a && !c) return '';
+  return `<div class="grid g2" style="margin-top:10px">${a}${c}</div>`;
+}
+
+/* ---- ড্যাশবোর্ড কার্ড ও বিস্তারিত তালিকা ---- */
+function tgBank(d) {
+  const T = S.tgt && S.tgt[d]; if (!T) return null;
+  const o = {dt: 0, da: 0, at: 0, aa: 0, pt: 0, pa: 0, nd: 0, nda: 0, na: 0, naa: 0, np: 0, npo: 0};
+  for (const c in T) { const r = T[c]; ['dt', 'da', 'at', 'aa', 'pt', 'pa'].forEach(k => { o[k] += r[k] || 0; }); }
+  const mo = tgMo(d);
+  S.branches.forEach(b => {
+    const r = T[b.code]; if (!r) return;
+    if (r.dt > 0) { o.nd++; if (r.da >= r.dt) o.nda++; }
+    if (r.at > 0) { o.na++; if (r.aa >= r.at) o.naa++; }
+    if (r.pt) { o.np++; const s = tgState('p', r.pt, r.pa, mo); if (s.st === 'ok') o.npo++; }
+  });
+  return o;
+}
+function tgCard() {
+  const td = tgtD(), md = mixD(); if (!td && !md) return '';
+  let h = `<div class="card cc" data-a="tgc" style="margin-top:12px"><h3>${td ? '🎯 লক্ষ্য বনাম অর্জন' : '💳 ডিপোজিট মিক্স'} <small class="mut">${td ? 'ডিসেম্বর ' + td.slice(0, 4) + '-এর লক্ষ্য · ' + fmtD(td) + ' পর্যন্ত' : fmtD(md) + ' পর্যন্ত'}</small></h3>`;
+  if (td) {
+    const o = tgBank(td), mo = tgMo(td);
+    h += `<div class="tgrid3">${tgRow('ডিপোজিট', 'd', o.dt, o.da, mo)}${tgRow('অ্যাডভান্স', 'a', o.at, o.aa, mo)}${tgRow('প্রফিট (ব্যাংক)', 'p', o.pt, o.pa, mo)}</div>
+     <div class="mut" style="font-size:12px;margin-top:4px">লক্ষ্য পূরণকারী শাখা — ডিপোজিটে <b>${o.nda}/${o.nd}</b> · অ্যাডভান্সে <b>${o.naa}/${o.na}</b> · প্রফিটে সময়ের গতির সঙ্গে তাল মিলিয়েছে <b>${o.npo}/${o.np}</b></div>`;
+  }
+  const bm = md && mixBank(md);
+  if (bm && bm.total) h += `<div style="margin-top:12px"><div class="mut" style="font-size:12px;margin-bottom:4px">শাখাগুলোর ডিপোজিট মিক্স (মোট ${crore(bm.total)} কোটি · ${fmtD(md)})</div>${mixRibbon(bm)}${mixLegend(bm)}</div>`;
+  return h + `<div class="mut" style="font-size:12px;margin-top:8px">ক্লিক করলে শাখাওয়ারি তালিকা (লক্ষ্য, অর্জন, ডিপোজিট মিক্স)।</div></div>`;
+}
+let TG = {f: 'all', s: 'code'};
+function tgRows() {
+  const d = tgtD(), md = mixD(), mo = d ? tgMo(d) : 0;
+  return S.branches.map(b => {
+    const r = d ? tgtOf(b.code, d) : null, m = md ? mixOf(b.code, md) : null;
+    return {b, r, m, dp: r && r.dt > 0 ? r.da / r.dt * 100 : null, ap: r && r.at > 0 ? r.aa / r.at * 100 : null, ps: r && r.pt ? tgState('p', r.pt, r.pa, mo) : null, lc: m ? lowCost(m) : null};
+  });
+}
+function openTgt() {
+  const d = tgtD(), md = mixD(), mo = d ? tgMo(d) : 0, all = tgRows();
+  let rows = all.filter(x => TG.f === 'd80' ? x.dp != null && x.dp < 80 : TG.f === 'a80' ? x.ap != null && x.ap < 80 : TG.f === 'pl' ? x.ps && x.ps.st === 'over' : true);
+  const key = {dp: x => x.dp, ap: x => x.ap, lc: x => x.lc};
+  if (TG.s === 'code') rows.sort((a, b) => a.b.code - b.b.code);
+  else if (TG.s === 'lc') rows.sort((a, b) => (b.lc == null ? -1 : b.lc) - (a.lc == null ? -1 : a.lc));
+  else rows.sort((a, b) => (key[TG.s](a) == null ? 1e9 : key[TG.s](a)) - (key[TG.s](b) == null ? 1e9 : key[TG.s](b)));
+  const pcell = (p, st) => p == null ? '<span class="mut">—</span>' : `<div style="min-width:96px">${tgBar(p, st, mo)}<small>${pc(p)}</small></div>`;
+  const st1 = p => p >= 100 ? 'ok' : p >= 80 ? 'warn' : 'over';
+  const tb = dt([['কোড'], ['শাখা'], ['ডিপোজিট (লক্ষ্যের %)'], ['অ্যাডভান্স (লক্ষ্যের %)'], ['প্রফিট (কোটি)', 'n'], ['ডিপোজিট মিক্স'], ['কম খরচের আমানত', 'n']],
+    rows.map(x => ({a: 'branch', p: x.b.code, c: [x.b.code, esc(x.b.name), pcell(x.dp, x.dp == null ? '' : st1(x.dp)), pcell(x.ap, x.ap == null ? '' : st1(x.ap)),
+      x.r ? `<span class="${x.ps ? 'st s-' + x.ps.st : ''}">${sg(x.r.pa)}</span>` : '—', x.m ? `<div style="width:150px">${mixRibbon(x.m, {mini: true})}</div>` : '<span class="mut">—</span>', x.lc == null ? '—' : pc(x.lc)]})), 440);
+  const dv = divs().map(dd => {
+    const l = all.filter(x => x.b.div === dd && x.r), s = k => l.reduce((a, x) => a + (x.r[k] || 0), 0);
+    return {a: 'div', p: dd, c: [esc(dn(dd)), all.filter(x => x.b.div === dd).length, crore(s('dt')), crore(s('da')), s('dt') ? pc(s('da') / s('dt') * 100) : '—', crore(s('at')), crore(s('aa')), s('at') ? pc(s('aa') / s('at') * 100) : '—']};
+  });
+  const o = d ? tgBank(d) : null;
+  const fb = (f, t) => `<button class="b ${TG.f === f ? '' : 'sec'}" data-a="tgf" data-p="${f}">${t}</button>`;
+  modal(mHead('লক্ষ্য বনাম অর্জন ও ডিপোজিট মিক্স — শাখাওয়ারি') + `<div class="note">${d ? `লক্ষ্য: ডিসেম্বর ${d.slice(0, 4)}, অর্জন ${fmtD(d)} পর্যন্ত` : 'লক্ষ্যমাত্রার ফাইল ইমপোর্ট করা হয়নি'}${md ? ` · ডিপোজিট মিক্স ${fmtD(md)} পর্যন্ত` : ''}। অঙ্ক কোটি টাকায়। বারের দাগ = বছরের কতটা সময় গেছে। সারিতে ক্লিক করলে শাখার বিস্তারিত।</div>
+   ${o ? `<div class="grid g3">${[['ডিপোজিট', 'd', o.dt, o.da], ['অ্যাডভান্স', 'a', o.at, o.aa], ['প্রফিট (ব্যাংক)', 'p', o.pt, o.pa]].map(q => `<div class="card" style="padding:10px 14px">${tgRow(q[0], q[1], q[2], q[3], mo)}</div>`).join('')}</div>
+   <div class="card" style="margin-top:12px"><h3>বিভাগ অনুযায়ী</h3>${dt([['বিভাগ'], ['শাখা', 'n'], ['ডিপোজিট লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n'], ['অ্যাডভান্স লক্ষ্য', 'n'], ['অর্জন', 'n'], ['%', 'n']], dv, 260)}</div>` : ''}
+   <div class="card" style="margin-top:12px"><h3>শাখার তালিকা (${rows.length}টি)</h3>
+    <div class="row" style="margin-bottom:8px">${fb('all', 'সব')}${fb('d80', 'ডিপোজিট ৮০%-এর নিচে')}${fb('a80', 'অ্যাডভান্স ৮০%-এর নিচে')}${fb('pl', 'প্রফিটে পিছিয়ে')}<label>সাজান <select data-f="tgs">${[['code', 'শাখার কোড'], ['dp', 'ডিপোজিট % (কম আগে)'], ['ap', 'অ্যাডভান্স % (কম আগে)'], ['lc', 'কম খরচের আমানত (বেশি আগে)']].map(q => `<option value="${q[0]}" ${TG.s === q[0] ? 'selected' : ''}>${q[1]}</option>`).join('')}</select></label></div>${tb}</div>`);
+}
+Object.assign(ACT, {
+  tgc: () => { TG = {f: 'all', s: 'code'}; openTgt(); },
+  tgf: p => { TG.f = p; openTgt(); },
+  mxApply: () => mxApply(),
+  mxClear: () => { MX = {}; render(); },
+});
+document.addEventListener('change', e => {
+  const t = e.target, f = t.dataset && t.dataset.f; if (!f) return;
+  if (f === 'mxFiles') { if (t.files.length) onMxFiles([...t.files]); return; }
+  if (f === 'tgs') { TG.s = t.value; openTgt(); }
+});
 
 /* ================= লাইসেন্স ================= */
 let licInfo = null;
@@ -1495,7 +1895,7 @@ let VIEW = null;
 let ROLL = {mode: 'prop', g: null, bk: true};
 const clone = o => JSON.parse(JSON.stringify(o));
 const archYears = () => Object.keys((VIEW ? VIEW.live : S).archive || {}).sort();
-const VIEW_BLOCK = new Set(['saveBud', 'applyProp', 'impApply', 'delSnap', 'saveSet', 'addCat', 'resetData', 'saveUnit', 'saveDivs', 'addDiv', 'saveBr', 'hoSaveBud', 'hoClearBud', 'hoSaveHeads', 'hoAddHead', 'hoDel', 'hoResetHeads', 'depApply', 'licApply', 'openRoll', 'doRoll', 'undoRoll']);
+const VIEW_BLOCK = new Set(['saveBud', 'applyProp', 'impApply', 'delSnap', 'saveSet', 'addCat', 'resetData', 'saveUnit', 'saveDivs', 'addDiv', 'saveBr', 'hoSaveBud', 'hoClearBud', 'hoSaveHeads', 'hoAddHead', 'hoDel', 'hoResetHeads', 'depApply', 'licApply', 'openRoll', 'doRoll', 'undoRoll', 'mxApply']);
 const r20 = v => Math.ceil(v * 20 - 1e-9) / 20; // ০.০৫ লাখে উপরের দিকে গোল
 
 // নতুন বছরের শাখাভিত্তিক [মূল, সংশোধিত] বাজেট
@@ -1627,7 +2027,7 @@ let REV = 0, SEEN_REV = 0, ARCH_SENT = {}, SAVE_T = null, SAVING = false, SAVE_A
 let LAST_ACT = '', LAST_DETAIL = '', USERS = null, AUDIT = null, UNSUB = [];
 const GUEST_HIDE_TABS = ['im', 'st'];
 // guest যে বোতামগুলো চাপতে পারবে (বাকি সব আটকানো)
-const GUEST_OK = new Set(['tab', 'close', 'branch', 'goDiv', 'goCat', 'sort', 'plSort', 'kpi', 'cat', 'div', 'divList', 'hoHead', 'bank', 'plc', 'lang', 'theme', 'liveYear', 'logout', 'pwSave']);
+const GUEST_OK = new Set(['tab', 'close', 'branch', 'goDiv', 'goCat', 'sort', 'plSort', 'kpi', 'cat', 'div', 'divList', 'hoHead', 'bank', 'plc', 'lang', 'theme', 'liveYear', 'logout', 'pwSave', 'tgc', 'tgf']);
 
 async function fbInit() {
   const [appM, authM, fsM] = await Promise.all([import(FB_SDK + 'firebase-app.js'), import(FB_SDK + 'firebase-auth.js'), import(FB_SDK + 'firebase-firestore.js')]);
@@ -1684,7 +2084,32 @@ function failOut(msg) {
   try { sessionStorage.setItem('ebm_msg', msg); } catch (e) {}
   F.A.signOut(F.auth).finally(() => location.reload());
 }
+// জমে থাকা পরিবর্তন এখনই ক্লাউডে পাঠানো; ms-এর মধ্যে সব সংরক্ষিত হলে true
+async function flushSave(ms) {
+  if (ROLE !== 'admin' || !F) return true;
+  if (SAVE_T) { clearTimeout(SAVE_T); SAVE_T = null; doCloudSave(); }
+  else if (DIRTY && !SAVING) doCloudSave();
+  const end = Date.now() + ms;
+  while ((SAVING || SAVE_T) && Date.now() < end) await new Promise(r => setTimeout(r, 200));
+  return !SAVING && !SAVE_T && !DIRTY;
+}
+// অটো-লগআউটের সময় সংরক্ষণ না হলে: স্ক্রিন ঢেকে রাখা (ডেটা গোপন), সংযোগ ফিরলে সংরক্ষণ করে তারপর লগআউট
+function idleHold() {
+  $('#app').hidden = true; $('#modal').hidden = true;
+  const L = $('#lock');
+  const bi = (bn, en) => LANG === 'en' ? en : bn;
+  L.innerHTML = `<div class="mbox" style="max-width:520px"><h2 style="margin:0 0 6px">🔒 ${bi('নিরাপত্তার জন্য স্ক্রিন বন্ধ', 'Screen locked for security')}</h2><div class="note er">${bi(FB.idleMinutes + ' মিনিট কিছু না করায় লগআউট হচ্ছিল, কিন্তু শেষ পরিবর্তনগুলো এখনও ক্লাউডে সংরক্ষণ হয়নি (ইন্টারনেট দেখুন)। সংরক্ষণ হলেই নিজে থেকে লগআউট হবে।', 'Logging out after ' + FB.idleMinutes + ' idle minutes, but your last changes are not yet saved to the cloud (check the internet). You will be logged out as soon as they are saved.')}</div>
+   <div class="row" style="margin-top:8px"><button class="b" id="ihTry">↻ ${bi('এখনই আবার চেষ্টা', 'Retry now')}</button><button class="b sec" id="ihBk">💾 ${bi('ব্যাকআপ (JSON) নামান', 'Download backup (JSON)')}</button><button class="b sec red" style="color:#fff" id="ihOut">${bi('পরিবর্তন বাদ দিয়ে লগআউট', 'Discard changes and log out')}</button></div></div>`;
+  L.hidden = false;
+  const tryNow = async () => { if (await flushSave(15000)) { clearInterval(idleHold.t); doLogout('idle'); } };
+  $('#ihTry').onclick = tryNow;
+  $('#ihBk').onclick = () => { try { saveBackup(); } catch (e) { toast('ব্যাকআপ হয়নি'); } };
+  $('#ihOut').onclick = () => { if (cf('না-সংরক্ষিত পরিবর্তনগুলো হারিয়ে যাবে। তবুও লগআউট করবেন?')) { clearInterval(idleHold.t); DIRTY = false; clearTimeout(SAVE_T); SAVE_T = null; doLogout('idleForce'); } };
+  clearInterval(idleHold.t); idleHold.t = setInterval(tryNow, 30000);
+}
 async function doLogout(reason) {
+  if (reason === 'idle' && ROLE === 'admin' && (SAVING || SAVE_T || DIRTY) && !(await flushSave(10000))) return idleHold();
+  if (reason === 'idleForce') { reason = 'idle'; SAVING = false; DIRTY = false; }
   if (ROLE === 'admin' && (SAVING || SAVE_T || DIRTY) && reason !== 'idle' && reason !== 'revoked' && !cf('কিছু পরিবর্তন এখনও ক্লাউডে সংরক্ষণ হয়নি। তবুও লগআউট করবেন?')) return;
   const msg = {idle: FB.idleMinutes + ' মিনিট কিছু না করায় নিরাপত্তার জন্য লগআউট করা হয়েছে।', revoked: 'আপনার অনুমতি বদলানো বা বন্ধ করা হয়েছে।'}[reason] || 'লগআউট হয়েছে।';
   await Promise.race([audit('logout', reason || ''), new Promise(r => setTimeout(r, 1500))]);
@@ -1767,6 +2192,11 @@ function setSync(st, msg) {
   c.textContent = st === 'ok' ? '☁ সংরক্ষিত' : st === 'busy' ? '⏳ সংরক্ষণ হচ্ছে…' : '⚠ সংরক্ষণ হয়নি';
   c.title = msg || ''; trDom(c);
 }
+let LAST_HIST = 0, HIST_OFF = false, snapTried = false;
+const RISKY_ACTS = new Set(['init', 'restoreFile', 'histUse', 'doRoll', 'undoRoll', 'resetData', 'impApply', 'delSnap', 'tplFile', 'applyProp', 'hoResetHeads', 'depApply', 'mxApply']);
+// rules-এ সীমা ৯,৫০,০০০ (অক্ষর ≤ বাইট); নথির মোট সীমা ১০,৪৮,৫৭৬ বাইট
+const SIZE_MAX = 940000, SIZE_WARN = 750000;
+const bytesOf = s => new TextEncoder().encode(s).length;
 function cloudSave(now) {
   if (ROLE !== 'admin' || VIEW || !F) return;
   setSync('busy');
@@ -1782,19 +2212,40 @@ async function doCloudSave() {
   const act = LAST_ACT || 'save', det = LAST_DETAIL || '';
   const D = F.D;
   try {
-    if (data.length > 940000) throw Object.assign(new Error('ডেটা খুব বড় (' + Math.round(data.length / 1024) + ' KB)'), {code: 'ebm/size'});
+    // Firestore-এর সীমা বাইটে (১ MiB); বাংলা অক্ষর ৩ বাইট, তাই অক্ষর না গুনে আসল বাইট মাপা হয়
+    const big = [['চলতি বছর', bytesOf(data)]].concat(Object.keys(archStr).filter(y => archStr[y] !== ARCH_SENT[y]).map(y => [y + ' আর্কাইভ', bytesOf(archStr[y])]));
+    const over = big.find(x => x[1] > SIZE_MAX);
+    if (over) throw Object.assign(new Error(over[0] + ': ডেটা খুব বড় (' + Math.round(over[1] / 1024) + ' KB, সীমা ' + Math.round(SIZE_MAX / 1024) + ' KB)। পুরোনো সংশোধনের লগ কমান বা ডেভেলপারকে জানান'), {code: 'ebm/size'});
+    const near = big.find(x => x[1] > SIZE_WARN);
+    if (near && !doCloudSave.warned) { doCloudSave.warned = true; setTimeout(() => toast('⚠ ' + near[0] + '-এর ডেটা সীমার ' + Math.round(near[1] / SIZE_MAX * 100) + '% ভরে গেছে; শিগগির ডেভেলপারকে জানান'), 800); }
+    // ঝুঁকির কাজের আগে, আর প্রতি ৩০ মিনিটে একবার, ক্লাউডের আগের অবস্থার কপি history-তে রাখা হয়
+    snapTried = !HIST_OFF && (RISKY_ACTS.has(act) || Date.now() - LAST_HIST > 30 * 60000);
+    let snapped = false;
     await D.runTransaction(F.db, async tx => {
       const ref = dref('state', 'main'), cur = await tx.get(ref);
       const sr = cur.exists() ? cur.data().rev : 0;
       if (sr !== REV) throw Object.assign(new Error('conflict'), {code: 'ebm/conflict'});
+      const hm = snapTried && cur.exists() ? await tx.get(dref('history', 'meta')) : null;
       tx.set(ref, {data, rev: sr + 1, appVer: APP_VER, updatedAt: D.serverTimestamp(), updatedBy: ME.uid, updatedByEmail: String(ME.email || '').slice(0, 200)});
+      snapped = false;
+      if (hm) {
+        const n = hm.exists() && Number.isInteger(hm.data().next) ? hm.data().next : 0;
+        tx.set(dref('history', 'h' + (n % 10)), {data: cur.data().data, rev: sr, act: String(act).slice(0, 60), updatedAt: D.serverTimestamp(), updatedBy: ME.uid});
+        tx.set(dref('history', 'meta'), {next: n + 1, updatedAt: D.serverTimestamp(), updatedBy: ME.uid});
+        snapped = true;
+      }
       for (const y in archStr) if (archStr[y] !== ARCH_SENT[y]) tx.set(dref('archive', y), {data: archStr[y], updatedAt: D.serverTimestamp(), updatedBy: ME.uid});
       for (const y in ARCH_SENT) if (!(y in archStr)) tx.delete(dref('archive', y));
       tx.set(D.doc(D.collection(F.db, 'audit')), auditDoc(act, det));
     });
     REV += 1; ARCH_SENT = archStr; DIRTY = false; LAST_ACT = LAST_DETAIL = ''; setSync('ok');
+    if (snapped) LAST_HIST = Date.now();
   } catch (e) {
-    if (e.code === 'ebm/conflict') {
+    if (snapTried && e.code === 'permission-denied' && !HIST_OFF) {
+      // সার্ভারের রুলস পুরোনো (history নেই): কপি ছাড়াই আবার সংরক্ষণ, যাতে কাজ না আটকায়
+      HIST_OFF = true; SAVE_AGAIN = true;
+      console.warn('history বন্ধ: Firestore rules হালনাগাদ করুন');
+    } else if (e.code === 'ebm/conflict') {
       setSync('err', 'conflict'); DIRTY = false;
       alert(tr('অন্য কম্পিউটার থেকে এর মধ্যে ডেটা বদলানো হয়েছে। সর্বশেষ ডেটা লোড করা হচ্ছে; আপনার শেষ পরিবর্তনটি আবার করুন।'));
       await reloadFromCloud().catch(() => {});
@@ -1958,7 +2409,53 @@ Object.assign(ACT, {
   },
 });
 ['addGuest', 'addByUid', 'userToggle', 'userDel', 'userReset'].forEach(a => VIEW_BLOCK.delete(a));
+// লগইন স্ক্রিনের পুরো বাক্যের ইংরেজি (শব্দ-ধরে অনুবাদে "পাসওয়ার্ড ভুলে" ভুলভাবে ভাঙছিল)
+Object.assign(TR_EXACT, {'পাসওয়ার্ড ভুলে গেছেন?': 'Forgot password?', 'ইমেইল': 'Email', 'পাসওয়ার্ড': 'Password', 'লগইন': 'Login',
+  'BASIC Bank PLC · লগইন করুন': 'BASIC Bank PLC · Please log in', 'BASIC Bank PLC · লগইন করুন · 🧪 এমুলেটর (পরীক্ষা)': 'BASIC Bank PLC · Please log in · 🧪 Emulator (test)',
+  ['ব্রাউজার বন্ধ করলে বা ' + FB.idleMinutes + ' মিনিট কিছু না করলে নিজে থেকেই লগআউট হবে।']: 'You are logged out automatically when the browser is closed or after ' + FB.idleMinutes + ' minutes of inactivity.',
+  'ইমেইল বা পাসওয়ার্ড ভুল।': 'Wrong email or password.', 'ইমেইল ও পাসওয়ার্ড দিন': 'Enter email and password', 'আগে ইমেইল লিখুন': 'Enter your email first',
+  'এই ইমেইলে অ্যাকাউন্ট থাকলে পাসওয়ার্ড বদলের লিংক পাঠানো হয়েছে।': 'If an account exists for this email, a password-reset link has been sent.',
+  '🕘 আগের সংস্করণ': '🕘 Previous versions', '↺ ফিরুন': '↺ Restore', '⬇ নামান': '⬇ Download'});
 Object.entries({'ব্যবহারকারী': 'Users', 'লগআউট': 'Logout', 'লগইন': 'Login', 'পাসওয়ার্ড': 'password', 'অডিট লগ': 'Audit log', 'শুধু দেখা': 'view only', 'সংরক্ষিত': 'saved'}).forEach(([k, v]) => { if (TR_DICT[k] === undefined) TR_DICT[k] = v; });
+
+/* ---- আগের সংস্করণ (history, শুধু admin) ----
+   ঝুঁকির কাজের আগে ও প্রতি ৩০ মিনিটে চলতি ডেটার কপি history/h0…h9-এ ঘুরে ঘুরে থাকে (শেষ ১০টি)। আর্কাইভ এতে নেই। */
+let HIST = null;
+const HIST_ACT = {save: 'সাধারণ সংরক্ষণ', init: 'প্রথম সেটআপ', restoreFile: 'ব্যাকআপ রিস্টোর', histUse: 'আগের সংস্করণে ফেরা', doRoll: 'বছর বদল', undoRoll: 'বছর বদল বাতিল', resetData: 'ডেটা রিসেট', impApply: 'মাসিক ইমপোর্ট', delSnap: 'মাস মোছা', tplFile: 'বাজেট টেমপ্লেট', applyProp: 'প্রস্তাব প্রয়োগ', hoResetHeads: 'হেড অফিস খাত রিসেট', depApply: 'ডিপোজিট ইমপোর্ট', mxApply: 'মিক্স/লক্ষ্যমাত্রা ইমপোর্ট'};
+const BI = (bn, en) => LANG === 'en' ? en : bn;
+const HIST_ACT_EN = {save: 'Normal save', init: 'First setup', restoreFile: 'Backup restore', histUse: 'Version restore', doRoll: 'Year change', undoRoll: 'Year change undo', resetData: 'Data reset', impApply: 'Monthly import', delSnap: 'Month delete', tplFile: 'Budget template', applyProp: 'Proposal applied', hoResetHeads: 'HO heads reset', depApply: 'Deposit import', mxApply: 'Mix/target import'};
+let histTitle = '';
+async function histOpen() {
+  if (ROLE !== 'admin' || VIEW) return;
+  histTitle = `<h2 style="margin:0 0 6px">🕘 ${BI('আগের সংস্করণ (ক্লাউড)', 'Previous versions (cloud)')}</h2>`;
+  modal(histTitle + '<div class="note">লোড হচ্ছে…</div>');
+  try {
+    const qs = await F.D.getDocs(F.D.collection(F.db, 'history'));
+    HIST = []; qs.forEach(d => { if (d.id === 'meta') return; const h = Object.assign({id: d.id}, d.data()); try { const s = JSON.parse(h.data); h.year = s.year; const ks = Object.keys(s.snaps || {}).sort(); h.last = ks.length ? ks[ks.length - 1] : ''; } catch (e) { h.bad = true; } HIST.push(h); });
+    HIST.sort((a, b) => b.rev - a.rev);
+  } catch (e) { modal(histTitle + `<div class="note er">${esc('পড়া যায়নি: ' + (e.code || e.message))}</div>`); return; }
+  const rows = HIST.map(h => `<tr><td style="white-space:nowrap">${esc(fmtT(h.updatedAt))}</td><td class="n">${h.rev | 0}</td><td>${esc(((m => m[h.act] || m.save)(LANG === 'en' ? HIST_ACT_EN : HIST_ACT)))}</td><td>${esc(h.year || '')}${h.last ? ' · ' + esc(lbl(h.last)) : ''}</td><td class="n">${Math.round(bytesOf(h.data || '') / 1024)} KB</td>
+    <td>${h.bad ? '<span class="neg">নষ্ট</span>' : `<button class="b sec" data-a="histUse" data-p="${esc(h.id)}">↺ ফিরুন</button> <button class="b sec" data-a="histDl" data-p="${esc(h.id)}">⬇ নামান</button>`}</td></tr>`).join('');
+  modal(histTitle + `<div class="note">${BI('প্রতিটি সারি = সেই কাজের <b>ঠিক আগের</b> অবস্থা (চলতি বছরের ডেটা)। "ফিরুন" চাপলে এখনকার অবস্থারও একটি কপি এখানে থেকে যায়, তাই ভুল হলে আবার ফেরা যায়। পুরোনো বছরের আর্কাইভ এতে বদলায় না। শেষ ১০টি কপি থাকে।', 'Each row is the state <b>just before</b> that action (current-year data). Restoring also keeps a copy of the present state here, so you can go back again. Archived years are not changed. The last 10 copies are kept.')}</div>
+   <div class="tw" style="max-height:420px"><table><tr>${th(BI('কখন', 'When'))}${th(BI('সংস্করণ', 'Version'), 'n')}${th(BI('যে কাজের আগে', 'Before action'))}${th(BI('বছর · শেষ মাস', 'Year · last month'))}${th(BI('আকার', 'Size'), 'n')}${th('')}</tr>${rows || `<tr><td colspan="6" class="mut">${BI('এখনও কোনো কপি নেই (প্রথম সংরক্ষণের পর থেকে জমবে)', 'No copies yet (they build up after the first save)')}</td></tr>`}</table></div>
+   <div class="row" style="margin-top:8px"><button class="b sec" data-a="close">${BI('বন্ধ', 'Close')}</button></div>`);
+}
+function histUse(id) {
+  const h = (HIST || []).find(x => x.id === id); if (!h || ROLE !== 'admin' || VIEW) return;
+  if (!cf(`সংস্করণ ${h.rev} (${fmtT(h.updatedAt)})-এর অবস্থায় ফিরবেন? এখনকার চলতি বছরের ডেটা এটি দিয়ে প্রতিস্থাপিত হবে (এখনকার অবস্থার কপি history-তে থাকবে)।`)) return;
+  let d; try { d = JSON.parse(h.data); } catch (e) { return toast('কপিটি পড়া যায়নি'); }
+  if (!validState(d)) return toast('কপিটি এই সফটওয়্যারের সঠিক ডেটা নয়');
+  if (d.year !== S.year && !cf(`সাবধান: এই কপি ${d.year} সালের, এখন চলতি ${S.year} সাল। বছর বদলের আগের অবস্থায় ফিরতে সাধারণত "${S.year - 1} সালে ফিরে যান" বোতামই ঠিক। তবুও এগোবেন?`)) return;
+  const old = S; d.archive = S.archive; S = d;
+  try { migrate(); } catch (e) { S = old; return toast('রূপান্তর করা যায়নি: ' + e.message); }
+  TRK = null; LAST_ACT = 'histUse'; LAST_DETAIL = 'toRev=' + h.rev; save(); $('#modal').hidden = true; render(); toast('সংস্করণ ' + h.rev + '-এ ফিরে এসেছে');
+}
+function histDl(id) {
+  const h = (HIST || []).find(x => x.id === id); if (!h || ROLE !== 'admin') return;
+  download('EBM_history_rev' + (h.rev | 0) + '.json', new Blob([h.data], {type: 'application/json'}));
+}
+Object.assign(ACT, {histOpen: () => histOpen(), histUse: p => histUse(p), histDl: p => histDl(p)});
+VIEW_BLOCK.add('histOpen'); VIEW_BLOCK.add('histUse');
 
 /* ================= চালু ================= */
 async function boot() {
