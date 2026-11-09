@@ -137,6 +137,28 @@ svg text{font-family:var(--fnt)}
 .hm td.c{font-size:12px;font-weight:600;color:#fff;min-width:64px;border-left:2px solid var(--card);border-bottom:2px solid var(--card)}
 .hm td.c.h-ok{background:var(--ok)}.hm td.c.h-warn{background:var(--warn);color:#2a2000}.hm td.c.h-crit{background:var(--crit)}.hm td.c.h-over{background:var(--over)}.hm td.c.h-none{background:var(--noneBg);color:var(--noneTx)}
 #printRoot{display:none}
+.row[hidden]{display:none}
+.mbox .mpdf{position:absolute;right:150px;top:14px;border:1px solid var(--bd);background:none;border-radius:6px;padding:2px 10px;cursor:pointer;color:var(--mut);font-size:13px}
+body.guest [data-a=pagePdf]{display:none!important}
+@media print{
+ @page{size:A4;margin:9mm}
+ body:not(.pr),body:not(.pr) *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ html,body:not(.pr),body:not(.pr) #app,body:not(.pr) main{background:#fff!important;min-height:0!important}
+ /* মডাল খোলা থাকলে শুধু মডাল, আর সেটি ভাসমান নয় — তাই প্রতি পাতায় একই জিনিস ফিরে আসে না */
+ body:not(.pr):has(#modal:not([hidden])) #app{display:none!important}
+ body:not(.pr) #modal{position:static!important;display:block!important;background:none!important;backdrop-filter:none!important;padding:0!important;overflow:visible!important;inset:auto}
+ body:not(.pr) #modal[hidden]{display:none!important}
+ body:not(.pr) .mbox{box-shadow:none!important;max-width:none!important;width:auto!important;animation:none!important;padding:6px 4px!important}
+ body:not(.pr) header{position:static!important;box-shadow:none!important}
+ body:not(.pr) header .search,body:not(.pr) .hdr-r button,body:not(.pr) #sg,body:not(.pr) .tbar button,body:not(.pr) .mbox .x,body:not(.pr) .mbox .bk,body:not(.pr) .mbox .mpdf,body:not(.pr) .mtop button,body:not(.pr) .noprint,body:not(.pr) .toast,body:not(.pr) #lock,body:not(.pr) #login{display:none!important}
+ body:not(.pr) nav{position:static!important}
+ body:not(.pr) nav button:not(.on){display:none!important}
+ body:not(.pr) .tw{max-height:none!important;overflow:visible!important}
+ body:not(.pr) th{position:static!important}
+ body:not(.pr) .card,body:not(.pr) svg,body:not(.pr) tr{break-inside:avoid}
+ body:not(.pr) input,body:not(.pr) select{border-color:var(--bd)!important}
+}
+
 .rep h2{margin:0}.rep .meta{display:flex;justify-content:space-between;margin:6px 0 10px;font-size:13px}
 .sign{display:flex;justify-content:space-between;margin-top:60px;font-size:13px}.sign div{border-top:1px solid #000;padding-top:4px;min-width:170px;text-align:center}
 @media print{
@@ -169,7 +191,7 @@ body.guest .tbar button,body.guest [data-a=exportXlsx],body.guest [data-a=printB
   <div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
    <div><h1 id="ttl"></h1><div class="sub" id="sub"></div></div></div>
   <div class="search"><input id="q" type="text" autocomplete="off"><div id="sg" class="sugg" hidden></div></div>
-  <div class="hdr-r"><button class="ico" id="bBack" data-a="navBack" hidden>← পেছনে</button><button class="ico" id="bLang" data-a="lang" title="Language"></button><button class="ico" id="bTheme" data-a="theme" title="Theme"></button><span id="yrBox"></span><span class="chip" id="asof"></span><span class="sync" id="sync" hidden></span><span class="uchip" id="uchip"></span><button class="ico" data-a="logout" title="লগআউট">⏻</button></div>
+  <div class="hdr-r"><button class="ico" id="bBack" data-a="navBack" hidden>← পেছনে</button><button class="ico" id="bPdf" data-a="pagePdf" title="এই পাতা রঙিন PDF হিসেবে সংরক্ষণ" style="width:auto;padding:0 10px;font-size:13px">📄 PDF</button><button class="ico" id="bLang" data-a="lang" title="Language"></button><button class="ico" id="bTheme" data-a="theme" title="Theme"></button><span id="yrBox"></span><span class="chip" id="asof"></span><span class="sync" id="sync" hidden></span><span class="uchip" id="uchip"></span><button class="ico" data-a="logout" title="লগআউট">⏻</button></div>
  </header>
  <nav id="nav"></nav>
  <main id="main"></main>
@@ -225,7 +247,7 @@ const FB_SDK = 'https://www.gstatic.com/firebasejs/10.14.1/';
 const EMU = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]emu=1\b/.test(location.search);
 // ডেভেলপার কী-জেনারেটর এই (GitHub-এ প্রকাশ্য) সংস্করণ থেকে সরানো হয়েছে; নতুন লাইসেন্স কী লোকাল v3.2 থেকে বানান।
 const LIC_BOOT = "eyJhcHAiOiJFQk0iLCJuYW1lIjoiTWQuIFJ1a29udXp6YW1hbiIsImlzcyI6IjIwMjYtMTAtMjciLCJleHAiOiIyMDI3LTEwLTI3In0.a5FIEsUh3TLNTn2XWTYeDtKYTAh838fFmGMo9a6CmWZwDjdJ8xSyV4LsB6pAPs1iLZd8E4WOKIkW5M_pDIHwjA";
-const APP_VER = '4.3.1';
+const APP_VER = '4.3.2';
 const LS = 'ebm_v1', LSL = 'ebm_lic', LSS = 'ebm_seen';
 const MBN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
 const MEN = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -496,7 +518,7 @@ function migrate() {
 }
 
 /* ---- মডাল / প্রিন্ট ---- */
-function modal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox"><button class="x" data-a="close">×</button><button class="bk" data-a="navBack"${NAV.length ? '' : ' hidden'}>← পেছনে</button>${html}</div>`; m.hidden = false; post(m); }
+function modal(html) { const m = $('#modal'); m.innerHTML = `<div class="mbox"><button class="x" data-a="close">×</button><button class="bk" data-a="navBack"${NAV.length ? '' : ' hidden'}>← পেছনে</button><button class="mpdf" data-a="pagePdf" title="এই জানালা রঙিন PDF হিসেবে সংরক্ষণ">📄 PDF</button>${html}</div>`; m.hidden = false; post(m); }
 function printHtml(html) {
   const r = $('#printRoot'); r.innerHTML = html; trDom(r);
   document.body.classList.add('pr');
@@ -2647,11 +2669,13 @@ function inchCells(x) {
 }
 function inchBox(b) {
   const x = inchOf(b.code), c = inchCells(x), has = x && (x.name || x.mobile || x.staffId || x.email);
-  let h = `<div class="card" style="margin-top:10px"><h3>👤 শাখা-প্রধান</h3>` +
+  const ed = ROLE === 'admin' && !VIEW;
+  // দেখার অংশ একবারই; সম্পাদনার ঘর লুকানো থাকে, "✏️ বদলান" চাপলে খোলে (তথ্য না থাকলে শুরু থেকেই খোলা)
+  let h = `<div class="card" style="margin-top:10px"><h3 style="display:flex;align-items:center;gap:10px">👤 শাখা-প্রধান${ed && has ? '<button class="b sec noprint" data-a="inchEdit" style="padding:3px 10px;font-size:12px">✏️ বদলান</button>' : ''}</h3>` +
     (has ? `<div class="inch">${INCH_F.map(([k, l]) => `<div><span class="mut">${l}</span><b>${c[k]}</b></div>`).join('')}</div>` : '<div class="mut">শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।</div>');
-  if (ROLE === 'admin' && !VIEW) {
+  if (ed) {
     const v = k => esc((x && x[k]) || '');
-    h += `<div class="row" style="margin-top:8px"><input type="text" id="in_name" value="${v('name')}" placeholder="নাম" maxlength="100"><input type="text" id="in_mob" value="${v('mobile')}" placeholder="মোবাইল (একাধিক হলে কমা দিয়ে)" maxlength="80" style="width:200px"><input type="text" id="in_sid" value="${v('staffId')}" placeholder="স্টাফ আইডি" maxlength="30" style="width:120px"><input type="email" id="in_em" value="${v('email')}" placeholder="ইমেইল" maxlength="120"><button class="b sec" data-a="saveInch" data-p="${b.code}">💾 সংরক্ষণ</button></div>`;
+    h += `<div class="row noprint" id="inchEd" style="margin-top:8px"${has ? ' hidden' : ''}><input type="text" id="in_name" value="${v('name')}" placeholder="নাম" maxlength="100"><input type="text" id="in_mob" value="${v('mobile')}" placeholder="মোবাইল (একাধিক হলে কমা দিয়ে)" maxlength="80" style="width:200px"><input type="text" id="in_sid" value="${v('staffId')}" placeholder="স্টাফ আইডি" maxlength="30" style="width:120px"><input type="text" inputmode="email" id="in_em" value="${v('email')}" placeholder="ইমেইল" maxlength="120"><button class="b sec" data-a="saveInch" data-p="${b.code}">💾 সংরক্ষণ</button></div>`;
   }
   return h + '</div>';
 }
@@ -2747,6 +2771,8 @@ Object.assign(ACT, {
   inchTpl: () => inchTpl(),
   inchApply: () => inchApply(),
   inchClear: () => { INCH_IMP = null; render(); },
+  inchEdit: () => { const e = $('#inchEd'); if (e) { e.hidden = !e.hidden; if (!e.hidden) { const i = $('#in_name'); if (i) i.focus(); } } },
+  pagePdf: () => { toast('প্রিন্ট জানালায় Destination: "Save as PDF" বাছুন'); setTimeout(() => window.print(), 350); },
   inchList: () => { UI.tab = 'br'; render(); setTimeout(() => { const el = $('#inchDir'); if (el) el.scrollIntoView({behavior: 'smooth'}); }, 50); },
 });
 document.addEventListener('change', e => {
@@ -2754,6 +2780,9 @@ document.addEventListener('change', e => {
   const fl = t.files[0]; t.value = ''; if (fl) onInchFile(fl);
 });
 ['navBack', 'inchList'].forEach(a => GUEST_OK.add(a));
+let PR_THEME = null;
+window.addEventListener('beforeprint', () => { const h = document.documentElement; if (h.dataset.theme === 'dark') { PR_THEME = 'dark'; h.dataset.theme = 'light'; } });
+window.addEventListener('afterprint', () => { if (PR_THEME) { document.documentElement.dataset.theme = PR_THEME; PR_THEME = null; } });
 ['saveInch', 'inchApply'].forEach(a => VIEW_BLOCK.add(a));
 RISKY_ACTS.add('inchApply');
 Object.assign(HIST_ACT, {inchApply: 'শাখা-প্রধানের তথ্য ইমপোর্ট', saveInch: 'শাখা-প্রধানের তথ্য'});
@@ -2764,7 +2793,7 @@ Object.assign(TR_EXACT, {
   'ডিপোজিট ও লাভ/ক্ষতি: কোটি টাকায় · আপ্যায়ন ব্যয়: লাখ টাকায়': 'Deposit and profit/loss: crore Taka · Entertainment cost: lakh Taka',
   'ডিপোজিট/অ্যাডভান্স: লক্ষ্যের % · প্রফিট: কোটি টাকায়': 'Deposit/advance: % of target · Profit: crore Taka',
   'অঙ্ক: কোটি টাকায় (% = লক্ষ্যের তুলনায়)': 'Figures in crore Taka (% = of target)', 'অঙ্ক: কোটি টাকায় (অংশ = মোটের %)': 'Figures in crore Taka (share = % of total)',
-  '← পেছনে': '← Back', 'মোবাইল (একাধিক হলে কমা দিয়ে)': 'Mobile (separate several with commas)', 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)': 'Click to sort (click again to reverse)', 'আগের অবস্থায় ফিরুন': 'Go back to the previous view', '👤 শাখা-প্রধান': '👤 Branch incharge', 'শাখা-প্রধান': 'Branch incharge', 'নাম': 'Name', 'মোবাইল': 'Mobile', 'স্টাফ আইডি': 'Staff ID',
+  '← পেছনে': '← Back', '✏️ বদলান': '✏️ Edit', 'প্রিন্ট জানালায় Destination: "Save as PDF" বাছুন': 'In the print window choose Destination: "Save as PDF"', 'এই পাতা রঙিন PDF হিসেবে সংরক্ষণ': 'Save this page as a colour PDF', 'এই জানালা রঙিন PDF হিসেবে সংরক্ষণ': 'Save this window as a colour PDF', 'মোবাইল (একাধিক হলে কমা দিয়ে)': 'Mobile (separate several with commas)', 'সাজাতে ক্লিক করুন (আবার ক্লিক করলে উল্টো ক্রম)': 'Click to sort (click again to reverse)', 'আগের অবস্থায় ফিরুন': 'Go back to the previous view', '👤 শাখা-প্রধান': '👤 Branch incharge', 'শাখা-প্রধান': 'Branch incharge', 'নাম': 'Name', 'মোবাইল': 'Mobile', 'স্টাফ আইডি': 'Staff ID',
   'শাখা-প্রধানের তথ্য এখনও দেওয়া হয়নি।': 'Branch-incharge details not added yet.', '💾 সংরক্ষণ': '💾 Save',
   '৮. শাখা-প্রধানের তথ্য (Excel)': '8. Branch-incharge details (Excel)', '⬆ তথ্যের ফাইল দিন': '⬆ Upload details file',
 });
